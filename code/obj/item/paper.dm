@@ -97,41 +97,34 @@
 
 	return
 
-/obj/item/paper/examine()
-	set src in view()
-	set category = "Local"
-
-	..()
-	if(ismob(usr) && !usr.literate)
-		. = html_encode(illiterateGarbleText(src.info)) // deny them ANY useful information
+/obj/item/paper/examine(mob/user)
+	. = ..()
+	var/windowtext
+	if(!user.literate)
+		windowtext = html_encode(illiterateGarbleText(src.info)) // deny them ANY useful information
 	else
-		. = src.info
+		windowtext = src.info
 		if (src.form_startpoints && src.form_endpoints)
 			for (var/x = src.form_startpoints.len, x > 0, x--)
-				. = copytext(., 1, src.form_startpoints[src.form_startpoints[x]]) + "<a href='byond://?src=\ref[src];form=[src.form_startpoints[x]]'>" + copytext(., src.form_startpoints[src.form_startpoints[x]], src.form_endpoints[src.form_endpoints[x]]) + "</a>" + copytext(., src.form_endpoints[src.form_endpoints[x]])
+				windowtext = copytext(., 1, src.form_startpoints[src.form_startpoints[x]]) + "<a href='byond://?src=\ref[src];form=[src.form_startpoints[x]]'>" + copytext(., src.form_startpoints[src.form_startpoints[x]], src.form_endpoints[src.form_endpoints[x]]) + "</a>" + copytext(., src.form_endpoints[src.form_endpoints[x]])
 
 	var/font_junk = ""
 	for (var/i in src.fonts)
 		font_junk += "<link href='http://fonts.googleapis.com/css?family=[i]' rel='stylesheet' type='text/css'>"
 
-	usr.Browse("<HTML><HEAD><TITLE>[src.name]</TITLE>[font_junk]</HEAD><BODY><TT>[.]</TT></BODY></HTML>", "window=[src.name][(sizex || sizey) ? {";size=[sizex]x[sizey]"} : ""]")
+	usr.Browse("<HTML><HEAD><TITLE>[src.name]</TITLE>[font_junk]</HEAD><BODY><TT>[windowtext]</TT></BODY></HTML>", "window=[src.name][(sizex || sizey) ? {";size=[sizex]x[sizey]"} : ""]")
 	onclose(usr, "[src.name]")
-	return null
 
 //[(sizex || sizey) ? {";size=[sizex]x[sizey]"} : ""]
-/obj/item/paper/Map/examine()
-	set src in view()
-	set category = "Local"
+/obj/item/paper/Map/examine(mob/user)
+	. = ..()
 
-	..()
-
-	if (!( ishuman(usr) || isobserver(usr) || issilicon(usr) ))
-		usr.Browse("<HTML><HEAD><TITLE>[src.name]</TITLE></HEAD><BODY><TT>[stars(src.info)]</TT></BODY></HTML>", "window=[src.name]")
-		onclose(usr, "[src.name]")
+	if (!( ishuman(user) || isobserver(user) || issilicon(user) ))
+		user.Browse("<HTML><HEAD><TITLE>[src.name]</TITLE></HEAD><BODY><TT>[stars(src.info)]</TT></BODY></HTML>", "window=[src.name]")
+		onclose(user, "[src.name]")
 	else
-		usr.Browse("<HTML><HEAD><TITLE>[src.name]</TITLE></HEAD><BODY><TT>[src.info]</TT></BODY></HTML>", "window=[src.name]")
-		onclose(usr, "[src.name]")
-	return
+		user.Browse("<HTML><HEAD><TITLE>[src.name]</TITLE></HEAD><BODY><TT>[src.info]</TT></BODY></HTML>", "window=[src.name]")
+		onclose(user, "[src.name]")
 
 /obj/item/paper/custom_suicide = 1
 /obj/item/paper/suicide(var/mob/user as mob)
@@ -203,7 +196,7 @@
 				t = sign_name(t, usr)
 				src.info = copytext(src.info, 1, form_startpoints[.]) + "" + t + "" + copytext(src.info, form_startpoints[.] + length(t))
 				build_formpoints()
-				src.examine()
+				usr.examine_verb(src)
 
 		if (istype(usr.equipped(), /obj/item/stamp))
 			var/obj/item/stamp/S = usr.equipped()
@@ -222,7 +215,7 @@
 						src.info = copytext(src.info, 1, form_startpoints[.]) + "" + T + "" + copytext(src.info, form_endpoints[.])
 						src.icon_state = "paper_stamped"
 						build_formpoints()
-						src.examine()
+						usr.examine_verb(src)
 
 	src.add_fingerprint(usr)
 
@@ -922,9 +915,7 @@ Only trained personnel should operate station systems. Follow all procedures car
 
 	examine()
 		usr << browse_rsc(icon(print_icon,print_icon_state), "sstv_cachedimage.png")
-		..()
-		return
-
+		. = ..()
 
 	satellite
 		print_icon_state = "sstv_2"
@@ -1137,8 +1128,8 @@ Only trained personnel should operate station systems. Follow all procedures car
 	return
 
 /obj/item/stamp/examine()
-	..()
-	boutput(usr, "It is set to '[current_mode]' mode.")
+	. = ..()
+	. += "It is set to '[current_mode]' mode."
 
 /obj/item/stamp/reagent_act(reagent_id, volume)
 	if (..())
@@ -1253,9 +1244,9 @@ WHO DID THIS */
 
 /obj/item/paper/folded/examine()
 	if (src.sealed)
-		boutput(usr, desc)
+		return list(desc)
 	else
-		..()
+		return ..()
 
 /obj/item/paper/folded/plane
 	name = "paper plane"
@@ -1304,26 +1295,26 @@ WHO DID THIS */
     <b>SPECIAL INSTRUCTIONS</b> WILL PAY DOUBLE IF SUB-BASEMENT 3 IS CLEARED OF ALL RESEARCH SPECIMENS AND SUBJECTS, ALL SPECIMENS AND SUBJECTS ARE EFFECTIVELY BRAINDEAD, SUPPLY OWN MEANS OF EXECUTION OF SUBJECTS.<br>
     <b>STATUS:</b> BEING CLEANED"}
 
-/obj/item/paper/lawgiver_pamphlet
-	name = "Your Lawgiver And You"
+/obj/item/paper/lawbringer_pamphlet
+	name = "Your Lawbringer And You"
 	icon_state = "paper"
 	info = {"
-<h2>Your Lawgiver And You</h2>
+<h2>Your Lawbringer And You</h2>
 <i>A Nanotrasen Arms Division Instructional Publication</i>
 <hr>
-<p>Welcome, noble lawperson, to the greatest technological development in policing since the helmet: Your new <b>Lawgiver™</b>!<br>
-The Lawgiver™ is a multi-purpose self-recharging personal armament for our loyal Heads of Security.<br>
+<p>Welcome, noble lawperson, to the greatest technological development in policing since the helmet: Your new <b>Lawbringer™</b>!<br>
+The Lawbringer™ is a multi-purpose self-recharging personal armament for our loyal Heads of Security.<br>
 Please take a moment to acquaint yourself with your new colleague's features, and to scan your fingerprints into the provided identity lock system.</p>
 
-<p>The Lawgiver™ is equipped with eight different Crime Pacification Projectile Synthesization Methods, or "Modes,"
+<p>The Lawbringer™ is equipped with eight different Crime Pacification Projectile Synthesization Methods, or "Modes,"
 all of which draw from the central Self-Renewing Energy Capacitance Device, or "Cell."<br> The Cell has a capacity of
 300 Power Units ("PU"), and recharges at a rate of approximately 10 PU per 6 seconds;
-however, due to the exacting measurements used in the Lawgiver™'s foolproof* design, the Cell
+however, due to the exacting measurements used in the Lawbringer™'s foolproof* design, the Cell
 cannot be removed from the unit or externally recharged.<br>
-<small><i><b>*</b>The Lawgiver™ should not be exposed to fools. If this occurs, wash thoroughly under cold water.</i></small></p>
+<small><i><b>*</b>The Lawbringer™ should not be exposed to fools. If this occurs, wash thoroughly under cold water.</i></small></p>
 
-<p>The greatest feature of the Lawgiver™ is its unique voice control system: To choose your desired Mode, simply speak its name!
-So long as your fingerprints† match those assigned to the identity lock (configured during device setup) the Lawgiver™ will
+<p>The greatest feature of the Lawbringer™ is its unique voice control system: To choose your desired Mode, simply speak its name!
+So long as your fingerprints† match those assigned to the identity lock (configured during device setup) the Lawbringer™ will
 automatically adopt your criminal control strategy of choice.<br>
 <small><i><b>†</b>The user is considered responsible for the protection of their own fingerprints and arms.</i></small></p>
 <hr>
@@ -1338,12 +1329,12 @@ automatically adopt your criminal control strategy of choice.<br>
 <tr>
 <td><b>"Execute"</b></td>
 <td>30 PU</td>
-<td>Turn your Lawgiver™ into your favourite sidearm with these .38 Full Metal Jacket rounds!</td>
+<td>Turn your Lawbringer™ into your favourite sidearm with these .38 Full Metal Jacket rounds!</td>
 </tr>
 <tr>
 <td><b>"Hotshot"</b></td>
 <td>60 PU</td>
-<td>This handy flare gun/flamethrower option is sure to heat things up! The Lawgiver™ is not certified fireproof. Do not set on fire.</td>
+<td>This handy flare gun/flamethrower option is sure to heat things up! The Lawbringer™ is not certified fireproof. Do not set on fire.</td>
 </tr>
 <tr>
 <td><b>"Smokeshot"</b></td>
@@ -1363,7 +1354,7 @@ automatically adopt your criminal control strategy of choice.<br>
 <tr>
 <td><b>"Clownshot"</b></td>
 <td>15 PU</td>
-<td>Lawgiver™ warranty is voided if exposed to clowns. Keep them at bay.</td>
+<td>Lawbringer™ warranty is voided if exposed to clowns. Keep them at bay.</td>
 </tr>
 <tr>
 <td><b>"Pulse"</b></td>
@@ -1377,7 +1368,7 @@ automatically adopt your criminal control strategy of choice.<br>
 as per your Nanotrasen Employment Agreement. If any of the Modes are found to be ineffective, underpowered,
 minimally successful at their purpose, or otherwise useless; and in the event that the user survives to do so;
 Nanotrasen Arms Division requests that they submit a formal Suggestion to our company forums,
-so that the Lawgiver™ can be the best it can be. Do not place fingers in path of moving parts, as the Lawgiver™ device
+so that the Lawbringer™ can be the best it can be. Do not place fingers in path of moving parts, as the Lawbringer™ device
 is solid-state and should not feature moving parts. Note that the Cell may experience spontaneous explosive overload when
 exposed to overconfident outbursts on the part of individuals unqualifed to embody the law; in event of such explosion, run.
 "}

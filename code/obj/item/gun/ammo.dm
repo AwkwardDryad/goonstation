@@ -852,12 +852,11 @@
 
 	examine()
 		if (src.artifact)
-			boutput(usr, text("You have no idea what this thing is!"))
+			return list("You have no idea what this thing is!")
+		. = ..()
+		if (src.unusualCell)
 			return
-		..()
-		if (src.unusualCell) return
-		boutput(usr, "There are [src.charge]/[src.max_charge] PU left!")
-		return
+		. += "There are [src.charge]/[src.max_charge] PU left!"
 
 	use(var/amt = 0)
 		if (src.charge <= 0)
@@ -1040,8 +1039,8 @@
 	cycle = 0
 	recharge_rate = 40.0
 
-/obj/item/ammo/power_cell/self_charging/lawgiver
-	name = "Power Cell - Lawgiver Charger"
+/obj/item/ammo/power_cell/self_charging/lawbringer
+	name = "Power Cell - Lawbringer Charger"
 	desc = "A self-contained radioisotope power cell that slowly recharges an internal capacitor. Holds 300PU."
 	icon = 'icons/obj/items/ammo.dmi'
 	icon_state = "recharger_cell"

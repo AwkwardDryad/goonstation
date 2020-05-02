@@ -272,9 +272,8 @@
 		return ..()
 
 	examine()
-		..()
-		boutput(usr, "There are [src.charge]/[src.maxCharge] PU left.")
-		return
+		. = ..()
+		. += "There are [src.charge]/[src.maxCharge] PU left."
 
 	buildTooltipContent()
 		var/content = ..()
@@ -327,8 +326,8 @@
 	/obj/item/gun/energy/phaser_gun,
 	/obj/item/gun/energy/laser_gun,
 	/obj/item/gun/energy/egun,
-	/obj/item/gun/energy/lawgiver,
-	/obj/item/gun/energy/lawgiver/old,
+	/obj/item/gun/energy/lawbringer,
+	/obj/item/gun/energy/lawbringer/old,
 	/obj/item/gun/energy/wavegun,
 	/obj/item/gun/kinetic/revolver,
 	/obj/item/gun/kinetic/zipgun)
