@@ -1029,3 +1029,77 @@ datum
 
 			reaction_temperature(exposed_temperature, exposed_volume)
 				bang()
+
+		combustible/grillgrease
+			name = "grease"
+			id = "grillgrease"
+			fluid_r = 214
+			fluid_g = 175
+			fluid_b = 171
+			transparency = 210
+			description = "A big viscuous mass of grill grease."
+			reagent_state = LIQUID
+			overdose = 100
+			var/max_radius = 7
+			var/min_radius = 0
+			var/volume_radius_modifier = -0.15
+			var/volume_radius_multiplier = 0.09
+			var/combustion_temp = T0C + 200
+			var/caused_fireflash = 0
+			var/min_req_fluid = 0.10
+			var/smokemax = 20
+
+			reaction_turf(var/turf/T, var/volume)
+				if (!locate(/obj/decal/cleanable/grease) in T)
+					playsound(T, "sound/impact_sounds/Slimy_Splat_1.ogg", 50, 1)
+					switch(volume)
+						if (1 to 4)
+							if (prob(volume * 10))
+								make_cleanable(/obj/decal/cleanable/grease,T)
+						if (5 to INFINITY)
+							make_cleanable(/obj/decal/cleanable/grease,T)
+
+			reaction_temperature(exposed_temperature, exposed_volume)
+				//fire size scales up to 50u
+				//smoke amount scales up to 100u
+				if(exposed_temperature > combustion_temp)
+					if(volume < 1)
+						if (holder)
+							holder.del_reagent(id)
+						return
+
+					if (caused_fireflash) return //Stop the fireflash from triggering reaction_temperature on myself (inf loop)
+					var/list/covered = holder.covered_turf()
+					if (covered.len < 4 || (volume / holder.total_volume) > min_req_fluid)
+						if(covered.len > 0) //possible fix for bug where caused_fireflash was set to 1 without fireflash going off, allowing fuel to reach any temp without igniting
+							caused_fireflash = 1
+						for(var/turf/turf in covered)
+							var/modified_volume
+							if(volume > 50)
+								modified_volume = 50
+							else
+								modified_volume = volume
+							var/radius = min(max(min_radius, ((modified_volume/covered.len) * volume_radius_multiplier + volume_radius_modifier)), max_radius)
+							fireflash_sm(turf, radius, 2200 + radius * 250, radius * 50)
+							var/datum/effects/system/harmless_smoke_spread/smoke = new /datum/effects/system/harmless_smoke_spread()
+							var/smokeamount = (holder.total_volume / 5)
+							if(smokeamount > smokemax)
+								smokeamount = smokemax
+							smoke.set_up(smokeamount, 0, turf)
+							smoke.start()
+						if (holder)
+							holder.del_reagent(id)
+						caused_fireflash = 0
+				return
+
+			on_mob_life(var/mob/M, var/mult = 1)
+				if(prob(10))
+					M.reagents.add_reagent("cholesterol", rand(5,15) * mult)
+				..()
+				return
+
+			do_overdose(var/severity, var/mob/M, var/mult = 1)
+				if(ishuman(M))
+					var/mob/living/carbon/human/user = M
+					if(!user.bioHolder.GetEffect("fat"))
+						user.bioHolder.AddEffect("fat")
