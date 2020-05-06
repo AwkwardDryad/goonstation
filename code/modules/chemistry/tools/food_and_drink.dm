@@ -453,7 +453,7 @@
 						product = src.parse_product(R)
 					break
 				if(istype(product,/obj/item/reagent_containers/food/snacks))*/
-				return 1
+			return 1
 		else
 			return //no state change
 
