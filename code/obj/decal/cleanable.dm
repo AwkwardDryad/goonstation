@@ -1112,6 +1112,26 @@ var/list/blood_decal_violent_icon_states = list("floor1", "floor2", "floor3", "f
 		pool(src)
 		return
 
+/obj/decal/cleanable/grease
+	name = "grease"
+	desc = "Ewwwww!"
+	icon = 'icons/obj/decals.dmi'
+	icon_state = "dirt1"
+	can_sample = 1
+	sample_reagent = "grillgrease"
+	sample_verb = "scrape"
+	sample_amt = 1
+	stain = "dirty"
+	color = "#D6AFAB"
+
+	New()
+		..()
+		icon_state = pick("dirt","dirt2","dirt3","dirt4","dirt5")
+
+	Sample(var/obj/item/W as obj, var/mob/user as mob)
+		..()
+		pool(src)
+
 /obj/decal/cleanable/sakura
 	name = "sakura petals"
 	desc = "cherryblossom petals floating around from...somewhere?"

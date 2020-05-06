@@ -16,6 +16,7 @@
 	heal_amt = 0
 	custom_food = 1
 	var/blood = 7 //how much blood cleanables we are allowed to spawn
+	initial_reagents = list("grillgrease"=10)
 
 	heal(var/mob/living/M)
 		if (prob(33))

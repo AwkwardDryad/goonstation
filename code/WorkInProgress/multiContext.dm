@@ -337,6 +337,9 @@ var/list/globalContextActions = null
 				contextActions.Add(globalContextActions[contextType])
 		return
 
+	proc/contextActionOverlayRelay(var/datum/contextAction/A)
+		return
+
 	proc/removeContextAction(var/contextType)
 		if(!ispath(contextType)) return
 		for(var/datum/contextAction/C in contextActions)
@@ -388,6 +391,11 @@ var/list/globalContextActions = null
 			background = image('icons/ui/context16x16.dmi', src, "[action.getBackground(target, user)]0")
 			background.appearance_flags = RESET_COLOR
 			src.underlays += background
+
+		if(action.needs_overlay)
+			var/image/actionOverlay = target.contextActionOverlayRelay(action)
+			if(actionOverlay)
+				src.overlays += actionOverlay
 		return
 
 	MouseEntered(location,control,params)
@@ -426,6 +434,7 @@ var/list/globalContextActions = null
 	var/name = ""
 	var/desc = ""
 	var/tooltip_flags = null
+	var/needs_overlay
 
 	proc/checkRequirements(var/atom/target, var/mob/user) //Is this action even allowed to show up under the given circumstances? 1=yes, 0=no
 		return 0
@@ -1068,7 +1077,62 @@ var/list/globalContextActions = null
 				..()
 				var/obj/machinery/vehicle/V = target
 				V.return_to_station()
+	grill
+		icon = 'icons/obj/foodNdrink/grill.dmi'
+		name = "Grill"
+		desc = "You shouldn't be reading this, bug."
+		icon_state = "quadrant"
+		var/quadrant
 
+		quadrant
+			icon_state = "quadrant"
+
+			checkRequirements(var/atom/target, var/mob/user)
+				return 1
+
+			execute(var/atom/target, var/mob/user)
+				..()
+				var/obj/machinery/grill/G = target
+				//check for spatula
+				G.setup_grill_actions(quadrant)
+				user.showContextActions(G.contextActions,G)
+
+			quad_1
+				needs_overlay = 1
+				quadrant = 1
+				desc = "Selects the first quadrant of the grill (Top Left)"
+			quad_2
+				needs_overlay = 1
+				quadrant = 2
+				desc = "Selects the second quadrant of the grill (Top Right)"
+			quad_3
+				needs_overlay = 1
+				quadrant = 3
+				desc = "Selects the third quadrant of the grill (Bottom Left)"
+			quad_4
+				needs_overlay = 1
+				quadrant = 4
+				desc = "Selects the fourth quadrant of the grill (Bottom Right)"
+		peek
+			name = "Peek"
+			icon_state = "peek"
+			desc = "a"
+		press
+			name = "Press"
+			icon_state = "press"
+			desc = "a"
+		flip
+			name = "Flip"
+			icon_state = "flip"
+			desc = "a"
+		pull
+			name = "Pull"
+			icon_state = "pull"
+			desc = "a"
+		clean
+			name = "Clean"
+			icon_state = "clean"
+			desc = "a"
 /*
 	offered
 		icon = null
