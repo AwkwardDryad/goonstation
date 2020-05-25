@@ -150,5 +150,5 @@
     create_products()
         var/obj/item/clothing/mask/cursedclown_hat/product
         product.name = "HONK HONK HONK!!!"
-        add_product(product,1,1)
+        add_product(product,1,0)
         return

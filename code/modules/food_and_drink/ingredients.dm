@@ -18,6 +18,10 @@
 	var/blood = 7 //how much blood cleanables we are allowed to spawn
 	initial_reagents = list("grillgrease"=10)
 
+	var/foodstate //overall cook value of the food item : 1 = raw, 2 = rare, 2.5 = medium rare, 3 = done, 3.5 = crispy, 4 = burnt
+	var/side_1_grill = 0
+	var/side_2_grill = 0
+
 	heal(var/mob/living/M)
 		if (prob(33))
 			boutput(M, "<span style=\"color:red\">You briefly think you probably shouldn't be eating raw meat.</span>")
@@ -31,6 +35,65 @@
 			make_cleanable( /obj/decal/cleanable/blood,T)
 			blood--
 		..()
+
+	proc/grill(var/side) //side that will be grilled, amount to grill it by (used mainly for "external grilling")
+		var/gv1 //condensed value of side 1
+		var/gv2 //condensed value of side 2
+		var/foodstate_new
+
+		//incrementing grill value of a side of the food
+		switch(side)
+			if(1)
+				side_1_grill++
+				if(side_1_grill > 24) //DEV - temporary?
+					side_1_grill = 24
+			if(2)
+				side_2_grill++
+				if(side_2_grill > 24) //DEV - temporary?
+					side_2_grill = 24
+
+		//assigning grill value shorthand to each side
+		switch(side_1_grill)
+			if(0 to 9)
+				gv1 = 1 //raw
+			if(10 to 19)
+				gv1 = 2 //rare
+			if(20 to 25)
+				gv1 = 3 //done
+			/*if(25 to INFINITY)
+				gv1 = 4*/ //burnt
+		switch(side_2_grill)
+			if(0 to 9)
+				gv2 = 1
+			if(10 to 19)
+				gv2 = 2
+			if(20 to 25)
+				gv2 = 3
+			/*if(25 to INFINITY)
+				gv2 = 4*/
+
+		//setting up comparative foodstate
+		if(gv1 == gv2)
+			foodstate_new = gv1
+		else if((gv1 == 1) || (gv2 == 1))
+			foodstate_new = 1
+		else if((gv1 == 2 && gv2 == 3) || (gv2 == 2 && gv1 == 3))
+			foodstate_new = 2.5
+		/*else if((gv1 == 3 && gv2 == 4) || (gv2 == 3 && gv1 == 4))
+			foodstate_new = 3.5*/
+
+		//handling state change
+		if(foodstate != foodstate_new)
+			foodstate = foodstate_new
+			//do state change stuffs
+			if(foodstate == 2) //rare
+				//add rare prefix
+				//set color
+				return 2 //updates grill overlay //DEV - check foodstate on grill to determine the overlay sprite
+			if(foodstate == 3) //food is fully cooked
+				return 3 //recipe check, produce product, update grill overlay, start burn timer
+		else
+			return //no state change
 
 /obj/item/reagent_containers/food/snacks/ingredient/meat/humanmeat
 	name = "-meat"
@@ -72,7 +135,7 @@
 	desc = "Synthetic meat grown in hydroponics."
 	amount = 1
 	initial_volume = 20
-	initial_reagents = list("synthflesh"=2)
+	initial_reagents = list("synthflesh"=2,"grillgrease"=10)
 
 /obj/item/reagent_containers/food/snacks/ingredient/meat/mysterymeat
 	name = "mystery meat"

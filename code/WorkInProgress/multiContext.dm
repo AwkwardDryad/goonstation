@@ -338,7 +338,7 @@ var/list/globalContextActions = null
 		return
 
 	proc/contextActionOverlayRelay(var/datum/contextAction/A)
-		return
+		return //must return a list of images
 
 	proc/removeContextAction(var/contextType)
 		if(!ispath(contextType)) return
@@ -392,10 +392,14 @@ var/list/globalContextActions = null
 			background.appearance_flags = RESET_COLOR
 			src.underlays += background
 
-		if(action.needs_overlay)
-			var/image/actionOverlay = target.contextActionOverlayRelay(action)
-			if(actionOverlay)
-				src.overlays += actionOverlay
+		if(action.needs_overlays)
+			var/list/actionOverlays = target.contextActionOverlayRelay(action)
+
+			if(actionOverlays)
+				for(var/i=1,i<=actionOverlays.len,i++)
+					var/image/overlay = actionOverlays[i]
+					if(overlay)
+						src.overlays += overlay
 		return
 
 	MouseEntered(location,control,params)
@@ -423,8 +427,11 @@ var/list/globalContextActions = null
 		return
 
 	clicked(list/params)
-		if(action.checkRequirements(target, user)) //Let's just check again, just in case.
+		if(action.bypass_checkRequirements)
 			SPAWN_DBG(0) action.execute(target, user)
+		else if(action.checkRequirements(target, user)) //Let's just check again, just in case.
+			SPAWN_DBG(0) action.execute(target, user)
+		if(!action.bypass_close_on_use) //DEV - temp
 			user.closeContextActions()
 
 /datum/contextAction
@@ -434,7 +441,9 @@ var/list/globalContextActions = null
 	var/name = ""
 	var/desc = ""
 	var/tooltip_flags = null
-	var/needs_overlay
+	var/needs_overlays
+	var/bypass_close_on_use //DEV - temp
+	var/bypass_checkRequirements
 
 	proc/checkRequirements(var/atom/target, var/mob/user) //Is this action even allowed to show up under the given circumstances? 1=yes, 0=no
 		return 0
@@ -1082,10 +1091,10 @@ var/list/globalContextActions = null
 		name = "Grill"
 		desc = "You shouldn't be reading this, bug."
 		icon_state = "quadrant"
-		var/quadrant
 
 		quadrant
 			icon_state = "quadrant"
+			var/target_quadrant
 
 			checkRequirements(var/atom/target, var/mob/user)
 				return 1
@@ -1094,45 +1103,66 @@ var/list/globalContextActions = null
 				..()
 				var/obj/machinery/grill/G = target
 				//check for spatula
-				G.setup_grill_actions(quadrant)
+				user.closeContextActions() //DEV - temp
+				G.setup_grill_actions(target_quadrant)
 				user.showContextActions(G.contextActions,G)
+				G.active_quadrant = target_quadrant
 
 			quad_1
-				needs_overlay = 1
-				quadrant = 1
+				needs_overlays = 1
+				target_quadrant = 1
 				desc = "Selects the first quadrant of the grill (Top Left)"
 			quad_2
-				needs_overlay = 1
-				quadrant = 2
+				needs_overlays = 1
+				target_quadrant = 2
 				desc = "Selects the second quadrant of the grill (Top Right)"
 			quad_3
-				needs_overlay = 1
-				quadrant = 3
+				needs_overlays = 1
+				target_quadrant = 3
 				desc = "Selects the third quadrant of the grill (Bottom Left)"
 			quad_4
-				needs_overlay = 1
-				quadrant = 4
+				needs_overlays = 1
+				target_quadrant = 4
 				desc = "Selects the fourth quadrant of the grill (Bottom Right)"
 		peek
 			name = "Peek"
 			icon_state = "peek"
 			desc = "a"
+			bypass_close_on_use = 1
+			bypass_checkRequirements = 1 //DEV - temporary bypass fix to stop the eldritch bug of desolation from happeneing
+
+			execute(var/atom/target, var/mob/user)
+				..()
+				var/obj/machinery/grill/G = target
+				G.peek_food(user)
 		press
 			name = "Press"
 			icon_state = "press"
 			desc = "a"
+			bypass_close_on_use = 1
+			bypass_checkRequirements = 1
+
 		flip
 			name = "Flip"
 			icon_state = "flip"
 			desc = "a"
+			bypass_close_on_use = 1
+			bypass_checkRequirements = 1
+
 		pull
 			name = "Pull"
 			icon_state = "pull"
 			desc = "a"
+			bypass_close_on_use = 1
+			bypass_checkRequirements = 1
+
 		clean
 			name = "Clean"
 			icon_state = "clean"
 			desc = "a"
+			bypass_close_on_use = 1
+			bypass_checkRequirements = 1
+
 /*
 	offered
 		icon = null
