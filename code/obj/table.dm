@@ -328,7 +328,7 @@
 			return
 
 		if (istype(O,/obj/machinery/space_heater) && !istype(O,/obj/machinery/space_heater/table))
-			actions.start(new /datum/action/bar/icon/table_install_heater(user,O,src), user)
+			actions.start(new /datum/action/bar/icon/table_heater_install(user,O,src), user)
 
 		if (!isitem(O))
 			return

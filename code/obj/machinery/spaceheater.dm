@@ -20,10 +20,11 @@
 
 	New()
 		..()
-		cell = new(src)
-		cell.charge = 1000
-		cell.maxcharge = 1000
-		update_icon()
+		if(!istype(src,/obj/machinery/space_heater/table))
+			cell = new(src)
+			cell.charge = 1000
+			cell.maxcharge = 1000
+			update_icon()
 		return
 
 	proc/update_icon()
