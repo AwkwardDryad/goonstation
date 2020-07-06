@@ -3,6 +3,27 @@
     desc = "a heated table with a futon cover on top for maximum warm!"
     icon = 'icons/obj/furniture/table.dmi'
     icon_state = "0"
+    layer = OBJ_LAYER-0.1
+    anchored = 1
+    density = 1
+    var/oldpath
+
+    var/obj/item/clothing/suit/bedsheet/internal_sheet
+    var/obj/machinery/space_heater/internal_heater
+
+    New() //DEV - modify later
+        ..()
+
+    proc/kotatsuify(var/obj/item/S)
+        UpdateOverlays(image('icons/obj/furniture/table.dmi',"kotatsu-[S.icon_state]"),"sheet")
+
+    attackby(obj/item/I, mob/user,params)
+        if(istype(I,/obj/item/clothing/suit/bedsheet))
+            user.u_equip(I)
+            kotatsuify(I)
+            user.put_in_hand_or_drop(internal_sheet)
+            I.set_loc(src)
+            internal_sheet = I
 
 /obj/machinery/space_heater/table
     name = "heated table"
@@ -28,7 +49,25 @@
             TO.cell = new_cell
 
     attackby(obj/item/I, mob/user,params)
-        if(istype(I, /obj/item/cell))
+        if(istype(I,/obj/item/clothing/suit/bedsheet))
+            var/obj/kotatsu/K = new /obj/kotatsu
+            var/obj/machinery/space_heater/H = new /obj/machinery/space_heater
+
+            //save instance of heater
+            cell_transfer(H,src)
+            H.set_loc(K)
+            K.internal_heater = H
+
+            //save instance of sheet
+            user.u_equip(I)
+            I.set_loc(K)
+            K.internal_sheet = I
+
+            K.kotatsuify(I)
+            K.set_loc(src.loc)
+            K.oldpath = oldpath
+            qdel(src)
+        else if(istype(I, /obj/item/cell))
             ..()
         else if(istype(I,/obj/item/card/emag))
             ..()
