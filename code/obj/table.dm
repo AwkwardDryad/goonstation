@@ -327,6 +327,9 @@
 			boutput(usr, "<span class='alert'>This table looks way too intimidating for you to scale on your own! You'll need a partner to help you over.</span>")
 			return
 
+		if (istype(O,/obj/machinery/space_heater) && !istype(O,/obj/machinery/space_heater/table))
+			actions.start(new /datum/action/bar/icon/table_install_heater(user,O,src), user)
+
 		if (!isitem(O))
 			return
 
