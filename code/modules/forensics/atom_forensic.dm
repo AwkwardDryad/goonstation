@@ -224,6 +224,8 @@
 			var/mob/living/carbon/human/M = src
 			var/list/gear_to_clean = list(M.r_hand, M.l_hand, M.head, M.wear_mask, M.w_uniform, M.wear_suit, M.belt, M.gloves, M.glasses, M.shoes, M.wear_id, M.back)
 			for (var/obj/item/check in gear_to_clean)
+				if(istype(check,/obj/item/reagent_containers/food/snacks/mandrake))
+					continue
 				if (check.fingerprints || check.blood_DNA || check.blood_type)
 					check.add_forensic_trace("fprints", check.fingerprints)
 					check.fingerprints = null

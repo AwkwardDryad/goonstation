@@ -3895,6 +3895,25 @@ datum
 			description = "A low quality blend of chemical agents, water, an aggregate and cement."
 			concrete_strength = 1
 
+		witch_hazel
+			name = "witch hazel"
+			id = "witch_hazel"
+			fluid_r = 183
+			fluid_g = 176
+			fluid_b = 45
+			description = "O. M. G. It's. SO. FREAKING. S M O O T H!"
+			reagent_state = LIQUID
+			depletion_rate = 0.4
+			transparency = 125
+
+			reaction_mob(var/mob/M, var/method=TOUCH, var/amount_passed)
+				..()
+				var/mob/living/carbon/human/H = M
+				if(H.decomp_stage && (H.decomp_stage < 4) && (method==TOUCH) && (amount_passed >= 50))
+					H.decomp_stage = 0
+					H.update_body()
+					H.visible_message("<span style=\"color:green\"><b>The necrosis of [H.name]'s body begins to recede...</b></span>")
+
 /obj/badman/ //I really don't know a good spot to put this guy so im putting him here, fuck you.
 	name = "Senator Death Badman"
 	desc = "Finally, a politician I can trust."
