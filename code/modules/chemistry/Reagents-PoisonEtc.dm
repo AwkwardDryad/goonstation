@@ -1906,6 +1906,8 @@ datum
 					M.contract_disease(/datum/ailment/disease/space_madness, null, null, 1)
 				if(!M)
 					M = holder.my_atom
+				if(probmult(50)) 
+					M.drowsyness = max(M.drowsyness, 4)
 				M.take_toxin_damage(1 * mult)
 				M.updatehealth()
 				switch(counter += (1 * mult))

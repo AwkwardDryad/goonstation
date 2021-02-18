@@ -4047,3 +4047,11 @@ datum
 			mix_phrase = "The mixture comes together slowly. It doesn't seem like it wants to be here."
 			required_reagents = list("poor_cement" = 1, "silicon_dioxide" = 5, "water" = 1)
 			result_amount = 7
+
+		mandrake_cider
+			name = "mandrake cider"
+			id = "mandrake cider"
+			result = "mandrake_cider"
+			mix_phrase = "The solution seems to calm down a bit."
+			required_reagents = list("mandrake" = 1, "cider" = 1)
+			result_amount = 2

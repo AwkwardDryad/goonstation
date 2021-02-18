@@ -2482,10 +2482,8 @@
 		else //if both slots are filled, add the bloody leaves overlay
 			UpdateOverlays(image('icons/obj/foodNdrink/food_produce.dmi',"mandrake-hair_blood"),"hair")
 			user.visible_message("<span class='alert'><b>[user]</b> smears blood all over the [name]'s leaves. It begins to glow with an ominous power!")
-			var/mob/message_to = bound_blood[1]
-			message_to.show_text("You feel like you're not alone...at all...","red")
-			message_to = bound_blood[2]
-			message_to.show_text("You feel like you're not alone...at all...","red")
+			for(var/mob/living/carbon/human/H in bound_blood)
+				H.show_text("You feel like you're not alone...at all...","red")
 
 		user.clean_forensic() //clean up the user because the blood has been transferred to the mandrake
 		is_bloody = TRUE
@@ -2524,7 +2522,7 @@
 				remaininglimbs--
 			transferamount = src.reagents.total_volume / remaininglimbs
 			src.reagents.trans_to(M,transferamount)
-		src.visible_message("<span style='alert'><b>[name]</b> dramatically severs a chunk from the [src]!")
+		src.visible_message("<span style='alert'><b>[name]</b> dramatically severs a chunk from the [src]!</span>")
 		M.set_loc(get_turf(src))
 		var/list/throw_target = get_offset_target_turf(src.loc, rand(5)-rand(5), rand(5)-rand(5))
 		M.throw_at(throw_target, 5, 1)
@@ -2543,7 +2541,27 @@
 			. = 1
 		if(length(bound_blood) == 2 && bound_blood[2] == user)
 			. = 1
-	
+
+	proc/cleanup_bound_blood(var/balance)
+		var/gibbed
+		for(var/mob/living/carbon/human/H in bound_blood)
+			if(!H.bioHolder)
+				bound_blood -= H
+				bound_blood += "GIBBED"
+		if(bound_blood[1] == "GIBBED")
+			gibbed = TRUE
+		else if(length(bound_blood) == 2 && bound_blood[2] == "GIBBED")
+			gibbed = TRUE
+		if(gibbed && balance)
+			for(var/mob/living/carbon/human/H in bound_blood)
+				H.visible_message("<span style='alert'><b>The [name]</b> grabs the [H.equipped()] and rips [H.name] to shreds!</span>","<b>The [name]</b> says, \"Your fate must be balanced.\"")
+				H.gib(1)
+
+	proc/burn_mandrake()
+		src.visible_message("<span style='alert'>The [name] is consumed by flamed and poofs into a pile of ash!</span>")
+		make_cleanable( /obj/decal/cleanable/ash,get_turf(src))
+		qdel(src)
+
 	proc/addUid(Uid)
 		if(!src.blood_DNA)
 			src.blood_DNA = Uid
@@ -2558,9 +2576,8 @@
 			return
 		if(!user.blood_DNA) //is the user covered in blood?
 			return
-
+		cleanup_bound_blood()
 		var/list/dna_list = params2list(user:blood_DNA)
-
 		var/player_added
 		for(var/i in 1 to length(dna_list))
 			if(!open_binding_slot())
@@ -2591,6 +2608,7 @@
 			if(!open_binding_slot() && !player_bound(user))
 				user.show_text("You attempt to cut at the [src], but it resists all attempts! Perhaps your fates are not bound...","red")
 				return
+			cleanup_bound_blood(1)
 			var/selection = input("Which limb would you like to cut?", "Being a Terrible Person", null) as null|anything in limbs
 			if(selection && in_interact_range(src,user))
 				severing = TRUE
@@ -2615,7 +2633,7 @@
 						for(var/mob/living/carbon/human/H in bound_blood)
 							mandrake_delimb("hair",user.name)
 							var/obj/item/wig = H.create_wig()
-							H.visible_message("<span style='alert'>[H.name]'s hair flies off!")
+							H.visible_message("<span style='alert'>[H.name]'s hair flies off!</span>")
 							H.bioHolder.mobAppearance.customization_first = "None"
 							H.bioHolder.mobAppearance.customization_second = "None"
 							H.bioHolder.mobAppearance.customization_third = "None"
@@ -2637,17 +2655,14 @@
 		else if(W.firesource)
 			if(src.loc == user)
 				user.u_equip(src)
-			visible_message("<span style='alert'>The [name] is consumed by flamed and poofs into a pile of ash!")
-			make_cleanable( /obj/decal/cleanable/ash,get_turf(src))
-			qdel(src)
+			burn_mandrake()
 		else
 			..()
 
 	temperature_expose(datum/gas_mixture/air, temperature, volume)
 		..()
-		visible_message("<span style='alert'>The [name] is consumed by flamed and poofs into a pile of ash!")
-		make_cleanable( /obj/decal/cleanable/ash,get_turf(src))
-		qdel(src)
+		burn_mandrake()
+
 
 	clean_forensic()
 		..()

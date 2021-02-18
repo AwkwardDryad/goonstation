@@ -1533,3 +1533,48 @@ datum
 					L.contract_disease(/datum/ailment/disease/food_poisoning, null, null, 1)
 				..()
 				return
+
+		medical/mandrake_cider
+			name = "mandrake cider"
+			id = "mandrake_cider"
+			fluid_r = 65
+			fluid_g = 37
+			fluid_b = 7
+			description = "A wonderful drink to have with your sleep paralysis demon."
+			reagent_state = LIQUID
+			depletion_rate = 0.4
+			value = 2
+			overdose = 40
+
+			on_mob_life(var/mob/M, var/mult = 1)
+				if(!M) 
+					M = holder.my_atom
+				M.reagents.add_reagent("ethanol", 0.3 * mult)
+				if(ishuman(M))
+					var/mob/living/carbon/human/H = M
+					if(H.organHolder)
+						H.organHolder.heal_organs(3*mult, 3*mult, 3*mult, "stomach")
+				if(probmult(5))
+					M.playsound_local(M.loc, 'sound/voice/screams/mandrake_scree.ogg', 50, 1)
+				..()
+				return
+
+			do_overdose(var/severity, var/mob/M, var/mult = 1)
+				switch(severity)
+					if(1)
+						M.reagents.add_reagent("mandrake", rand(1,2) * mult)
+					if(2)
+						M.reagents.add_reagent("mandrake", rand(2,4) * mult)
+						if(prob(10))
+							M.visible_message("<span class='alert'>[M.name] suddenly and violently vomits!</span>")
+							M.vomit()
+
+			on_add()
+				if(ismob(holder?.my_atom))
+					var/mob/M = holder.my_atom
+					APPLY_MOVEMENT_MODIFIER(M, /datum/movement_modifier/reagent/salicylic_acid, src.type)
+
+			on_remove()
+				if(ismob(holder?.my_atom))
+					var/mob/M = holder.my_atom
+					REMOVE_MOVEMENT_MODIFIER(M, /datum/movement_modifier/reagent/salicylic_acid, src.type)

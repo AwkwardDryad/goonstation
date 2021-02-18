@@ -3909,10 +3909,27 @@ datum
 			reaction_mob(var/mob/M, var/method=TOUCH, var/amount_passed)
 				..()
 				var/mob/living/carbon/human/H = M
+				var/effected
+				if((H.real_name == "Unknown") && H.mind && H.mind.brain &&(method==TOUCH) && (amount_passed >= 10))
+					H.real_name = replacetext(H.mind.brain.name,"'s brain","")
+					H.name = H.real_name
+					effected = TRUE
 				if(H.decomp_stage && (H.decomp_stage < 4) && (method==TOUCH) && (amount_passed >= 50))
 					H.decomp_stage = 0
 					H.update_body()
-					H.visible_message("<span style=\"color:green\"><b>The necrosis of [H.name]'s body begins to recede...</b></span>")
+					effected = TRUE
+				if(effected)
+					H.visible_message("<span style='green'><b>The necrosis of [H.name]'s body begins to recede...</b></span>")
+
+			on_mob_life(var/mob/M, var/mult = 1)
+				if(ishuman(M))
+					var/mob/living/carbon/human/H = M
+					H.organHolder.damage_organ(0,0,1 * mult * (!H.organHolder.stomach.robotic), "stomach")
+					if(prob(10))
+						var/list/damage_messages = list("Your stomach hurts.","You feel soft on the inside...","Your stomach lining feels silky smooth!","You feel a bit of pain in your gut.")
+						H.show_text(pick(damage_messages),"red")
+				..()
+				return
 
 /obj/badman/ //I really don't know a good spot to put this guy so im putting him here, fuck you.
 	name = "Senator Death Badman"
