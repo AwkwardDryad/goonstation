@@ -312,7 +312,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	starthealth = 1
 	growtime = 200
 	harvtime = 260
-	cropsize = 1 //-20
+	cropsize = 1
 	harvests = 0
 	endurance = 1
 	isgrass = 0

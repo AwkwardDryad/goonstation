@@ -3896,7 +3896,7 @@ datum
 			concrete_strength = 1
 
 		witch_hazel
-			name = "witch hazel"
+			name = "witch hazel extract"
 			id = "witch_hazel"
 			fluid_r = 183
 			fluid_g = 176
