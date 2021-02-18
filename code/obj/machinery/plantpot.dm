@@ -118,7 +118,7 @@
 		// We have this here as a check for whether or not the plant needs to update its sprite.
 		// Originally plantpots updated constantly but this was found to be rather expensive, so
 		// now it only does that if it needs to.
-	var/actionpassed 	//holds defines for action bar harvesting yay :D
+	var/actionpassed //holds defines for action bar harvesting yay :D
 	New()
 		..()
 		src.plantgenes = new /datum/plantgenes(src)

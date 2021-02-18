@@ -1879,3 +1879,65 @@ datum
 						H.TakeDamage(zone="All", brute=damage)
 						bleed(H, damage * 2 * mult, 3)
 
+		harmful/mandrake
+			name = "mandrake extract"
+			id = "mandrake"
+			description = "The distilled form of a very temperamental plant...Even under a microscope it looks like it's screaming at you."
+			reagent_state = LIQUID
+			fluid_r = 76
+			fluid_g = 48
+			fluid_b = 36
+			transparency = 30
+			overdose = 15
+			var/counter = 1
+
+			pooled()
+				..()
+				counter = 1
+
+			on_mob_life(var/mob/living/M, var/mult = 1)
+				var/madnessfound
+				for(var/datum/ailment_data/AD in M.ailments)
+					if(AD.master.type == /datum/ailment/disease/space_madness)
+						AD.stage = 5
+						madnessfound = 1
+						break
+				if(!madnessfound)
+					M.contract_disease(/datum/ailment/disease/space_madness, null, null, 1)
+				if(!M)
+					M = holder.my_atom
+				M.take_toxin_damage(1 * mult)
+				M.updatehealth()
+				switch(counter += (1 * mult))
+					if(1 to INFINITY)
+						if(prob(8))
+							M.show_text("<b>You feel [pick("weak", "horribly weak", "numb", "like you can barely move", "tingly")].</b>","red")
+							M.setStatus("stunned", max(M.getStatusDuration("stunned"), 100 * mult))
+							M.emote("collapse")
+				..()
+				return
+
+			//Overdose causes Organ Damage. Raise BP, Toxin Damage on Overdose
+			do_overdose(var/severity, var/mob/M, var/mult = 1)
+				var/mob/living/carbon/human/H = M
+				var/damage
+				if (severity == 1)
+					damage = rand(1,6)
+
+				else if (severity == 2)
+					damage = rand(6,9)
+
+				if(H.organHolder)
+					if (H.organHolder.left_kidney && prob(30))
+						H.organHolder.damage_organ(0,0,damage * mult * (!H.organHolder.left_kidney.robotic), "left_kidney")
+					if (H.organHolder.right_kidney && prob(30))
+						H.organHolder.damage_organ(0,0,damage * mult * (!H.organHolder.right_kidney.robotic), "right_kidney")
+					if (H.organHolder.liver && prob(30))
+						H.organHolder.damage_organ(0,0,damage * mult * (!H.organHolder.liver.robotic), "liver")
+
+				..(severity, M, mult)
+
+			on_mob_life_complete(var/mob/living/M)
+				if(M)
+					M.cure_disease_by_path(/datum/ailment/disease/space_madness)
+

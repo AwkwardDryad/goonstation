@@ -234,3 +234,119 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 4
 	assoc_reagents = list("grassgro")
 	commuts = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
+
+/datum/plant/herb/witchhazel
+	name = "Witch Hazel"
+	category = "Herb"
+	seedcolor = "#B7B02D"
+	crop = /obj/item/plant/herb/hazel
+	starthealth = 10
+	growtime = 200
+	harvtime = 260
+	cropsize = 2
+	harvests = 1
+	endurance = 0
+	isgrass = 0
+	vending = 1 //temporary
+	genome = 1
+	special_proc = 1
+	assoc_reagents = list("witch_hazel")
+	stop_size_scaling = 1
+	harvest_tools = list(TOOL_CUTTING,TOOL_SAWING,TOOL_SNIPPING)
+	harvest_tool_message = "<span style=\"color:green\"><b>You carefully slice segments off the plant and harvest the sprigs of witch hazel.</b></span>"
+	harvest_tool_fail_message = "<b>Hmm...You'll need a tool capable of cutting these branches...</b>"
+
+	HYPspecial_proc(var/obj/machinery/plantpot/POT)
+		..()
+		if (.) return
+		var/datum/plant/P = POT.current
+		var/datum/plantgenes/DNA = POT.plantgenes
+
+		if (POT.growth > (P.harvtime + DNA.harvtime) && prob((10+DNA.cropsize))) //incrase probability with yield (10% is decent as a base level)
+			var/obj/item/seed/S
+			if (POT.current.unique_seed)
+				S = unpool(POT.current.unique_seed)
+				S.set_loc(POT)
+			else
+				S = unpool(/obj/item/seed)
+				S.set_loc(POT)
+				S.removecolor()
+			var/datum/plantgenes/HDNA = DNA
+			var/datum/plantgenes/SDNA = S.plantgenes
+
+			if (!POT.current.unique_seed && !POT.current.hybrid)
+				S.generic_seed_setup(POT.current)
+			var/seedname = "[POT.current.name]"
+			var/datum/plantmutation/MUT = POT.plantgenes.mutation
+
+			if (istype(MUT,/datum/plantmutation/))
+				if (!MUT.name_prefix && !MUT.name_prefix && MUT.name)
+					seedname = "[MUT.name]"
+				else if (MUT.name_prefix || MUT.name_suffix)
+					seedname = "[MUT.name_prefix][POT.current.name][MUT.name_suffix]"
+			S.name = "[seedname] seed"
+			HYPpassplantgenes(HDNA,SDNA)
+			S.generation = POT.generation
+
+			if (POT.current.hybrid)
+				var/datum/plant/hybrid = new /datum/plant(S)
+				for(var/V in POT.current.vars)
+					if (issaved(POT.current.vars[V]) && V != "holder")
+						hybrid.vars[V] = POT.current.vars[V]
+				S.planttype = hybrid
+			S.set_loc(get_turf(POT))
+
+			S.throwforce = DNA.potency
+			playsound(POT,"sound/weapons/Gunshot.ogg",45,1)
+			var/list/throw_targets = list()
+			throw_targets += get_offset_target_turf(POT.loc, rand(5)-rand(5), rand(5)-rand(5))
+			S.throw_at(pick(throw_targets), 5, 1)
+			spawn(15)
+				S.throwforce = 0
+
+/datum/plant/herb/mandrake
+	name = "Mandrake"
+	category = "Herb"
+	seedcolor = "#bb7418"
+	crop = /obj/item/reagent_containers/food/snacks/mandrake
+	starthealth = 1
+	growtime = 200
+	harvtime = 260
+	cropsize = 1 //-20
+	harvests = 0
+	endurance = 1
+	isgrass = 0
+	vending = 1 //temporary
+	genome = 1
+	harvested_proc = 1
+	assoc_reagents = list("mandrake")
+	stop_size_scaling = 1
+	required_reagents = list(list(id="poo",amount=100))
+
+	HYPharvested_proc(var/obj/machinery/plantpot/POT,var/mob/user)
+		if (.) return
+		POT.visible_message("<span style='color:red'><b>[user.name] places their foot against the hydroponics tray and violently tugs on the leaves of the mandrake!</b></span>")
+		if(HYPaction_bar(POT,user,50)==1) //if it returned the escape value
+			return 1 //escape harvest
+		user.visible_message("<span style='color:red'><b>[user.name] yanks the mandrake out of the pot!</b></span>")
+		if((POT.current.cropsize+POT.plantgenes.cropsize) > 0) //Caps the max output to 1 Mandrake by doing a fucky-wucky to the genes on harvest.
+			POT.plantgenes.cropsize = 0
+		POT.health = 1
+		if((POT.current.cropsize+POT.plantgenes.cropsize) > 0)
+			playsound(POT.loc, 'sound/voice/screams/mandrake_scree.ogg', 100, 0, 0, null)
+			for (var/mob/living/M in all_hearers(world.view, POT.loc))
+				if(issilicon(M) || isintangible(M))
+					continue
+
+				if(!M.ears_protected_from_sound()) //modified Hootingium effect
+					boutput(M, "<span style=\"color:red\">The mandrake <b>SCREEEEEEAMS!!!</b></span>")
+					var/checkdist = get_dist(M, POT.loc)
+					var/weak = max(0, 30 * 0.2 * (3 - checkdist))
+					var/misstep = 40
+					var/ear_damage = max(0, 30 * 0.2 * (3 - checkdist))
+					var/ear_tempdeaf = max(0, 30 * 0.2 * (5 - checkdist))
+
+					M.apply_sonic_stun(weak, 0, misstep, 0, 0, ear_damage, ear_tempdeaf)
+					take_bleeding_damage(M, null, 80, DAMAGE_CUT, 1, M.loc)  //Very Lound, much earbleeding
+				else
+					continue

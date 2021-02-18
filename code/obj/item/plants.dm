@@ -400,6 +400,15 @@
 			user.take_toxin_damage(-10)
 			return
 
+/obj/item/plant/herb/hazel
+	name = "sprig of witch hazel"
+	icon = 'icons/obj/foodNdrink/food_produce.dmi'
+	icon_state = "witch_hazel"
+	desc = "it's hazel, but witchier."
+	w_class = 1
+	crop_prefix = "sprig of "
+	crop_suffix = ""
+
 // FLOWERS //
 
 /obj/item/plant/flower

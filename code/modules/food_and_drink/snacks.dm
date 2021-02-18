@@ -2447,3 +2447,224 @@
 		..()
 		reagents.add_reagent("epinephrine",8)
 		reagents.add_reagent("synaptizine",8)
+
+/obj/item/reagent_containers/food/snacks/mandrake
+	name = "mandrake root"
+	desc = "SCREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
+	icon = 'icons/obj/foodNdrink/food_produce.dmi'
+	icon_state = "mandrake-fresh"
+	w_class = 1
+	burn_point = 220
+	burn_output = 900
+	burn_possible = 2
+	health = 1
+	//brewable = 1
+	//brew_result = "mandrake_tea?"
+	var/list/bound_blood = list() //list of mobs bound to the mandrake (MAX: 2)
+	var/is_bloody
+	var/is_segment
+	var/list/limbs = list("left arm","right arm","left leg","right leg","hair")
+	var/severing
+
+	New()
+		..()
+		processing_items.Remove(src)
+
+	proc/bloody_mandrake(var/mob/user) //handling the bloodying of a mandrake
+		name = "blood-soaked mandrake"
+		desc = "the mandrake is soaked in blood! My god there's blood everywhere!"
+		icon_state = "mandrake-base"
+		UpdateOverlays(image('icons/obj/foodNdrink/food_produce.dmi',"mandrake-head"),"head")
+		UpdateOverlays(image('icons/obj/foodNdrink/food_produce.dmi',"mandrake-l_arm"),"l_arm")
+		UpdateOverlays(image('icons/obj/foodNdrink/food_produce.dmi',"mandrake-r_arm"),"r_arm")
+		UpdateOverlays(image('icons/obj/foodNdrink/food_produce.dmi',"mandrake-l_leg"),"l_leg")
+		UpdateOverlays(image('icons/obj/foodNdrink/food_produce.dmi',"mandrake-r_leg"),"r_leg")
+
+		if(open_binding_slot()) //if two players aren't bound, don't bloody the leaves
+			UpdateOverlays(image('icons/obj/foodNdrink/food_produce.dmi',"mandrake-hair"),"hair")
+			user.visible_message("<span class='alert'><b>[user]</b> wraps the [name] in [his_or_her(user)] blood-soaked hands, letting the red fluid soak into the root.")
+		else //if both slots are filled, add the bloody leaves overlay
+			UpdateOverlays(image('icons/obj/foodNdrink/food_produce.dmi',"mandrake-hair_blood"),"hair")
+			user.visible_message("<span class='alert'><b>[user]</b> smears blood all over the [name]'s leaves. It begins to glow with an ominous power!")
+			var/mob/message_to = bound_blood[1]
+			message_to.show_text("You feel like you're not alone...at all...","red")
+			message_to = bound_blood[2]
+			message_to.show_text("You feel like you're not alone...at all...","red")
+
+		user.clean_forensic() //clean up the user because the blood has been transferred to the mandrake
+		is_bloody = TRUE
+
+	proc/mandrake_delimb(var/limb,var/name)
+		if(!limb)
+			return
+		if(src.GetOverlayImage(limb))
+			src.ClearSpecificOverlays(limb)
+		else 
+			var/find_limb
+			switch(limb)
+				if("l_arm")
+					find_limb = "left arm"
+				if("r_arm")
+					find_limb = "right arm"
+				if("l_leg")
+					find_limb = "left leg"
+				if("r_leg")
+					find_limb = "right leg"
+			if(find_limb in src.limbs)
+				src.limbs -= find_limb
+			return 0
+		var/obj/item/reagent_containers/food/snacks/mandrake/M = new /obj/item/reagent_containers/food/snacks/mandrake
+		M.is_segment = 1
+		M.name = "chunk of mandrake root"
+		if(limb == "hair")
+			M.icon_state = "mandrake-hair_blood"
+		else
+			M.icon_state = "mandrake-[limb]"
+		
+		if(reagents)//add reagents to mandrake limb
+			var/transferamount
+			var/remaininglimbs = (length(limbs) + 2) //+2 because bodies are separated into two segments
+			if((length(limbs) == 1) && (src.limbs[1] == "head"))
+				remaininglimbs--
+			transferamount = src.reagents.total_volume / remaininglimbs
+			src.reagents.trans_to(M,transferamount)
+		src.visible_message("<span style='alert'><b>[name]</b> dramatically severs a chunk from the [src]!")
+		M.set_loc(get_turf(src))
+		var/list/throw_target = get_offset_target_turf(src.loc, rand(5)-rand(5), rand(5)-rand(5))
+		M.throw_at(throw_target, 5, 1)
+		. = 1
+
+	proc/open_binding_slot()
+		if(!length(bound_blood))
+			. = 2
+		else if(length(bound_blood) == 1)
+			. = 1
+
+	proc/player_bound(var/mob/user)
+		if(!length(bound_blood))
+			return
+		if(bound_blood[1] && (bound_blood[1] == user))
+			. = 1
+		if(length(bound_blood) == 2 && bound_blood[2] == user)
+			. = 1
+	
+	proc/addUid(Uid)
+		if(!src.blood_DNA)
+			src.blood_DNA = Uid
+		else
+			var/list/dna_list = params2list(src.blood_DNA)
+			dna_list += Uid
+			src.blood_DNA = list2params(dna_list)
+
+	attack_self(mob/user as mob)
+		if(is_segment) //is the mandrake in question just a chunk of the original mandrake?
+			..()
+			return
+		if(!user.blood_DNA) //is the user covered in blood?
+			return
+
+		var/list/dna_list = params2list(user:blood_DNA)
+
+		var/player_added
+		for(var/i in 1 to length(dna_list))
+			if(!open_binding_slot())
+				break
+			if(dna_list[i] == user.bioHolder.Uid) //checking for the user specifically to prioritize their blood
+				if(player_bound(user))
+					continue
+				bound_blood += user
+				addUid(user.bioHolder.Uid)
+				player_added = TRUE
+			else
+				for(var/mob/living/carbon/human/H in mobs) //search for the human it corresponds to
+					if(H.bioHolder.Uid == dna_list[i]) //if there's a match
+						if(player_bound(H)) //link the mob if they aren't already linked
+							continue
+						bound_blood += H
+						addUid(H.bioHolder.Uid)
+						player_added = TRUE
+
+		if(player_added) //if a player was added, soak the mandrake in blood!
+			bloody_mandrake(user)
+
+	attackby(obj/item/W as obj,mob/user as mob)
+		if(istool(W, TOOL_CUTTING | TOOL_SAWING) && in_interact_range(src,user) && !is_segment)
+			if(open_binding_slot() && !player_bound(user))
+				user.show_text("The [name] hungers for your blood!","red")
+				return
+			if(!open_binding_slot() && !player_bound(user))
+				user.show_text("You attempt to cut at the [src], but it resists all attempts! Perhaps your fates are not bound...","red")
+				return
+			var/selection = input("Which limb would you like to cut?", "Being a Terrible Person", null) as null|anything in limbs
+			if(selection && in_interact_range(src,user))
+				severing = TRUE
+				var/mandrake_limb
+				switch(selection)
+					if("left arm")
+						mandrake_limb = "l_arm"
+					if("right arm")
+						mandrake_limb = "r_arm"
+					if("left leg")
+						mandrake_limb = "l_leg"
+					if("right leg")
+						mandrake_limb = "r_leg"
+				severing = FALSE
+				if((selection != "head") && (selection != "hair"))
+					for(var/mob/living/carbon/human/H in bound_blood)
+						mandrake_delimb(mandrake_limb,user.name)
+						H.sever_limb(mandrake_limb)
+					limbs -= "[selection]"
+				else
+					if(selection == "hair")
+						for(var/mob/living/carbon/human/H in bound_blood)
+							mandrake_delimb("hair",user.name)
+							var/obj/item/wig = H.create_wig()
+							H.visible_message("<span style='alert'>[H.name]'s hair flies off!")
+							H.bioHolder.mobAppearance.customization_first = "None"
+							H.bioHolder.mobAppearance.customization_second = "None"
+							H.bioHolder.mobAppearance.customization_third = "None"
+							wig.set_loc(H.loc)
+						limbs -= "hair"
+					else
+						mandrake_delimb("head",user.name)
+						for(var/mob/living/carbon/human/H in bound_blood)
+							H.organHolder.drop_organ("head")
+							H.visible_message("<span style='alert'><b>[H.name] IS DECAPITATED BY A MYSTERIOUS FORCE! OH GOD NO!</b>")
+						limbs -= "head"
+						is_segment = TRUE
+
+				for(var/mob/living/carbon/human/H in bound_blood)
+					random_brute_damage(H, 20)
+
+				if(!length(limbs))
+					limbs += "head"
+		else if(W.firesource)
+			if(src.loc == user)
+				user.u_equip(src)
+			visible_message("<span style='alert'>The [name] is consumed by flamed and poofs into a pile of ash!")
+			make_cleanable( /obj/decal/cleanable/ash,get_turf(src))
+			qdel(src)
+		else
+			..()
+
+	temperature_expose(datum/gas_mixture/air, temperature, volume)
+		..()
+		visible_message("<span style='alert'>The [name] is consumed by flamed and poofs into a pile of ash!")
+		make_cleanable( /obj/decal/cleanable/ash,get_turf(src))
+		qdel(src)
+
+	clean_forensic()
+		..()
+		if(!length(bound_blood))
+			return
+		for(var/mob/living/carbon/human/H in bound_blood)
+			H.show_text("You feel free...","green")
+		if("hair" in limbs)
+			src.UpdateOverlays(image('icons/obj/foodNdrink/food_produce.dmi',"mandrake-hair"),"hair")
+		src.name = "inert mandrake"
+		src.visible_message("<span style='green'>The energy emanating from the [name] fades slowly into nothingness...")
+
+	disposing()
+		for(var/mob/living/carbon/human/H in bound_blood)
+			H.show_text("You feel free...","green")
+		..()

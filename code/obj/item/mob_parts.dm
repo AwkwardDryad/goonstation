@@ -186,6 +186,28 @@
 		if (user)
 			logTheThing("admin", user, src.holder, "severed [constructTarget(src.holder,"admin")]'s limb, [src] (<i>type: [src.type], side: [src.side]</i>)")
 
+		var/blocked
+		var/playerfound
+		var/obj/item/reagent_containers/food/snacks/mandrake/M
+		for(var/obj/item/reagent_containers/food/snacks/mandrake/md in src.holder.contents)
+			if(md.player_bound(src.holder))
+				playerfound = TRUE
+			if(playerfound)
+				M = md
+				break
+		if(playerfound && M && (M.mandrake_delimb(src.slot,"a mysterious force") == 1))
+			blocked = 1
+		for(var/obj/item/reagent_containers/food/snacks/mandrake/mdcheck in range(1,src.holder))
+			if(!mdcheck.open_binding_slot())
+				if(mdcheck == M)
+					continue
+				if(blocked == 1)
+					blocked = 0
+					src.holder.show_text("The presence of another potent magical object nullifies the power of the mandrake talisman!","red")
+					break
+		if(blocked == 1)
+			return
+
 		var/obj/item/object = src
 		if(remove_object)
 			object = remove_object
