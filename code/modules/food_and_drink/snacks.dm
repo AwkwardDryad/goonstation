@@ -2454,10 +2454,6 @@
 	icon = 'icons/obj/foodNdrink/food_produce.dmi'
 	icon_state = "mandrake-fresh"
 	w_class = 1
-	burn_point = 220
-	burn_output = 900
-	burn_possible = 2
-	health = 1
 	//brewable = 1
 	//brew_result = "mandrake_tea?"
 	var/list/bound_blood = list() //list of mobs bound to the mandrake (MAX: 2)
