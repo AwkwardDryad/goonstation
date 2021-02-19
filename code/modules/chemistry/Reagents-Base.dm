@@ -427,7 +427,7 @@ datum
 
 			on_plant_life(var/obj/machinery/plantpot/P)
 				var/datum/plant/growing = P.current
-				if (growing.growthmode != "plasmavore")
+				if (!has_plant_flag(growing,GROWTHMODE_PLASMAVORE))
 					P.HYPdamageplant("poison",2)
 
 		platinum

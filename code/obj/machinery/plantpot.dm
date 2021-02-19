@@ -217,7 +217,7 @@
 		var/drink_rate = 1
 		// drink_rate is how much reagent is consumed per tick. This used to be 0.5, but got bumped
 		// up to 1 when the tick rate for plant pots was halved.
-		if(growing.simplegrowth)
+		if(has_plant_flag(growing,SIMPLE_GROWTH))
 			src.growth++
 			// Simplegrowth is used pretty much only for crystals. It essentially skips all
 			// simulation whatsoever and just adds one growth point per tick, ignoring all
@@ -249,7 +249,7 @@
 			else
 				// If there's no water in the plant pot, we slowly damage the plant and prevent
 				// it from gaining any growth if it's not a weed.
-				if(!growing.nothirst)
+				if(!has_plant_flag(growing,NO_THIRST))
 					HYPdamageplant("drought",1)
 				else
 					src.growth++
@@ -313,7 +313,7 @@
 
 		// Special procs now live in the plant datums file! These are for plants that will
 		// occasionally do special stuff on occasion, such as radweeds, lashers, and the like.
-		if(growing.special_proc)
+		if(has_plant_flag(growing,USE_SPECIAL_PROC))
 			if(plantgenes.mutation)
 				// If we've got a mutation, we want to check if the mutation has its own special
 				// proc that overrides the regular one.
@@ -366,7 +366,7 @@
 
 		// Have we lost all health or growth, or used up all available harvests? If so, this plant
 		// should now die. Sorry, that's just life! Didn't they teach you the curds and the peas?
-		if((src.health < 1 || src.growth < 0) || (growing.harvestable && src.harvests < 1))
+		if((src.health < 1 || src.growth < 0) || (!has_plant_flag(growing,NO_HARVEST) && src.harvests < 1))
 			HYPkillplant()
 			return
 
@@ -471,7 +471,7 @@
 				return
 			if(src.current)
 				var/datum/plant/growing = src.current
-				if(growing.attacked_proc)
+				if(has_plant_flag(growing,USE_ATTACKED_PROC))
 					// It will fight back if possible, and halts the attack if it returns
 					// anything other than zero from the attack proc.
 					if(plantgenes.mutation)
@@ -504,7 +504,7 @@
 			// I already had burn procs in, but whatever.
 			if(src.current)
 				var/datum/plant/growing = src.current
-				if(growing.attacked_proc)
+				if(has_plant_flag(growing,USE_ATTACKED_PROC))
 					// It will fight back if possible, and halts the attack if it returns
 					// anything other than zero from the attack proc.
 					if(plantgenes.mutation)
@@ -618,7 +618,7 @@
 			if (src.current.harvest_tools)
 				return
 			var/datum/plant/growing = src.current
-			if(!growing.harvestable)
+			if(has_plant_flag(growing,NO_HARVEST))
 				boutput(user, "<span class='alert'>You doubt this plant is going to grow anything worth harvesting...</span>")
 				return
 
@@ -696,7 +696,7 @@
 
 		if(src.current)
 			var/datum/plant/growing = src.current
-			if(growing.attacked_proc)
+			if(has_plant_flag(growing,USE_ATTACKED_PROC))
 				// It will fight back if possible, and halts the attack if it returns
 				// anything other than zero from the attack proc.
 				if(plantgenes.mutation)
@@ -716,7 +716,7 @@
 				else
 					if(growing.HYPattacked_proc(src,usr,null)) return
 
-			if(growing.growthmode == "weed")
+			if(has_plant_flag(growing,GROWTHMODE_WEED))
 				if(alert("Clear this tray?",,"Yes","No") == "Yes")
 					usr.visible_message("<b>[usr.name]</b> dumps out the tray's contents.")
 					boutput(usr, "<span class='alert'>Weeds still infest the tray. You'll need something a bit more thorough to get rid of them.</span>")
@@ -859,7 +859,7 @@
 		var/datum/plant/growing = src.current
 		var/datum/plantgenes/DNA = src.plantgenes
 		var/datum/plantmutation/MUT = DNA.mutation
-		if(growing?.cantscan) // what if we disable this for a bit, what will happen...
+		if(growing && has_plant_flag(growing,NO_SCAN)) // what if we disable this for a bit, what will happen...
 			src.name = "\improper strange plant"
 		else
 			if(istype(MUT,/datum/plantmutation/))
@@ -882,7 +882,7 @@
 			if(MUT.harvest_override && MUT.crop)
 				if(src.growth >= current.harvtime - plantgenes.harvtime) return 1
 				else return 0
-		if(!current.crop || !current.harvestable) return 0
+		if(!current.crop || has_plant_flag(current.crop,NO_HARVEST)) return 0
 
 		if(src.growth >= current.harvtime - plantgenes.harvtime) return 1
 		else return 0
@@ -910,7 +910,7 @@
 			logTheThing("debug", null, null, "<b>Hydro Controls</b>: Plant pot at \[[x],[y],[z]] used by ([user]) attempted a harvest without having a current plant.")
 			return
 
-		if(growing.harvested_proc)
+		if(has_plant_flag(growing,USE_HARVESTED_PROC))
 			if(growing.HYPharvested_proc(src,user)) return
 			if(MUT?.HYPharvested_proc_M(src,user)) return
 			// Does this plant react to being harvested? If so, do it - it also functions as
@@ -968,19 +968,21 @@
 		// Unstable isn't here because it'd be less random outside the loop.
 
 		var/getitem = null
-		var/dont_rename_crop = false
+		var/dont_rename_crop = FALSE
 		// Figure out what crop we use - the base crop or a mutation crop.
 		if(growing.crop || MUT?.crop)
 			if(MUT)
 				if(MUT.crop)
 					getitem = MUT.crop
-					dont_rename_crop = MUT.dont_rename_crop
+					if(has_plant_flag(MUT,NO_RENAME_HARVEST))
+						dont_rename_crop = TRUE
 				else
 					logTheThing("debug", null, null, "<b>I Said No/Hydroponics:</b> Plant mutation [MUT] crop is not properly configured")
 					getitem = growing.crop
 			else
 				getitem = growing.crop
-				dont_rename_crop = growing.dont_rename_crop
+				if(has_plant_flag(growing,NO_RENAME_HARVEST))
+					dont_rename_crop = TRUE
 
 		var/extra_harvest_chance = 0
 
@@ -1100,7 +1102,7 @@
 					else
 						CROP.quality = quality_score
 
-				if(!growing.stop_size_scaling) //Keeps plant sprite from scaling if variable is enabled.
+				if(!has_plant_flag(growing,NO_SIZE_SCALE)) //Keeps plant sprite from scaling if variable is enabled.
 					CROP.transform = matrix() * clamp((quality_score + 100) / 100, 0.35, 2)
 
 				if(istype(CROP,/obj/item/reagent_containers/food/snacks/plant/))
@@ -1205,7 +1207,7 @@
 					S.amount = max(1, DNA.potency * rand(2,4))
 					S.update_stack_appearance()
 
-				if(((growing.isgrass || growing.force_seed_on_harvest) && prob(80)) && !istype(CROP,/obj/item/seed/) && !HYPCheckCommut(DNA,/datum/plant_gene_strain/seedless))
+				if(((has_plant_flag(growing,SINGLE_HARVEST) || has_plant_flag(growing,FORCE_SEED_ON_HARVEST)) && prob(80)) && !istype(CROP,/obj/item/seed/) && !HYPCheckCommut(DNA,/datum/plant_gene_strain/seedless))
 					// Same shit again. This isn't so much the crop as it is giving you seeds
 					// incase you couldn't get them otherwise, though.
 					var/obj/item/seed/S
@@ -1310,7 +1312,7 @@
 					src.harvests--
 			else
 				src.harvests--
-		if(growing.isgrass)
+		if(has_plant_flag(growing,SINGLE_HARVEST))
 			// Vegetable-style plants always die after one harvest irregardless of harvests
 			// remaining, though they do get bonuses for having a good harvests gene.
 			HYPkillplant()
@@ -1349,7 +1351,7 @@
 
 		// Now we deal with various health bonuses and penalties for the plant.
 
-		if(growing.isgrass)
+		if(has_plant_flag(growing,SINGLE_HARVEST))
 			src.health += src.plantgenes.harvests * 2
 			// If we have a single-harvest vegetable plant, the harvests gene (which is otherwise
 			// useless) adds 2 health for every point. This works negatively also!
@@ -1387,7 +1389,7 @@
 
 		// Finally set the harvests, make sure we always have at least one harvest,
 		// then get rid of the seed, mutate the genes a little and update the pot sprite.
-		if(growing.harvestable) src.harvests = growing.harvests + DNA.harvests
+		if(!has_plant_flag(growing,NO_HARVEST)) src.harvests = growing.harvests + DNA.harvests
 		if(src.harvests < 1) src.harvests = 1
 		pool (SEED)
 
@@ -1563,7 +1565,7 @@ proc/HYPgeneticanalysis(var/mob/user as mob,var/obj/scanned,var/datum/plant/P,va
 	var/datum/plantmutation/MUT = DNA.mutation
 	var/generation = 0
 
-	if(P.cantscan)
+	if(has_plant_flag(P,NO_SCAN))
 		boutput(user, "<span class='alert'><B>ERROR:</B> Genetic structure not recognized. Cannot scan.</span>")
 		return
 

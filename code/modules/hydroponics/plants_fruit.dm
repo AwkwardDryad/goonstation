@@ -81,6 +81,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 
 /datum/plant/fruit/melon
 	name = "Melon"
+	plant_flags = USE_SPECIAL_PROC
 	seedcolor = "#33BB00"
 	crop = /obj/item/reagent_containers/food/snacks/plant/melon
 	starthealth = 80
@@ -94,7 +95,6 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	nectarlevel = 15
 	mutations = list(/datum/plantmutation/melon/george, /datum/plantmutation/melon/bowling)
 	commuts = list(/datum/plant_gene_strain/immortal,/datum/plant_gene_strain/seedless)
-	special_proc = 1 // my sincerest apologies for this, it's there only for a dumb effect on the bowling melons
 
 	HYPinfusionP(var/obj/item/seed/S,var/reagent)
 		..()

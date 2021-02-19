@@ -1,21 +1,19 @@
 ABSTRACT_TYPE(/datum/plant/weed)
 /datum/plant/weed
 	plant_icon = 'icons/obj/hydroponics/plants_weed.dmi'
-	growthmode = "weed"
 	category = "Miscellaneous"
 
 /datum/plant/weed/fungus
 	name = "Fungus"
+	plant_flags = GROWTHMODE_WEED | NO_THIRST | FORCE_SEED_ON_HARVEST
 	seedcolor = "#224400"
 	crop = /obj/item/reagent_containers/food/snacks/mushroom
-	nothirst = 1
 	starthealth = 20
 	growtime = 30
 	harvtime = 250
 	harvests = 10
 	endurance = 40
 	cropsize = 3
-	force_seed_on_harvest = 1
 	vending = 2
 	genome = 30
 	assoc_reagents = list("space_fungus")
@@ -23,18 +21,13 @@ ABSTRACT_TYPE(/datum/plant/weed)
 
 /datum/plant/weed/lasher
 	name = "Lasher"
+	plant_flags = GROWTHMODE_WEED | NO_THIRST | NO_HARVEST | USE_SPECIAL_PROC | USE_ATTACKED_PROC | USE_HARVESTED_PROC
 	seedcolor = "#00FFFF"
 	cropsize = 3
-	nothirst = 1
 	starthealth = 45
 	growtime = 50
 	harvtime = 100
-	harvestable = 0
 	endurance = 50
-	isgrass = 1
-	special_proc = 1
-	attacked_proc = 1
-	harvested_proc = 1
 	vending = 2
 	genome = 5
 	mutations = list(/datum/plantmutation/lasher/berries)
@@ -83,16 +76,13 @@ ABSTRACT_TYPE(/datum/plant/weed)
 
 /datum/plant/weed/creeper
 	name = "Creeper"
+	plant_flags = GROWTHMODE_WEED | NO_THIRST | NO_HARVEST | USE_SPECIAL_PROC
 	unique_seed = /obj/item/seed/creeper
 	seedcolor = "#CC00FF"
-	nothirst = 1
 	starthealth = 30
 	growtime = 30
 	harvtime = 100
-	harvestable = 0
 	endurance = 40
-	isgrass = 1
-	special_proc = 1
 	vending = 2
 	genome = 8
 
@@ -116,14 +106,12 @@ ABSTRACT_TYPE(/datum/plant/weed)
 
 /datum/plant/weed/radweed
 	name = "Radweed"
+	plant_flags = GROWTHMODE_WEED | NO_THIRST | NO_HARVEST | USE_SPECIAL_PROC
 	seedcolor = "#55CC55"
-	nothirst = 1
 	starthealth = 40
 	growtime = 140
 	harvtime = 200
-	harvestable = 0
 	endurance = 80
-	special_proc = 1
 	vending = 2
 	genome = 40
 	assoc_reagents = list("radium")
@@ -170,14 +158,13 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	name = "Slurrypod"
 	seedcolor = "#004400"
 	crop = /obj/item/reagent_containers/food/snacks/plant/slurryfruit
-	nothirst = 1
+	plant_flags = GROWTHMODE_WEED | NO_THIRST | USE_SPECIAL_PROC
 	starthealth = 25
 	growtime = 30
 	harvtime = 60
 	harvests = 1
 	cropsize = 3
 	endurance = 30
-	special_proc = 1
 	vending = 2
 	genome = 45
 	var/exploding = 0

@@ -44,7 +44,7 @@
 				if (X == "health" && growing)
 					P.health++
 				if (X == "weedkiller" && growing)
-					if (growing.growthmode == "weed")
+					if (has_plant_flag(growing,GROWTHMODE_WEED))
 						P.health -= 3
 				if (X == "mutation" && growing)
 					if (prob(8))

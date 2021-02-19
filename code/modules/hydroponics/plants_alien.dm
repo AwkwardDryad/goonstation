@@ -2,23 +2,19 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 /datum/plant/artifact
 	name = "Unknown"
 	plant_icon = 'icons/obj/hydroponics/plants_alien.dmi'
-	cantscan = 0
 	vending = 0
 
 // non-harvestables
 
 /datum/plant/artifact/pukeplant
 	name = "Puker"
-	growthmode = "weed"
+	plant_flags = GROWTHMODE_WEED | NO_THIRST | NO_HARVEST | USE_SPECIAL_PROC
 	override_icon_state = "Puker"
 	unique_seed = /obj/item/seed/alien/pukeplant
-	nothirst = 1
 	starthealth = 80
 	growtime = 60
 	harvtime = 140
-	harvestable = 0
 	endurance = 40
-	special_proc = 1
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -33,16 +29,13 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 
 /datum/plant/artifact/peeker
 	name = "Peeker"
-	growthmode = "weed"
+	plant_flags = GROWTHMODE_WEED | NO_THIRST | NO_HARVEST | USE_SPECIAL_PROC
 	override_icon_state = "Peeker"
 	unique_seed = /obj/item/seed/alien/peeker
-	nothirst = 1
 	starthealth = 120
 	growtime = 20
 	harvtime = 100
-	harvestable = 0
 	endurance = 60
-	special_proc = 1
 	var/focused = null
 	var/focus_level = 0
 
@@ -149,6 +142,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 
 /datum/plant/artifact/rocks
 	name = "Rock"
+	plant_flags = FORCE_SEED_ON_HARVEST
 	override_icon_state = "Rocks"
 	crop = /obj/item/raw_material/rock
 	unique_seed = /obj/item/seed/alien/rocks
@@ -158,7 +152,6 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	cropsize = 3
 	harvests = 8
 	endurance = 40
-	force_seed_on_harvest = 1
 	mutations = list(/datum/plantmutation/rocks/syreline,/datum/plantmutation/rocks/bohrum,/datum/plantmutation/rocks/mauxite,/datum/plantmutation/rocks/erebite)
 
 /datum/plant/artifact/litelotus
@@ -200,6 +193,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 
 /datum/plant/artifact/cat
 	name = "Synthetic Cat"
+	plant_flags = NO_HARVEST | USE_SPECIAL_PROC | USE_ATTACKED_PROC
 	override_icon_state = "Cat"
 	crop = /obj/critter/cat/synth
 	unique_seed = /obj/item/seed/alien/cat
@@ -207,9 +201,6 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	growtime = 100
 	harvtime = 150
 	endurance = 30
-	special_proc = 1
-	attacked_proc = 1
-	harvestable = 0
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -243,17 +234,14 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 
 /datum/plant/maneater
 	name = "Man-Eating"
+	plant_flags = GROWTHMODE_CARNIVORE | NO_HARVEST | USE_SPECIAL_PROC | USE_ATTACKED_PROC
 	plant_icon = 'icons/obj/hydroponics/plants_alien.dmi'
 	sprite = "Maneater"
-	growthmode = "carnivore"
 	unique_seed = /obj/item/seed/maneater
 	starthealth = 40
 	growtime = 30
 	harvtime = 200
-	harvestable = 0
 	endurance = 10
-	special_proc = 1
-	attacked_proc = 1
 	vending = 0
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
@@ -294,7 +282,6 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	starthealth = 50
 	growtime = 300
 	harvtime = 600
-	harvestable = 1
 	endurance = 100
 	vending = 0
 	crop = /obj/item/raw_material/shard/plasmacrystal

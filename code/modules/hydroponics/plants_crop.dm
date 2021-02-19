@@ -5,6 +5,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 
 /datum/plant/crop/bamboo
 	name = "Bamboo"
+	plant_flags = SINGLE_HARVEST
 	seedcolor = "#FCDA91"
 	crop = /obj/item/material_piece/organic/bamboo
 	starthealth = 15
@@ -12,13 +13,13 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvtime = 40
 	cropsize = 5
 	harvests = 1
-	isgrass = 1
 	endurance = 0
 	genome = 10
 	commuts = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
 
 /datum/plant/crop/wheat
 	name = "Wheat"
+	plant_flags = SINGLE_HARVEST
 	seedcolor = "#FFFF88"
 	crop = /obj/item/plant/wheat
 	starthealth = 15
@@ -26,7 +27,6 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvtime = 80
 	cropsize = 5
 	harvests = 1
-	isgrass = 1
 	endurance = 0
 	genome = 10
 	mutations = list(/datum/plantmutation/wheat/steelwheat, /datum/plantmutation/wheat/durum)
@@ -41,6 +41,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 
 /datum/plant/crop/oat
 	name = "Oat"
+	plant_flags = SINGLE_HARVEST
 	seedcolor = "#CCFF88"
 	crop = /obj/item/plant/oat
 	starthealth = 20
@@ -48,13 +49,13 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvtime = 120
 	cropsize = 5
 	harvests = 1
-	isgrass = 1
 	endurance = 0
 	genome = 10
 	commuts = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
 
 /datum/plant/crop/rice
 	name = "Rice"
+	plant_flags = SINGLE_HARVEST
 	seedcolor = "#FFFFAA"
 	crop = /obj/item/reagent_containers/food/snacks/ingredient/rice_sprig
 	starthealth = 20
@@ -62,7 +63,6 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvtime = 70
 	cropsize = 4
 	harvests = 1
-	isgrass = 1
 	endurance = 0
 	genome = 8
 	commuts = list(/datum/plant_gene_strain/yield,/datum/plant_gene_strain/health_poor)
@@ -114,6 +114,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 
 /datum/plant/crop/synthmeat
 	name = "Synthmeat"
+	plant_flags = FORCE_SEED_ON_HARVEST | USE_SPECIAL_PROC
 	seedcolor = "#550000"
 	crop = /obj/item/reagent_containers/food/snacks/ingredient/meat/synthmeat
 	starthealth = 5
@@ -122,9 +123,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	cropsize = 3
 	harvests = 2
 	endurance = 3
-	force_seed_on_harvest = 1
 	genome = 7
-	special_proc = 1
 	assoc_reagents = list("synthflesh")
 	mutations = list(/datum/plantmutation/synthmeat/butt,/datum/plantmutation/synthmeat/limb,/datum/plantmutation/synthmeat/brain,/datum/plantmutation/synthmeat/heart,/datum/plantmutation/synthmeat/eye)
 	commuts = list(/datum/plant_gene_strain/yield,/datum/plant_gene_strain/unstable)
@@ -142,6 +141,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 
 /datum/plant/crop/sugar
 	name = "Sugar"
+	plant_flags = SINGLE_HARVEST
 	seedcolor = "#BBBBBB"
 	crop = /obj/item/plant/sugar
 	starthealth = 10
@@ -149,7 +149,6 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvtime = 60
 	cropsize = 7
 	harvests = 1
-	isgrass = 1
 	endurance = 0
 	genome = 8
 	commuts = list(/datum/plant_gene_strain/quality,/datum/plant_gene_strain/terminator)
@@ -172,6 +171,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 
 /datum/plant/crop/peanut
 	name = "Peanut"
+	plant_flags = SINGLE_HARVEST
 	seedcolor = "#999900"
 	crop = /obj/item/reagent_containers/food/snacks/plant/peanuts
 	starthealth = 40
@@ -179,7 +179,6 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvtime = 160
 	cropsize = 4
 	harvests = 1
-	isgrass = 1
 	endurance = 10
 	genome = 6
 
@@ -194,8 +193,8 @@ ABSTRACT_TYPE(/datum/plant/crop)
 
 /datum/plant/crop/cotton
 	name = "Cotton"
+	plant_flags = FORCE_SEED_ON_HARVEST | NO_RENAME_HARVEST
 	seedcolor = "#FFFFFF"
-	dont_rename_crop = true
 	crop = /obj/item/raw_material/cotton
 	starthealth = 10
 	growtime = 40
@@ -204,13 +203,12 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 4
 	endurance = 0
 	genome = 5
-	force_seed_on_harvest = 1
 	commuts = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/metabolism_slow)
 
 /datum/plant/crop/tree // :effort:
 	name = "Tree"
+	plant_flags = FORCE_SEED_ON_HARVEST | USE_SPECIAL_PROC | USE_ATTACKED_PROC | NO_RENAME_HARVEST
 	seedcolor = "#9C5E13"
-	dont_rename_crop = true
 	crop = /obj/item/material_piece/organic/wood
 	starthealth = 40
 	growtime = 200
@@ -219,10 +217,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 10
 	endurance = 5
 	genome = 20
-	force_seed_on_harvest = 1
-	special_proc = 1 // for dogwood tree
 	vending = 1
-	attacked_proc = 1 // for dogwood tree
 	mutations = list(/datum/plantmutation/tree/money, /datum/plantmutation/tree/rubber,/datum/plantmutation/tree/sassafras, /datum/plantmutation/tree/dog,/datum/plantmutation/tree/paper)
 	commuts = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/metabolism_slow,/datum/plant_gene_strain/resistance_drought)
 

@@ -10,51 +10,47 @@
 
 ABSTRACT_TYPE(/datum/plant)
 /datum/plant/
-	// Standard variables for plants are added here.
-	var/name = "plant species name" // Name of the plant species
-	var/sprite = null         // The plant's normal sprite - overridden by special_icon
-	var/growthmode = "normal" // what "family" is this plant part of? used for various things
-	var/nothirst = 0          // For weeds - won't die or halt growth from drought
-	var/simplegrowth = 0      // For boring decorative plants that don't do anything
-	var/plant_icon = null    // If you need a new DMI for whatever reason. why not!
-	var/override_icon_state = null   // If you need the icon to be different to the name
-	var/crop = null // What crop does this plant produce?
-	var/force_seed_on_harvest = 0 // an override so plants like synthmeat can give seeds
-	var/starthealth = 0 // What health does this plant start at?
-	var/growtime = 0 // How much faster this plant matures
-	var/harvtime = 0 // How much faster this plant produces harvests after maturing
-	var/cropsize = 0 // How many items you get per harvest
-	var/harvestable = 1 // Does this plant even produce anything
-	var/harvests = 1 // How many times you can harvest this species
-	var/endurance = 0 // How much endurance this species normally has
-	var/isgrass = 0 // Always dies after one harvest
-	var/cantscan = 0 // Can't be scanned by an analyzer
-	var/nectarlevel = 0 //If nonzero, slowly tries to maintain this level of nectar reagent.
-	var/list/assoc_reagents = list() // Used for extractions, harvesting, etc
-	var/list/commuts = list() // What general mutations can occur in this plant?
-	var/list/mutations = list() // what mutant variants does this plant have?
-	var/genome = 0 // Used for splicing - how "similar" the plants are = better odds of splice
-	var/stop_size_scaling // Stops the enlarging of sprites based on quality
-	var/list/harvest_tools // For plants that don't harvest normally and need some sort of special tool (mixed list of tool flags and item paths)
-	var/harvest_tool_message // An output message for plants with unique harvest messages (string)
-	var/harvest_tool_fail_message // A helpful output message to players when they attempt to harvest a plant by hand
-	var/no_extract // Stops the extraction of seeds in the PlantMaster
-	var/list/required_reagents // reagents required for the plant to grow - formated like: list(list(id="poo",amount=100),list(id="thing",amount=number))
+	//Name and Sprites
+	//--------------//
+	var/name = "plant species name" 	// Name of the plant species
+	var/sprite = null 					// The plant's normal sprite - overridden by special_icon
+	var/plant_icon = null 				// If you need a new DMI for whatever reason. why not!
+	var/override_icon_state = null 		// If you need the icon to be different to the name
+	var/seedcolor = "#000000"			// color on the seed packet, if applicable
 
-	var/special_proc = 0 // Does this plant do something special when it's in the pot?
-	var/attacked_proc = 0 // Does this plant react if you try to attack it?
-	var/harvested_proc = 0 // Take a guess
+	//Stats
+	//---//
+	var/starthealth = 0 				// What health does this plant start at?
+	var/endurance = 0 					// How much endurance this species normally has
+	var/growtime = 0 					// How much faster this plant matures
+	var/harvtime = 0 					// How much faster this plant produces harvests after maturing
+	var/cropsize = 0 					// How many items you get per harvest
+	var/harvests = 1 					// How many times you can harvest this species
+	var/nectarlevel = 0 				//If nonzero, slowly tries to maintain this level of nectar reagent.
+	var/genome = 0 						// Used for splicing - how "similar" the plants are = better odds of splice
 
-	var/dont_rename_crop = false	// don't rename the crop after the plant
+	//Vending
+	//-----//
+	var/vending = 1 					// 1 = Appears in seed vendors, 2 = appears when hacked, 0 = doesn't appear
+	var/category = null 				// Used for vendor filtering
 
+	//Other
+	//---//
+	var/lasterr = 0						// logged error code when bad things happen
+	var/harvest_tool_message 			// An output message for plants with unique harvest messages (string)
+	var/harvest_tool_fail_message 		// A helpful output message to players when they attempt to harvest a plant by hand
+	var/hybrid = 0 						// used for seed manipulator stuff
+	var/unique_seed = null 				// Does this plant produce a paticular instance of seeds?
+	var/crop = null 					// What crop does this plant produce?
 
-	var/category = null // Used for vendor filtering
-	var/vending = 1 // 1 = Appears in seed vendors, 2 = appears when hacked, 0 = doesn't appear
-	var/unique_seed = null // Does this plant produce a paticular instance of seeds?
-	var/seedcolor = "#000000" // color on the seed packet, if applicable
-	var/hybrid = 0 // used for seed manipulator stuff
-
-	var/lasterr = 0
+	//Lists
+	//---//
+	var/plant_flags
+	var/list/required_reagents 			// reagents required for the plant to grow - formated like: list(list(id="poo",amount=100),list(id="thing",amount=number))
+	var/list/harvest_tools 				// For plants that don't harvest normally and need some sort of special tool (mixed list of tool flags and item paths)
+	var/list/mutations = list() 		// what mutant variants does this plant have?
+	var/list/commuts = list() 			// What general mutations can occur in this plant?
+	var/list/assoc_reagents = list() 	// Used for extractions, harvesting, etc
 
 	// fixed some runtime errors here - singh
 	// hyp procs now return 0 for success and continue, any other number for error codes
@@ -102,7 +98,7 @@ ABSTRACT_TYPE(/datum/plant)
 		if (POT.dead || !POT.current) lasterr = 102
 		if (lasterr)
 			logTheThing("debug", null, null, "<b>Plant HYP</b> [src] in pot [POT] failed with error [.]")
-			special_proc = 0
+			remove_plant_flag(src,USE_SPECIAL_PROC)
 		return lasterr
 
 	proc/HYPattacked_proc(var/obj/machinery/plantpot/POT,var/mob/user)
@@ -112,17 +108,17 @@ ABSTRACT_TYPE(/datum/plant)
 		if (POT.dead || !POT.current) lasterr = 202
 		if (lasterr)
 			logTheThing("debug", null, null, "<b>Plant HYP</b> [src] in pot [POT] failed with error [.]")
-			attacked_proc = 0
+			remove_plant_flag(src,USE_ATTACKED_PROC)
 		return lasterr
 
 	proc/HYPharvested_proc(var/obj/machinery/plantpot/POT,var/mob/user)
 		lasterr = 0
 		if (!POT || !user) return 301
 		if (POT.dead || !POT.current) return 302
-		if (!src.harvestable || !src.crop) return 303
+		if (has_plant_flag(src,NO_HARVEST) || !src.crop) return 303
 		if (lasterr)
 			logTheThing("debug", null, null, "<b>Plant HYP</b> [src] in pot [POT] failed with error [.]")
-			harvested_proc = 0
+			remove_plant_flag(src,USE_HARVESTED_PROC)
 		return lasterr
 
 	proc/HYPinfusionP(var/obj/item/seed/S,var/reagent)
@@ -139,7 +135,7 @@ ABSTRACT_TYPE(/datum/plant)
 			if ("acid")
 				damage_amt = rand(40,50)
 			if ("weedkiller")
-				if (!HYPCheckCommut(DNA,/datum/plant_gene_strain/immunity_toxin) && src.growthmode == "weed")
+				if (!HYPCheckCommut(DNA,/datum/plant_gene_strain/immunity_toxin) && has_plant_flag(src,GROWTHMODE_WEED))
 					damage_amt = rand(50,60)
 			if ("toxin","mercury","chlorine","fluorine","fuel","oil","cleaner")
 				if (!HYPCheckCommut(DNA,/datum/plant_gene_strain/immunity_toxin))
@@ -148,7 +144,7 @@ ABSTRACT_TYPE(/datum/plant)
 				if (!HYPCheckCommut(DNA,/datum/plant_gene_strain/immunity_toxin))
 					damage_amt = rand(15,30)
 			if ("blood","bloodc")
-				if (src.growthmode == "carnivore")
+				if (has_plant_flag(src,GROWTHMODE_CARNIVORE))
 					DNA.growtime += rand(5,10)
 					DNA.harvtime += rand(5,10)
 					DNA.endurance += rand(10,30)

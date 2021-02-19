@@ -441,7 +441,7 @@
 					src.icon_state = "trowel_full"
 				else
 					return
-				if(p.growthmode == "weed")
+				if(has_plant_flag(p,GROWTHMODE_WEED))
 					user.visible_message("<b>[user]</b> tries to uproot the [p.name], but it's roots hold firmly to the [pot]!","<span class='alert'>The [p.name] is too strong for you traveller...</span>")
 					return
 				pot.HYPdestroyplant()

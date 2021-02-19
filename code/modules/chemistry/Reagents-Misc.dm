@@ -2835,7 +2835,7 @@ datum
 
 			on_plant_life(var/obj/machinery/plantpot/P)
 				var/datum/plant/growing = P.current
-				if (growing.growthmode == "weed")
+				if (has_plant_flag(growing,GROWTHMODE_WEED))
 					P.HYPdamageplant("poison",2)
 					P.growth -= 3
 		safrole
@@ -2884,7 +2884,7 @@ datum
 					DNA.cropsize++
 				if (DNA.harvests > 1 && prob(24))
 					DNA.harvests--
-				if (growing.isgrass && prob(66) && P.growth > 2)
+				if (has_plant_flag(growing,SINGLE_HARVEST) && prob(66) && P.growth > 2)
 					P.growth -= 2
 				if (prob(50))
 					P.growth++
@@ -3003,7 +3003,7 @@ datum
 */
 			on_plant_life(var/obj/machinery/plantpot/P)
 				var/datum/plant/growing = P.current
-				if (growing.growthmode == "carnivore") P.growth += 3
+				if (has_plant_flag(growing,GROWTHMODE_CARNIVORE)) P.growth += 3
 
 			on_transfer(var/datum/reagents/source, var/datum/reagents/target, var/trans_amt)
 				var/list/source_pathogens = source.aggregate_pathogens()

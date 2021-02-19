@@ -242,7 +242,7 @@
 						if (!SRCDNA || HYPCheckCommut(SRCDNA,"Seedless")) doseed = 0
 						if (doseed)
 							var/datum/plant/stored = P.planttype
-							if (istype(stored) && !stored.isgrass)
+							if (istype(stored) && !has_plant_flag(stored,SINGLE_HARVEST))
 								var/obj/item/seed/S
 								if (stored.unique_seed)
 									S = unpool(stored.unique_seed)

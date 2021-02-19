@@ -7,6 +7,7 @@ ABSTRACT_TYPE(/datum/plant/flower)
 
 /datum/plant/flower/rose
 	name = "Rose"
+	plant_flags = FORCE_SEED_ON_HARVEST
 	seedcolor = "#AA2222"
 	crop = /obj/item/plant/flower/rose
 	starthealth = 20
@@ -17,6 +18,5 @@ ABSTRACT_TYPE(/datum/plant/flower)
 	endurance = 0
 	nectarlevel = 12
 	genome = 7
-	force_seed_on_harvest = 1
 	mutations = list()
 	commuts = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/damage_res/bad)

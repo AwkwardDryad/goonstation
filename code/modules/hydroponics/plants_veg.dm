@@ -5,6 +5,7 @@ ABSTRACT_TYPE(/datum/plant/veg)
 
 /datum/plant/veg/lettuce
 	name = "Lettuce"
+	plant_flags = SINGLE_HARVEST
 	seedcolor = "#006622"
 	crop = /obj/item/reagent_containers/food/snacks/plant/lettuce
 	starthealth = 30
@@ -12,13 +13,13 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	harvtime = 80
 	cropsize = 8
 	harvests = 1
-	isgrass = 1
 	endurance = 5
 	genome = 12
 	commuts = list(/datum/plant_gene_strain/reagent_adder,/datum/plant_gene_strain/damage_res/bad)
 
 /datum/plant/veg/cucumber
 	name = "Cucumber"
+	plant_flags = SINGLE_HARVEST
 	seedcolor = "#005622"
 	crop = /obj/item/reagent_containers/food/snacks/plant/cucumber
 	starthealth = 25
@@ -26,13 +27,13 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	harvtime = 100
 	cropsize = 8
 	harvests = 1
-	isgrass = 1
 	endurance = 6
 	genome = 19
 	commuts = list(/datum/plant_gene_strain/damage_res,/datum/plant_gene_strain/stabilizer)
 
 /datum/plant/veg/carrot
 	name = "Carrot"
+	plant_flags = SINGLE_HARVEST
 	seedcolor = "#774400"
 	crop = /obj/item/reagent_containers/food/snacks/plant/carrot
 	starthealth = 20
@@ -40,7 +41,6 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	harvtime = 100
 	cropsize = 6
 	harvests = 1
-	isgrass = 1
 	endurance = 5
 	genome = 16
 	nectarlevel = 10
@@ -48,6 +48,7 @@ ABSTRACT_TYPE(/datum/plant/veg)
 
 /datum/plant/veg/potato
 	name = "Potato"
+	plant_flags = SINGLE_HARVEST
 	seedcolor = "#555500"
 	crop = /obj/item/reagent_containers/food/snacks/plant/potato
 	starthealth = 40
@@ -55,7 +56,6 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	harvtime = 160
 	cropsize = 4
 	harvests = 1
-	isgrass = 1
 	endurance = 10
 	genome = 16
 	nectarlevel = 6

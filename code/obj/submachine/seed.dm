@@ -336,7 +336,7 @@
 					give = 0
 				if (HYPCheckCommut(DNA,/datum/plant_gene_strain/seedless))
 					give = 0
-				if(stored.no_extract)
+				if(has_plant_flag(stored,NO_EXTRACT))
 					give = 0
 				if (!give)
 					boutput(usr, "<span class='alert'>No viable seeds found in [I].</span>")
@@ -543,11 +543,15 @@
 					P.override_icon_state = dominantspecies.name
 				P.plant_icon = dominantspecies.plant_icon
 				P.crop = dominantspecies.crop
-				P.force_seed_on_harvest = dominantspecies.force_seed_on_harvest
-				P.harvestable = dominantspecies.harvestable
+				if(has_plant_flag(dominantspecies,FORCE_SEED_ON_HARVEST))
+					add_plant_flag(P,FORCE_SEED_ON_HARVEST)
+				if(has_plant_flag(dominantspecies,SINGLE_HARVEST))
+					add_plant_flag(P,SINGLE_HARVEST)
+				if(has_plant_flag(dominantspecies,NO_HARVEST))
+					add_plant_flag(P,NO_HARVEST)
+				if(has_plant_flag(dominantspecies,NO_SCAN))
+					add_plant_flag(P,NO_SCAN)
 				P.harvests = dominantspecies.harvests
-				P.isgrass = dominantspecies.isgrass
-				P.cantscan = dominantspecies.cantscan
 				P.nectarlevel = dominantspecies.nectarlevel
 				S.name = "[P.name] seed"
 
@@ -699,7 +703,7 @@
 
 		var/generation = 0
 
-		if (P.cantscan)
+		if (has_plant_flag(P,NO_SCAN))
 			return "<td colspan='9' class='c'>Can't scan!</td>"
 
 		if (istype(scanned, /obj/item/seed/))
