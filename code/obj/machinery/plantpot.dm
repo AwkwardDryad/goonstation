@@ -189,7 +189,7 @@
 		var/current_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
 		switch(current_water_level)
 			if(0 to 0)
-				return
+				return "no water"
 			if(1 to 40) current_water_level = 1
 			if(40 to 100) current_water_level = 2
 			if(100 to 200) current_water_level = 3
@@ -237,7 +237,7 @@
 		else
 			var/compared_water = water_preferred_vs_current()
 
-			if(compared_water)
+			if(compared_water != "no water")
 				var/is_slow_metabolism = HYPCheckCommut(DNA,/datum/plant_gene_strain/metabolism_slow)
 				var/is_fast_metabolism = HYPCheckCommut(DNA,/datum/plant_gene_strain/metabolism_fast)
 				switch(compared_water)

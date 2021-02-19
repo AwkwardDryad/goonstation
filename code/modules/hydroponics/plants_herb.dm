@@ -343,7 +343,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 
 /datum/plant/herb/Heather
 	name = "Heather"
-	plant_flags = NO_SIZE_SCALE
+	plant_flags = SINGLE_HARVEST | NO_SIZE_SCALE
 	seedcolor = "#872872"
 	crop = /obj/item/plant/herb/heather
 	starthealth = 1
