@@ -243,7 +243,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	harvests = 1
 	endurance = 0
 	vending = 1 //temporary
-	genome = 1
+	genome = 20
 	assoc_reagents = list("witch_hazel")
 	harvest_tools = list(TOOL_CUTTING,TOOL_SAWING,TOOL_SNIPPING)
 	harvest_tool_message = "<span style=\"color:green\"><b>You carefully slice segments off the plant and harvest the sprigs of witch hazel.</b></span>"
@@ -309,7 +309,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	harvests = 0
 	endurance = 1
 	vending = 1 //temporary
-	genome = 1
+	genome = 16
 	assoc_reagents = list("mandrake")
 	required_reagents = list(list(id="poo",amount=100))
 
@@ -340,3 +340,19 @@ ABSTRACT_TYPE(/datum/plant/herb)
 					take_bleeding_damage(M, null, 80, DAMAGE_CUT, 1, M.loc)  //Very Lound, much earbleeding
 				else
 					continue
+
+/datum/plant/herb/Heather
+	name = "Heather"
+	plant_flags = NO_SIZE_SCALE
+	seedcolor = "#872872"
+	crop = /obj/item/plant/herb/heather
+	starthealth = 1
+	growtime = 100
+	harvtime = 130
+	cropsize = 1
+	harvests = 0
+	endurance = 1
+	vending = 1 //temporary
+	genome = 1
+	preferred_water_level = 4
+	assoc_reagents = list("heather_oil")

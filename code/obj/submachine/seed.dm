@@ -551,6 +551,12 @@
 					add_plant_flag(P,NO_HARVEST)
 				if(has_plant_flag(dominantspecies,NO_SCAN))
 					add_plant_flag(P,NO_SCAN)
+				if(has_plant_flag(dominantspecies,NO_SIZE_SCALE))
+					add_plant_flag(P,NO_SIZE_SCALE)
+				if(dominantspecies.harvest_tools)
+					P.harvest_tools = dominantspecies.harvest_tools
+					P.harvest_tool_message = dominantspecies.harvest_tool_message
+					P.harvest_tool_fail_message = dominantspecies.harvest_tool_fail_message
 				P.harvests = dominantspecies.harvests
 				P.nectarlevel = dominantspecies.nectarlevel
 				S.name = "[P.name] seed"

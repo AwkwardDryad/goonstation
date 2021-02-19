@@ -3931,6 +3931,20 @@ datum
 				..()
 				return
 
+		heather
+			name = "heather oil"
+			id = "heather_oil"
+			fluid_r = 181
+			fluid_g = 150
+			fluid_b = 27
+			description = "Fuck the thistle man!"
+			reagent_state = LIQUID
+			depletion_rate = 0.4
+			transparency = 125
+
+			reaction_mob(var/mob/M, var/method=TOUCH, var/amount_passed)
+				..()
+
 /obj/badman/ //I really don't know a good spot to put this guy so im putting him here, fuck you.
 	name = "Senator Death Badman"
 	desc = "Finally, a politician I can trust."

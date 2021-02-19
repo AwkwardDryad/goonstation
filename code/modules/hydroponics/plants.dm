@@ -28,6 +28,7 @@ ABSTRACT_TYPE(/datum/plant)
 	var/harvests = 1 					// How many times you can harvest this species
 	var/nectarlevel = 0 				//If nonzero, slowly tries to maintain this level of nectar reagent.
 	var/genome = 0 						// Used for splicing - how "similar" the plants are = better odds of splice
+	var/preferred_water_level = 3		//1-4 : amount of reagent in the pot
 
 	//Vending
 	//-----//

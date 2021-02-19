@@ -409,6 +409,15 @@
 	crop_prefix = "sprig of "
 	crop_suffix = ""
 
+/obj/item/plant/herb/heather
+	name = "branch of witch hazel"
+	icon = 'icons/obj/foodNdrink/food_produce.dmi'
+	icon_state = "heather"
+	desc = "A pretty pink flowering herb!"
+	w_class = 1
+	crop_prefix = "branch of "
+	crop_suffix = ""
+
 // FLOWERS //
 
 /obj/item/plant/flower

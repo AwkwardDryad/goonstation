@@ -156,25 +156,25 @@
 
 		frequency.post_signal(src, signal)
 
-	proc/update_water_level() //checks reagent contents of the pot, then returns the cuurent water level
+	proc/update_water_level() //checks reagent contents of the pot, then returns the curent water level
 		var/current_total_volume = (src.reagents ? src.reagents.total_volume : 0)
 		var/current_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
 		switch(current_water_level)
 			if(0 to 0) current_water_level = 1
-			if(0 to 40) current_water_level = 2
-			if(40 to 100) current_water_level = 3
-			if(100 to 200) current_water_level = 4
-			if(200 to INFINITY) current_water_level = 5
+			if(1 to 40) current_water_level = 2
+			if(41 to 100) current_water_level = 3
+			if(101 to 200) current_water_level = 4
+			if(201 to INFINITY) current_water_level = 5
 		if(current_water_level != src.water_level)
 			src.water_level = current_water_level
 			src.do_update_water_icon = 1
 		if(!current)
 			switch(current_total_volume)
 				if(0 to 0) current_total_volume = 1
-				if(0 to 40) current_total_volume = 2
-				if(40 to 100) current_total_volume = 3
-				if(100 to 200) current_total_volume = 4
-				if(200 to INFINITY) current_total_volume = 5
+				if(1 to 40) current_total_volume = 2
+				if(41 to 100) current_total_volume = 3
+				if(101 to 200) current_total_volume = 4
+				if(201 to INFINITY) current_total_volume = 5
 			if(current_total_volume != src.total_volume)
 				src.total_volume = current_total_volume
 				src.do_update_water_icon = 1
@@ -184,6 +184,18 @@
 			src.do_update_water_icon = 0
 
 		return current_water_level
+
+	proc/water_preferred_vs_current()
+		var/current_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
+		switch(current_water_level)
+			if(0 to 0)
+				return
+			if(1 to 40) current_water_level = 1
+			if(40 to 100) current_water_level = 2
+			if(100 to 200) current_water_level = 3
+			if(200 to INFINITY) current_water_level = 4
+
+		. = abs(current.preferred_water_level-current_water_level)
 
 	on_reagent_change()
 		src.do_update_water_icon = 1
@@ -223,27 +235,50 @@
 			// simulation whatsoever and just adds one growth point per tick, ignoring all
 			// reagents and everything else going on.
 		else
-			var/current_water_level = src.update_water_level()
+			var/compared_water = water_preferred_vs_current()
 
-			// The above is pretty much to figure out whether or not the water level
-			// icon on the plant pot needs to change.
-
-			if(current_water_level)
-				if(current_water_level < 200) // max water limit!!
-					if(HYPCheckCommut(DNA,/datum/plant_gene_strain/metabolism_slow) && prob(50))
-						src.growth++
-						if(drink_rate)
-							drink_rate /= 2
+			if(compared_water)
+				var/is_slow_metabolism = HYPCheckCommut(DNA,/datum/plant_gene_strain/metabolism_slow)
+				var/is_fast_metabolism = HYPCheckCommut(DNA,/datum/plant_gene_strain/metabolism_fast)
+				switch(compared_water)
+					if(0)
+						if(is_slow_metabolism)
+							if(prob(50))
+								growth++
+						else if(is_fast_metabolism)
+							growth += 4
+						else
+							growth += 2
+						if(prob(10)) //extra bonus for taking care of your plants <3
+							growth++
+					if(1)
+						if(is_slow_metabolism)
+							if(prob(50))
+								growth++
+						else if(is_fast_metabolism)
+							growth += 2
+						else
+							growth++
+					if(2)
+						if(is_slow_metabolism)
+							if(prob(25))
+								growth++
+						else if(is_fast_metabolism)
+							if(prob(20))
+								growth++
+						else
+							if(prob(10))
+								growth++
+				if(is_slow_metabolism)
+					if(drink_rate)
+						drink_rate /= 2
 						// If our plant has a slow metabolism, it will only gain growth 50% of
 						// the time compared to usual. It consumes reagents a lot slower though.
 						// This is essentially like putting the plant on slow-mo overall.
-					else
-						src.growth += growth_rate
-						// If not, it grows 2 points per tick - the regular rate. Remember, the
-						// tick rate is halved so 1 point would mean plants take AGES to grow.
-					if(HYPCheckCommut(DNA,/datum/plant_gene_strain/metabolism_fast))
+						// Additionally, plants with slow metabolism fare better in un-preferred climates
+				else if(is_fast_metabolism)
+					if(drink_rate)
 						drink_rate *= 2
-						src.growth += growth_rate
 						// The "growth rate on crack" mutation. Also causes it to take up
 						// reagents a lot faster - it's like hitting fast forward for plants.
 			else
