@@ -189,3 +189,17 @@
 	name = "Enzymatic"
 	desc = "Produce harvested from this plant may contain powerful enzymes."
 	reagents_to_add = list ("booster_enzyme")
+
+/datum/plant_gene_strain/slippery
+	name = "Slippery"
+	desc = "Overproduces oil, coating nearby tiles in the slippery substance" //I am an asshole.
+
+	on_process(var/obj/machinery/plantpot/PP)
+		if(..())
+			return
+		var/list/turflist = list()
+		for(var/turf/T in range(1,PP))
+			turflist += T
+			var/wet = image('icons/effects/water.dmi',"wet_floor")
+			T.UpdateOverlays(wet, "wet_overlay")
+			T.wet = 2
