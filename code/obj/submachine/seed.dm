@@ -557,6 +557,10 @@
 					P.harvest_tools = dominantspecies.harvest_tools
 					P.harvest_tool_message = dominantspecies.harvest_tool_message
 					P.harvest_tool_fail_message = dominantspecies.harvest_tool_fail_message
+				if(dominantspecies.preferred_water_level > P.preferred_water_level)
+					P.preferred_water_level++
+				else if(dominantspecies.preferred_water_level < P.preferred_water_level)
+					P.preferred_water_level--
 				P.harvests = dominantspecies.harvests
 				P.nectarlevel = dominantspecies.nectarlevel
 				S.name = "[P.name] seed"
