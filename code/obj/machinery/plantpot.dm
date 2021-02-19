@@ -917,7 +917,7 @@
 			if(MUT.harvest_override && MUT.crop)
 				if(src.growth >= current.harvtime - plantgenes.harvtime) return 1
 				else return 0
-		if(!current.crop || has_plant_flag(current.crop,NO_HARVEST)) return 0
+		if(!current.crop || has_plant_flag(current,NO_HARVEST)) return 0
 
 		if(src.growth >= current.harvtime - plantgenes.harvtime) return 1
 		else return 0
