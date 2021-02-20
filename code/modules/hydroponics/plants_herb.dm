@@ -1,7 +1,6 @@
 ABSTRACT_TYPE(/datum/plant/herb)
 /datum/plant/herb
 	plant_icon = 'icons/obj/hydroponics/plants_herb.dmi'
-	category = "Herb"
 
 /datum/plant/herb/contusine
 	name = "Contusine"
@@ -212,7 +211,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 /datum/plant/herb/grass
 	name = "Grass"
 	plant_flags = SINGLE_HARVEST
-	category = "Miscellaneous" //this seems inconsistent, shouldn't  this mean it belongs in plants_crop?
 	seedcolor = "#00CC00"
 	crop = /obj/item/plant/herb/grass
 	starthealth = 10
@@ -244,10 +242,11 @@ ABSTRACT_TYPE(/datum/plant/herb)
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
-		if (.) return
-		var/datum/plant/P = POT.current
+		if(.) return
 		var/datum/plantgenes/DNA = POT.plantgenes
-
+		if(HYPCheckCommut(DNA,/datum/plant_gene_strain/seedless))
+			return
+		var/datum/plant/P = POT.current
 		if (POT.growth > (P.harvtime + DNA.harvtime) && prob((10+DNA.cropsize))) //incrase probability with yield (10% is decent as a base level)
 			var/obj/item/seed/S
 			if (POT.current.unique_seed)

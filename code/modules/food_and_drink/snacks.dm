@@ -2454,8 +2454,8 @@
 	icon = 'icons/obj/foodNdrink/food_produce.dmi'
 	icon_state = "mandrake-fresh"
 	w_class = 1
-	//brewable = 1
-	//brew_result = "mandrake_tea?"
+	brewable = 1
+	brew_result = list("mandrake_cider")
 	var/list/bound_blood = list() //list of mobs bound to the mandrake (MAX: 2)
 	var/is_bloody
 	var/is_segment
@@ -2640,6 +2640,8 @@
 							H.bioHolder.mobAppearance.customization_second = "None"
 							H.bioHolder.mobAppearance.customization_third = "None"
 							wig.set_loc(H.loc)
+							H.set_clothing_icon_dirty()
+							H.update_colorful_parts()
 						limbs -= "hair"
 					else
 						mandrake_delimb("head",user.name)

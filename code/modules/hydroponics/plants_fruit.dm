@@ -1,7 +1,6 @@
 ABSTRACT_TYPE(/datum/plant/fruit)
 /datum/plant/fruit
 	plant_icon = 'icons/obj/hydroponics/plants_fruit.dmi'
-	category = "Fruit" // This is either Fruit, Vegetable, Herb or Miscellaneous (or Flower, apparently)
 
 /datum/plant/fruit/tomato
 	name = "Tomato" // You want to capitalise this, it shows up in the seed vendor and plant pot

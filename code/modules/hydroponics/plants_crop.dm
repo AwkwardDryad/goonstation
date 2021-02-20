@@ -1,7 +1,6 @@
 ABSTRACT_TYPE(/datum/plant/crop)
 /datum/plant/crop
 	plant_icon = 'icons/obj/hydroponics/plants_crop.dmi'
-	category = "Miscellaneous"
 
 /datum/plant/crop/bamboo
 	name = "Bamboo"

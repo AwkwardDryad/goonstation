@@ -35,7 +35,6 @@ ABSTRACT_TYPE(/datum/plant)
 	var/in_vendor = 1					// Is this seed vendable?
 	var/vending_details = "no description"	// Extra information on a given seed : appears in the seed market
 	var/ticket_cost = 0					// How many tickets does this seed cost?
-	var/category = null 				// Used for vendor filtering
 
 	//Other
 	//---//
