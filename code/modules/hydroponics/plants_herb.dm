@@ -356,3 +356,4 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 1
 	preferred_water_level = 4
 	assoc_reagents = list("heather_oil")
+	commuts = list(/datum/plant_gene_strain/slippery)

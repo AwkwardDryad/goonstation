@@ -193,13 +193,16 @@
 /datum/plant_gene_strain/slippery
 	name = "Slippery"
 	desc = "Overproduces oil, coating nearby tiles in the slippery substance" //I am an asshole.
+	process_proc_chance = 100
 
 	on_process(var/obj/machinery/plantpot/PP)
 		if(..())
 			return
+
 		var/list/turflist = list()
 		for(var/turf/T in range(1,PP))
 			turflist += T
-			var/wet = image('icons/effects/water.dmi',"wet_floor")
-			T.UpdateOverlays(wet, "wet_overlay")
-			T.wet = 2
+		var/turf/T = pick(turflist)
+		T.reagents.add_reagent("lube",1)
+		T.reagents.reaction(T.loc)
+		playsound(PP.loc, 'sound/impact_sounds/Liquid_Slosh_1.ogg', 25, 1, 0.3)
