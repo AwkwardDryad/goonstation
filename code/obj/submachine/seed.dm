@@ -1396,6 +1396,7 @@
 	density = 1
 	anchored = 1
 	var/tickets = 0
+	var/tab = 2
 	var/list/crop = list()
 	var/list/fruit = list()
 	var/list/vegetable = list()
@@ -1426,6 +1427,10 @@
 			var/datum/plant/p = new plant
 			flower += list(p.name,p,p.vending_details,p.ticket_cost)
 
+		for(var/plant in concrete_typesof(/datum/plant/weed))
+			var/datum/plant/p = new plant
+			alien += list(p.name,p,p.vending_details,p.ticket_cost)
+
 		for(var/plant in concrete_typesof(/datum/plant/artifact))
 			var/datum/plant/p = new plant
 			alien += list(p.name,p,p.vending_details,p.ticket_cost)
@@ -1444,6 +1449,7 @@
 	ui_data(mob/user)
 		. = list(
 			"tickets" = tickets,
+			"tab" = tab,
 			"croplist" = crop,
 			"fruitlist" = fruit,
 			"vegetablelist" = vegetable,
