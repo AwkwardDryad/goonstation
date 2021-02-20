@@ -304,6 +304,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 16
 	assoc_reagents = list("mandrake")
 	required_reagents = list(list(id="poo",amount=100))
+	ticket_cost = 50
 
 	HYPharvested_proc(var/obj/machinery/plantpot/POT,var/mob/user)
 		if (.) return

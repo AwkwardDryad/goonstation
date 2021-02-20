@@ -2543,6 +2543,8 @@
 			. = 1
 
 	proc/cleanup_bound_blood(var/balance)
+		if(!length(bound_blood))
+			return
 		var/gibbed
 		for(var/mob/living/carbon/human/H in bound_blood)
 			if(!H.bioHolder)

@@ -12182,7 +12182,7 @@
 	dir = 5;
 	icon_state = "line2"
 	},
-/obj/submachine/seed_market,
+/obj/machinery/hydro_growlamp,
 /turf/simulated/floor/grass/random,
 /area/station/hydroponics/bay)
 "awz" = (
@@ -13620,7 +13620,6 @@
 	dir = 6;
 	icon_state = "line2"
 	},
-/obj/machinery/hydro_growlamp,
 /turf/simulated/floor/grass/random,
 /area/station/hydroponics/bay)
 "azj" = (
