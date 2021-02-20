@@ -1384,3 +1384,34 @@
 				qdel(src)
 				return
 		..()
+
+/obj/submachine/seed_market
+	name = "seed market"
+	desc = "A vending....gachapon....ticket machine....Someone had waaay too much fun making this thing."
+	mats = 6
+	flags = TGUI_INTERACTIVE
+	deconstruct_flags = DECON_SCREWDRIVER | DECON_WIRECUTTERS | DECON_MULTITOOL
+	icon = 'icons/obj/vending.dmi'
+	icon_state = "seed_market"
+	density = 1
+	anchored = 1
+	var/tickets = 0
+	var/list/test = list("A","B","C")
+
+	attack_hand(var/mob/user as mob)
+		if(!ishuman(user))
+			return
+		ui_interact(user)
+
+	ui_interact(mob/user, datum/tgui/ui)
+		ui = tgui_process.try_update_ui(user, src, ui)
+		if(!ui)
+			ui = new(user, src, "SeedMarket", "Seed Market")
+			ui.open()
+
+	ui_data(mob/user)
+		. = list(
+			"tickets" = tickets,
+			"products" = test
+		)
+			
