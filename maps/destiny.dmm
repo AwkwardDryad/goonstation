@@ -11681,9 +11681,11 @@
 	dir = 4;
 	icon_state = "line1"
 	},
-/obj/machinery/hydro_growlamp,
 /obj/machinery/light{
 	dir = 4
+	},
+/obj/submachine/seed_manipulator{
+	dir = 8
 	},
 /turf/simulated/floor/blue/side{
 	dir = 4
@@ -12180,10 +12182,7 @@
 	dir = 5;
 	icon_state = "line2"
 	},
-/obj/submachine/seed_manipulator{
-	dir = 8;
-	tag = ""
-	},
+/obj/machinery/hydro_growlamp,
 /turf/simulated/floor/grass/random,
 /area/station/hydroponics/bay)
 "awz" = (
@@ -13620,9 +13619,6 @@
 /obj/decal/tile_edge/line/green{
 	dir = 6;
 	icon_state = "line2"
-	},
-/obj/submachine/seed_manipulator{
-	dir = 8
 	},
 /turf/simulated/floor/grass/random,
 /area/station/hydroponics/bay)

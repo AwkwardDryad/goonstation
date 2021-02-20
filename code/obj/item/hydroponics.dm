@@ -367,8 +367,6 @@
 		playsound(src.loc, "sound/machines/click.ogg", 100, 1)
 		var/list/usable = list()
 		for(var/datum/plant/A in hydro_controls.plant_species)
-			if (!A.vending)
-				continue
 			usable += A
 
 		var/holder = src.loc

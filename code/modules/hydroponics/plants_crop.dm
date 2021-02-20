@@ -1,7 +1,6 @@
 ABSTRACT_TYPE(/datum/plant/crop)
 /datum/plant/crop
 	plant_icon = 'icons/obj/hydroponics/plants_crop.dmi'
-	category = "Miscellaneous"
 
 /datum/plant/crop/bamboo
 	name = "Bamboo"
@@ -77,7 +76,6 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	cropsize = 2
 	harvests = 4
 	endurance = 0
-	vending = 1
 	genome = 6
 	mutations = list(/datum/plantmutation/beans/jelly)
 	commuts = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/metabolism_slow)
@@ -93,7 +91,6 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	cropsize = 2
 	harvests = 4
 	endurance = 0
-	vending = 1
 	genome = 8
 	commuts = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/metabolism_slow)
 
@@ -217,7 +214,6 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 10
 	endurance = 5
 	genome = 20
-	vending = 1
 	mutations = list(/datum/plantmutation/tree/money, /datum/plantmutation/tree/rubber,/datum/plantmutation/tree/sassafras, /datum/plantmutation/tree/dog,/datum/plantmutation/tree/paper)
 	commuts = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/metabolism_slow,/datum/plant_gene_strain/resistance_drought)
 

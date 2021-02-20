@@ -1104,7 +1104,7 @@
 	I.reagents.trans_to(src.extract_to, I.reagents.total_volume)
 	src.update_icon()
 
-/obj/submachine/seed_vendor
+/*/obj/submachine/seed_vendor //old seed vendor
 	name = "Seed Fabricator"
 	desc = "Fabricates basic plant seeds."
 	icon = 'icons/obj/vending.dmi'
@@ -1154,9 +1154,9 @@
 			dat+= "<u>Unit currently out of charge. Please wait.</u><br>"
 		dat += "<br>"
 		for(var/datum/plant/A in hydro_controls.plant_species)
-			if (!A.vending)
-				continue
-			if (A.vending > 1)
+			/*if (!A.vending)
+				continue*/
+			/*if (A.vending > 1)
 				if (src.hacked)
 					if (!src.category || (src.category == A.category))
 						dat += "<b>[A.name]</b>: <A href='?src=\ref[src];disp=\ref[A]'>(VEND)</A><br>"
@@ -1164,7 +1164,7 @@
 					continue
 			else
 				if (!src.category || (src.category == A.category))
-					dat += "<b>[A.name]</b>: <A href='?src=\ref[src];disp=\ref[A]'>(VEND)</A><br>"
+					dat += "<b>[A.name]</b>: <A href='?src=\ref[src];disp=\ref[A]'>(VEND)</A><br>"*/
 
 		user.Browse(dat, "window=seedfab;size=400x500")
 		onclose(user, "seedfab")
@@ -1226,9 +1226,9 @@
 				boutput(usr, "<span class='alert'>[src.name] fails to dispense anything.</span>")
 				return
 
-			if(!I.vending)
+			/*if(!I.vending)
 				trigger_anti_cheat(usr, "tried to href exploit vend forbidden seed [I] on [src]")
-				return
+				return*/
 
 			var/vend = src.vendamt
 			while(vend > 0)
@@ -1339,7 +1339,7 @@
 				else src.malfunction = 1
 			if (WIRE_POWER)
 				if (src.working) src.working = 0
-				else src.working = 1
+				else src.working = 1*/
 
 
 /obj/submachine/seed_manipulator/kudzu
@@ -1384,3 +1384,119 @@
 				qdel(src)
 				return
 		..()
+
+/obj/submachine/seed_vendor
+	name = "seed market"
+	desc = "A vending....gachapon....ticket machine....Someone had waaay too much fun making this thing."
+	mats = 6
+	flags = TGUI_INTERACTIVE
+	deconstruct_flags = DECON_SCREWDRIVER | DECON_WIRECUTTERS | DECON_MULTITOOL
+	icon = 'icons/obj/vending.dmi'
+	icon_state = "seed_market"
+	density = 1
+	anchored = 1
+	var/tickets = 0
+	var/tab = 2
+	var/list/crop = list()
+	var/list/fruit = list()
+	var/list/vegetable = list()
+	var/list/herb = list()
+	var/list/flower = list()
+	var/list/weed = list()
+	var/list/alien = list()
+	var/list/to_ui = list()
+	var/target_path
+
+	proc/sort_plant_list(var/list/L)
+		for(var/i = 1; i <= L.len; i++)
+			for(var/j = i+1; j <= L.len; j++)
+				if(sorttext(L[i]["name"], L[j]["name"]) == -1)
+					L.Swap(i, j)
+
+	New()
+		..()
+		for(var/plant in concrete_typesof(/datum/plant/crop))
+			var/datum/plant/p = new plant
+			crop += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+
+		for(var/plant in concrete_typesof(/datum/plant/fruit))
+			var/datum/plant/p = new plant
+			fruit += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+
+		for(var/plant in concrete_typesof(/datum/plant/veg))
+			var/datum/plant/p = new plant
+			vegetable += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+
+		for(var/plant in concrete_typesof(/datum/plant/herb))
+			var/datum/plant/p = new plant
+			herb += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+
+		for(var/plant in concrete_typesof(/datum/plant/flower))
+			var/datum/plant/p = new plant
+			flower += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+
+		for(var/plant in concrete_typesof(/datum/plant/weed))
+			var/datum/plant/p = new plant
+			weed += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+
+		for(var/plant in concrete_typesof(/datum/plant/artifact))
+			var/datum/plant/p = new plant
+			alien += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+
+		sort_plant_list(crop)
+		sort_plant_list(fruit)
+		sort_plant_list(vegetable)
+		sort_plant_list(herb)
+		sort_plant_list(flower)
+		sort_plant_list(weed)
+		sort_plant_list(alien)
+
+		to_ui += list(list("category"="Crops","plant_list"=crop))
+		to_ui += list(list("category"="Fruit","plant_list"=fruit))
+		to_ui += list(list("category"="Vegetables","plant_list"=vegetable))
+		to_ui += list(list("category"="Herbs","plant_list"=herb))
+		to_ui += list(list("category"="Flowers","plant_list"=flower))
+		to_ui += list(list("category"="Weeds","plant_list"=weed))
+		to_ui += list(list("category"="Experimental","plant_list"=alien))
+
+	attack_hand(var/mob/user as mob)
+		if(!ishuman(user))
+			return
+		ui_interact(user)
+
+	ui_interact(mob/user, datum/tgui/ui)
+		ui = tgui_process.try_update_ui(user, src, ui)
+		if(!ui)
+			ui = new(user, src, "SeedMarket", "Seed Market")
+			ui.open()
+
+	ui_data(mob/user)
+		. = list(
+			"tickets" = tickets,
+			"tab" = tab,
+			"plant_lists" = to_ui
+		)
+
+	ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+		. = ..()
+		if (.)
+			return
+		switch(action)
+			if("spawn_item")
+				target_path = params["target_path"]
+				tickets -= params["cost"]
+				vend_item(ui.user)
+
+	proc/vend_item(var/mob/user)
+		var/path = text2path(target_path)
+		var/datum/plant/p = new path
+		var/obj/item/seed/S
+		if(p.unique_seed)
+			S = unpool(p.unique_seed)
+			user.put_in_hand_or_drop(S)
+		else
+			S = unpool(/obj/item/seed)
+			user.put_in_hand_or_drop(S)
+			S.removecolor()
+		S.generic_seed_setup(p)
+

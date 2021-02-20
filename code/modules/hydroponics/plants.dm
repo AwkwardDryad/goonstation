@@ -32,8 +32,9 @@ ABSTRACT_TYPE(/datum/plant)
 
 	//Vending
 	//-----//
-	var/vending = 1 					// 1 = Appears in seed vendors, 2 = appears when hacked, 0 = doesn't appear
-	var/category = null 				// Used for vendor filtering
+	var/in_vendor = 1					// Is this seed vendable?
+	var/vending_details = "no description"	// Extra information on a given seed : appears in the seed market
+	var/ticket_cost = 0					// How many tickets does this seed cost?
 
 	//Other
 	//---//

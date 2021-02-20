@@ -1,7 +1,6 @@
 ABSTRACT_TYPE(/datum/plant/herb)
 /datum/plant/herb
 	plant_icon = 'icons/obj/hydroponics/plants_herb.dmi'
-	category = "Herb"
 
 /datum/plant/herb/contusine
 	name = "Contusine"
@@ -128,7 +127,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 6
 	harvests = 1
 	endurance = 0
-	vending = 2
 	nectarlevel = 5
 	genome = 2
 	assoc_reagents = list("THC","CBD")
@@ -147,7 +145,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 6
 	harvests = 1
 	endurance = 0
-	vending = 2
 	genome = 1
 	assoc_reagents = list("catonium")
 
@@ -164,7 +161,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 6
 	harvests = 1
 	endurance = 0
-	vending = 1
 	genome = 1
 	assoc_reagents = list("mercury")
 
@@ -179,7 +175,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 4
 	harvests = 1
 	endurance = 0
-	vending = 2
 	genome = 1
 	assoc_reagents = list("morphine")
 
@@ -193,7 +188,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 2
 	harvests = 1
 	endurance = 0
-	vending = 2
 	genome = 1
 	assoc_reagents = list("wolfsbane")
 
@@ -217,7 +211,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 /datum/plant/herb/grass
 	name = "Grass"
 	plant_flags = SINGLE_HARVEST
-	category = "Miscellaneous" //this seems inconsistent, shouldn't  this mean it belongs in plants_crop?
 	seedcolor = "#00CC00"
 	crop = /obj/item/plant/herb/grass
 	starthealth = 10
@@ -226,7 +219,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	harvests = 1
 	cropsize = 8
 	endurance = 10
-	vending = 2
 	genome = 4
 	assoc_reagents = list("grassgro")
 	commuts = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
@@ -242,7 +234,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 2
 	harvests = 1
 	endurance = 0
-	vending = 1 //temporary
 	genome = 20
 	assoc_reagents = list("witch_hazel")
 	harvest_tools = list(TOOL_CUTTING,TOOL_SAWING,TOOL_SNIPPING)
@@ -251,10 +242,11 @@ ABSTRACT_TYPE(/datum/plant/herb)
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
-		if (.) return
-		var/datum/plant/P = POT.current
+		if(.) return
 		var/datum/plantgenes/DNA = POT.plantgenes
-
+		if(HYPCheckCommut(DNA,/datum/plant_gene_strain/seedless))
+			return
+		var/datum/plant/P = POT.current
 		if (POT.growth > (P.harvtime + DNA.harvtime) && prob((10+DNA.cropsize))) //incrase probability with yield (10% is decent as a base level)
 			var/obj/item/seed/S
 			if (POT.current.unique_seed)
@@ -308,10 +300,10 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 1
 	harvests = 0
 	endurance = 1
-	vending = 1 //temporary
 	genome = 16
 	assoc_reagents = list("mandrake")
 	required_reagents = list(list(id="poo",amount=100))
+	ticket_cost = 50
 
 	HYPharvested_proc(var/obj/machinery/plantpot/POT,var/mob/user)
 		if (.) return
@@ -352,7 +344,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 1
 	harvests = 0
 	endurance = 1
-	vending = 1 //temporary
 	genome = 1
 	preferred_water_level = 4
 	assoc_reagents = list("heather_oil")

@@ -2,7 +2,6 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 /datum/plant/artifact
 	name = "Unknown"
 	plant_icon = 'icons/obj/hydroponics/plants_alien.dmi'
-	vending = 0
 
 // non-harvestables
 
@@ -242,7 +241,6 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	growtime = 30
 	harvtime = 200
 	endurance = 10
-	vending = 0
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -283,5 +281,4 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	growtime = 300
 	harvtime = 600
 	endurance = 100
-	vending = 0
 	crop = /obj/item/raw_material/shard/plasmacrystal
