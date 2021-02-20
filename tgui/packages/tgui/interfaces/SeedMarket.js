@@ -11,10 +11,10 @@ export const SeedMarket = (props, context) => {
             width={730}
             height={415}>
             <Window.Content scrollable>
-            <Box mb="0.5em">
-                <strong>Stored Tickets:</strong>{tickets}
-             </Box>
-                <Box ml="1em">
+                <NoticeBox success>
+                    <strong>Stored Tickets:</strong> {tickets}
+                </NoticeBox>
+                <Box>
                     <Tabs>
                         <Tabs.Tab
                             icon="plus-square"
@@ -22,7 +22,7 @@ export const SeedMarket = (props, context) => {
                             All
                         </Tabs.Tab>
                         <Tabs.Tab
-                            icon="pagelines"
+                            icon="bread-slice"
                             onClick={() => setMenu("crop")}>
                             Crop
                         </Tabs.Tab>
