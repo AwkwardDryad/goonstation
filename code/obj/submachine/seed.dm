@@ -1154,9 +1154,9 @@
 			dat+= "<u>Unit currently out of charge. Please wait.</u><br>"
 		dat += "<br>"
 		for(var/datum/plant/A in hydro_controls.plant_species)
-			if (!A.vending)
-				continue
-			if (A.vending > 1)
+			/*if (!A.vending)
+				continue*/
+			/*if (A.vending > 1)
 				if (src.hacked)
 					if (!src.category || (src.category == A.category))
 						dat += "<b>[A.name]</b>: <A href='?src=\ref[src];disp=\ref[A]'>(VEND)</A><br>"
@@ -1164,7 +1164,7 @@
 					continue
 			else
 				if (!src.category || (src.category == A.category))
-					dat += "<b>[A.name]</b>: <A href='?src=\ref[src];disp=\ref[A]'>(VEND)</A><br>"
+					dat += "<b>[A.name]</b>: <A href='?src=\ref[src];disp=\ref[A]'>(VEND)</A><br>"*/
 
 		user.Browse(dat, "window=seedfab;size=400x500")
 		onclose(user, "seedfab")
@@ -1226,9 +1226,9 @@
 				boutput(usr, "<span class='alert'>[src.name] fails to dispense anything.</span>")
 				return
 
-			if(!I.vending)
+			/*if(!I.vending)
 				trigger_anti_cheat(usr, "tried to href exploit vend forbidden seed [I] on [src]")
-				return
+				return*/
 
 			var/vend = src.vendamt
 			while(vend > 0)
@@ -1396,7 +1396,39 @@
 	density = 1
 	anchored = 1
 	var/tickets = 0
-	var/list/test = list("A","B","C")
+	var/list/crop = list()
+	var/list/fruit = list()
+	var/list/vegetable = list()
+	var/list/herb = list()
+	var/list/flower = list()
+	var/list/weed = list()
+	var/list/alien = list()
+
+	New()
+		..()
+		for(var/plant in concrete_typesof(/datum/plant/crop))
+			var/datum/plant/p = new plant
+			crop += list(p.name,p,p.vending_details,p.ticket_cost)
+
+		for(var/plant in concrete_typesof(/datum/plant/fruit))
+			var/datum/plant/p = new plant
+			fruit += list(p.name,p,p.vending_details,p.ticket_cost)
+
+		for(var/plant in concrete_typesof(/datum/plant/veg))
+			var/datum/plant/p = new plant
+			vegetable += list(p.name,p,p.vending_details,p.ticket_cost)
+
+		for(var/plant in concrete_typesof(/datum/plant/herb))
+			var/datum/plant/p = new plant
+			herb += list(p.name,p,p.vending_details,p.ticket_cost)
+
+		for(var/plant in concrete_typesof(/datum/plant/flower))
+			var/datum/plant/p = new plant
+			flower += list(p.name,p,p.vending_details,p.ticket_cost)
+
+		for(var/plant in concrete_typesof(/datum/plant/artifact))
+			var/datum/plant/p = new plant
+			alien += list(p.name,p,p.vending_details,p.ticket_cost)
 
 	attack_hand(var/mob/user as mob)
 		if(!ishuman(user))
@@ -1412,6 +1444,11 @@
 	ui_data(mob/user)
 		. = list(
 			"tickets" = tickets,
-			"products" = test
+			"croplist" = crop,
+			"fruitlist" = fruit,
+			"vegetablelist" = vegetable,
+			"herblist" = herb,
+			"flowerlist" = flower,
+			"weedlist" = weed,
+			"alienlist" = alien
 		)
-			

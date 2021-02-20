@@ -14,7 +14,6 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	harvests = 10
 	endurance = 40
 	cropsize = 3
-	vending = 2
 	genome = 30
 	assoc_reagents = list("space_fungus")
 	mutations = list(/datum/plantmutation/fungus/amanita,/datum/plantmutation/fungus/psilocybin,/datum/plantmutation/fungus/cloak)
@@ -28,7 +27,6 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	growtime = 50
 	harvtime = 100
 	endurance = 50
-	vending = 2
 	genome = 5
 	mutations = list(/datum/plantmutation/lasher/berries)
 
@@ -83,7 +81,6 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	growtime = 30
 	harvtime = 100
 	endurance = 40
-	vending = 2
 	genome = 8
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
@@ -112,7 +109,6 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	growtime = 140
 	harvtime = 200
 	endurance = 80
-	vending = 2
 	genome = 40
 	assoc_reagents = list("radium")
 	mutations = list(/datum/plantmutation/radweed/redweed,/datum/plantmutation/radweed/safeweed)
@@ -165,7 +161,6 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	harvests = 1
 	cropsize = 3
 	endurance = 30
-	vending = 2
 	genome = 45
 	var/exploding = 0
 	assoc_reagents = list("toxic_slurry")

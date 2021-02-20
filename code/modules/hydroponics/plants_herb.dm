@@ -128,7 +128,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 6
 	harvests = 1
 	endurance = 0
-	vending = 2
 	nectarlevel = 5
 	genome = 2
 	assoc_reagents = list("THC","CBD")
@@ -147,7 +146,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 6
 	harvests = 1
 	endurance = 0
-	vending = 2
 	genome = 1
 	assoc_reagents = list("catonium")
 
@@ -164,7 +162,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 6
 	harvests = 1
 	endurance = 0
-	vending = 1
 	genome = 1
 	assoc_reagents = list("mercury")
 
@@ -179,7 +176,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 4
 	harvests = 1
 	endurance = 0
-	vending = 2
 	genome = 1
 	assoc_reagents = list("morphine")
 
@@ -193,7 +189,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 2
 	harvests = 1
 	endurance = 0
-	vending = 2
 	genome = 1
 	assoc_reagents = list("wolfsbane")
 
@@ -226,7 +221,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	harvests = 1
 	cropsize = 8
 	endurance = 10
-	vending = 2
 	genome = 4
 	assoc_reagents = list("grassgro")
 	commuts = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
@@ -242,7 +236,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 2
 	harvests = 1
 	endurance = 0
-	vending = 1 //temporary
 	genome = 20
 	assoc_reagents = list("witch_hazel")
 	harvest_tools = list(TOOL_CUTTING,TOOL_SAWING,TOOL_SNIPPING)
@@ -308,7 +301,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 1
 	harvests = 0
 	endurance = 1
-	vending = 1 //temporary
 	genome = 16
 	assoc_reagents = list("mandrake")
 	required_reagents = list(list(id="poo",amount=100))
@@ -352,7 +344,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	cropsize = 1
 	harvests = 0
 	endurance = 1
-	vending = 1 //temporary
 	genome = 1
 	preferred_water_level = 4
 	assoc_reagents = list("heather_oil")

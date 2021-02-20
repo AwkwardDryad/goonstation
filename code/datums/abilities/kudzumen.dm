@@ -421,11 +421,7 @@
 				continue
 
 			//Yeah, I know this can look better. But I'm thinking I might throw these numbers and values out and set up a new thing for it so I'm doing this for now.
-			if (A.vending == 0 && power == 3)
-				usable += A
-			else if (A.vending == 1 && power >= 1)
-				usable += A
-			else if (A.vending == 2 && power >= 2)
+			if(power)
 				usable += A
 
 		var/datum/plant/pick = input(holder.owner, "Which seed do you want?", "Portable Seed Fabricator", null) in usable
