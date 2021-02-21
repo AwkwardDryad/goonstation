@@ -37124,9 +37124,7 @@
 	},
 /area/titlescreen)
 "bMW" = (
-/obj/submachine/seed_vendor{
-	hacked = 1
-	},
+/obj/submachine/seed_vendor,
 /obj/decal/stage_edge{
 	layer = 2.8;
 	mouse_opacity = 0
