@@ -198,11 +198,23 @@
 	on_process(var/obj/machinery/plantpot/PP)
 		if(..())
 			return
+		if(!prob(75))
+			return
 
 		var/list/turflist = list()
 		for(var/turf/T in range(1,PP))
 			turflist += T
 		var/turf/T = pick(turflist)
-		T.reagents.add_reagent("lube",1)
-		T.reagents.reaction(T.loc)
+
+		if(T.wet >= 2)
+			return
+		var/wet = image('icons/effects/water.dmi',"wet_floor")
+		T.UpdateOverlays(wet, "wet_overlay")
+		T.wet = 2
+
+		SPAWN_DBG(80 SECONDS)
+			if(istype(T))
+				T.wet = 0
+				T.UpdateOverlays(null, "wet_overlay")
+
 		playsound(PP.loc, 'sound/impact_sounds/Liquid_Slosh_1.ogg', 25, 1, 0.3)
