@@ -44,7 +44,7 @@
 		src.plant_seed_color(src.seedcolor)
 
 	proc/removecolor()
-		src.overlays = 0
+		ClearAllOverlays()
 
 	unpooled()
 		..()
@@ -98,7 +98,7 @@
 		if (!src.artifact)
 			var/icon/I = new /icon('icons/obj/hydroponics/items_hydroponics.dmi',"seeds-ovl")
 			I.Blend(colorRef, ICON_ADD)
-			src.overlays += I
+			UpdateOverlays(image(I),"color")
 
 	proc/HYPinfusionS(var/reagent,var/obj/submachine/seed_manipulator/M)
 		// The proc for when the manipulator is infusing seeds with a reagent. This is sort of a

@@ -1406,6 +1406,7 @@
 	var/list/alien = list()
 	var/list/to_ui = list()
 	var/target_path
+	var/gacha_cost = 10
 
 	proc/sort_plant_list(var/list/L)
 		for(var/i = 1; i <= L.len; i++)
@@ -1473,6 +1474,7 @@
 	ui_data(mob/user)
 		. = list(
 			"tickets" = tickets,
+			"gacha_cost" = gacha_cost,
 			"tab" = tab,
 			"plant_lists" = to_ui
 		)
@@ -1486,6 +1488,9 @@
 				target_path = params["target_path"]
 				tickets -= params["cost"]
 				vend_item(ui.user)
+			if("gachapon")
+				gachapon(ui.user)
+				
 
 	proc/vend_item(var/mob/user)
 		var/path = text2path(target_path)
@@ -1493,10 +1498,88 @@
 		var/obj/item/seed/S
 		if(p.unique_seed)
 			S = unpool(p.unique_seed)
-			user.put_in_hand_or_drop(S)
 		else
 			S = unpool(/obj/item/seed)
-			user.put_in_hand_or_drop(S)
 			S.removecolor()
 		S.generic_seed_setup(p)
+		user.put_in_hand_or_drop(S)
+
+	proc/gachapon(var/mob/user)
+		tickets -= gacha_cost
+		user.put_in_hand_or_drop(new /obj/item/seed_gachapon)
+
+/obj/item/seed_gachapon
+	name = "NaNo Gacha! Capsule"
+	desc = "NanoTrasen's failed attempt at making hydroponics more attractive to new recruits."
+	icon = 'icons/obj/items/figures.dmi'
+	var/obj/item/stored_seed
+	var/image/underlay
+	var/image/underlay_color
+	var/open = FALSE
+
+	New()
+		..()
+		icon_state = "[pick("cap-g","cap-b")]"
+		UpdateOverlays(image('icons/obj/items/figures.dmi',"cap-cap1"),"cap")
+		var/target_list = rand(1,7)
+		var/path
+		switch(target_list)
+			if(1)
+				path = pick(concrete_typesof(/datum/plant/crop))
+			if(2)
+				path = pick(concrete_typesof(/datum/plant/fruit))
+			if(3)
+				path = pick(concrete_typesof(/datum/plant/veg))
+			if(4)
+				path = pick(concrete_typesof(/datum/plant/herb))
+			if(5)
+				path = pick(concrete_typesof(/datum/plant/flower))
+			if(6)
+				path = pick(concrete_typesof(/datum/plant/weed))
+			if(7)
+				path = pick(concrete_typesof(/datum/plant/artifact))
+		var/datum/plant/p = new path
+		var/obj/item/seed/S
+		if(p.unique_seed)
+			S = unpool(p.unique_seed)
+		else
+			S = unpool(/obj/item/seed)
+			S.removecolor()
+
+		S.name = "NaNo Gacha! Mystery Seed"
+
+		S.generic_seed_setup(p)
+		S.set_loc(src)
+		stored_seed = S
+		
+		underlay_color = S.GetOverlayImage("color")
+		if(underlay_color)
+			underlay_color.pixel_y = 3
+		underlay = image(S.icon,S.icon_state)
+		underlay.pixel_y = 3
+
+	attack_self(var/mob/user)
+		if(!open)
+			ClearSpecificOverlays("cap")
+			if(underlay_color)
+				underlays += underlay_color
+			underlays += underlay
+			open = TRUE
+		else
+			if(stored_seed)
+				if(underlay_color)
+					underlays -= underlay_color
+				underlays -= underlay
+				UpdateOverlays(image('icons/obj/items/figures.dmi',"cap-cap1"),"cap")
+				open = FALSE
+
+	attack_hand(mob/user)
+		if(src.loc != user)
+			..()
+		else if(stored_seed && open)
+			user.put_in_hand_or_drop(stored_seed)
+			stored_seed = null
+			underlays -= underlay_color
+			underlays -= underlay
+
 
