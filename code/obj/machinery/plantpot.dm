@@ -1329,6 +1329,8 @@
 			. = hybrid
 
 	proc/Pot_add_gene_strain(var/strain) //for varediting! : requires a gene strain path
+		if(!growing)
+			return
 		Hydro_add_strain(DNA,strain)
 
 //children of plantpots
