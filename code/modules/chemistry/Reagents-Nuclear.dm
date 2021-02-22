@@ -47,7 +47,7 @@ datum
 
 			on_plant_life(var/obj/machinery/plantpot/P)
 				P.HYPdamageplant("radiation",2)
-				if (prob(24)) P.HYPmutateplant(1)
+				if (prob(24)) Hydro_mutate_DNA(P.DNA,1)
 
 		u235
 			name = "uranium-235"
@@ -73,7 +73,7 @@ datum
 
 			on_plant_life(var/obj/machinery/plantpot/P)
 				P.HYPdamageplant("radiation",2)
-				if (prob(24)) P.HYPmutateplant(1)
+				if (prob(24)) Hydro_mutate_DNA(P.DNA,1)
 
 		pu239
 			name = "plutonium-239"
@@ -99,7 +99,7 @@ datum
 
 			on_plant_life(var/obj/machinery/plantpot/P)
 				P.HYPdamageplant("radiation",2)
-				if (prob(24)) P.HYPmutateplant(1)
+				if (prob(24)) Hydro_mutate_DNA(P.DNA,1)
 
 
 		kremfuel

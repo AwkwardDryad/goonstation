@@ -18,4 +18,4 @@ ABSTRACT_TYPE(/datum/plant/flower)
 	nectarlevel = 12
 	genome = 7
 	mutations = list()
-	commuts = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/damage_res/bad)
+	gene_strains = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/damage_res/bad)

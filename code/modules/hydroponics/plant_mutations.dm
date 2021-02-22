@@ -20,7 +20,7 @@
 	var/list/CZrange = list(null,null) // as it wants otherwise with no consideration
 	var/list/PTrange = list(null,null)
 	var/list/ENrange = list(null,null)
-	var/commut = null // is a paticular common mutation required for this? (keeping it to 1 for now)
+	var/gene_strain = null // is a paticular common mutation required for this? (keeping it to 1 for now)
 	var/chance = 8 // How likely out of 100% is this mutation to appear when conditions are met?
 	var/list/assoc_reagents = list() // Used for extractions, harvesting, etc
 
@@ -31,7 +31,7 @@
 	proc/HYPharvested_proc_M(var/obj/machinery/plantpot/POT, var/mob/user)
 		lasterr = 0
 		if (!POT || !user) return 301
-		if (POT.dead || !POT.current) return 302
+		if (POT.dead || !POT.growing) return 302
 		if (lasterr)
 			logTheThing("debug", null, null, "<b>Plant HYP</b> [src] in pot [POT] failed with error [.]")
 			harvested_proc_override = 0
@@ -40,7 +40,7 @@
 	proc/HYPspecial_proc_M(var/obj/machinery/plantpot/POT)
 		lasterr = 0
 		if (!POT) lasterr = 401
-		if (POT.dead || !POT.current) lasterr = 402
+		if (POT.dead || !POT.growing) lasterr = 402
 		if (lasterr)
 			logTheThing("debug", null, null, "<b>Plant HYP</b> [src] in pot [POT] failed with error [.]")
 			special_proc_override = 0
@@ -49,7 +49,7 @@
 	proc/HYPattacked_proc_M(var/obj/machinery/plantpot/POT,var/mob/user)
 		lasterr = 0
 		if (!POT) lasterr = 501
-		if (POT.dead || !POT.current) lasterr = 502
+		if (POT.dead || !POT.growing) lasterr = 502
 		if (lasterr)
 			logTheThing("debug", null, null, "<b>Plant HYP</b> [src] in pot [POT] failed with error [.]")
 			attacked_proc_override = 0
@@ -169,7 +169,7 @@
 	HYPspecial_proc_M(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plantgenes/DNA = POT.DNA
 
 		var/thud_prob = max(0,min(100, DNA.endurance / 2))
 
@@ -240,8 +240,8 @@
 	HYPspecial_proc_M(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		var/fart_prob = max(0,min(100,DNA.potency))
 
@@ -384,8 +384,8 @@
 	HYPspecial_proc_M(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth > (P.harvtime + DNA.harvtime) && prob(10))
 			var/list/nerds = list()
@@ -493,8 +493,8 @@
 	HYPspecial_proc_M(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth > (P.harvtime - DNA.harvtime) && prob(10))
 			var/obj/overlay/B = new /obj/overlay( POT.loc )
@@ -514,9 +514,9 @@
 				if (160 to INFINITY)
 					radrange = 3
 			for (var/obj/machinery/plantpot/C in range(radrange,POT))
-				var/datum/plant/growing = C.current
+				var/datum/plant/growing = C.growing
 				if (istype(growing,/datum/plant/weed/radweed)) continue
-				if (growing) C.HYPmutateplant(radrange * 2)
+				if (growing) Hydro_mutate_DNA(C.DNA,radrange * 2)
 
 /datum/plantmutation/radweed/redweed
 	name = "Smoldering Radweed"
@@ -587,8 +587,8 @@
 	HYPspecial_proc_M(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth > (P.growtime + DNA.growtime) && prob(5))
 			POT.visible_message("<span class='combat'><b>[POT.name]</b> [pick("howls","bays","whines","barks","croons")]!</span>")
@@ -597,8 +597,8 @@
 	HYPattacked_proc_M(var/obj/machinery/plantpot/POT,var/mob/user)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth < (P.growtime + DNA.growtime)) return 0
 		playsound(get_turf(POT), pick("sound/voice/animal/howl1.ogg","sound/voice/animal/howl2.ogg","sound/voice/animal/howl3.ogg","sound/voice/animal/howl4.ogg","sound/voice/animal/howl5.ogg","sound/voice/animal/howl6.ogg"), 30, 1,-1)

@@ -14,7 +14,7 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	harvests = 1
 	endurance = 5
 	genome = 12
-	commuts = list(/datum/plant_gene_strain/reagent_adder,/datum/plant_gene_strain/damage_res/bad)
+	gene_strains = list(/datum/plant_gene_strain/reagent_adder,/datum/plant_gene_strain/damage_res/bad)
 
 /datum/plant/veg/cucumber
 	name = "Cucumber"
@@ -28,7 +28,7 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	harvests = 1
 	endurance = 6
 	genome = 19
-	commuts = list(/datum/plant_gene_strain/damage_res,/datum/plant_gene_strain/stabilizer)
+	gene_strains = list(/datum/plant_gene_strain/damage_res,/datum/plant_gene_strain/stabilizer)
 
 /datum/plant/veg/carrot
 	name = "Carrot"
@@ -43,7 +43,7 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	endurance = 5
 	genome = 16
 	nectarlevel = 10
-	commuts = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/mutations/bad)
+	gene_strains = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/mutations/bad)
 
 /datum/plant/veg/potato
 	name = "Potato"
@@ -58,7 +58,7 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	endurance = 10
 	genome = 16
 	nectarlevel = 6
-	commuts = list(/datum/plant_gene_strain/damage_res,/datum/plant_gene_strain/stabilizer)
+	gene_strains = list(/datum/plant_gene_strain/damage_res,/datum/plant_gene_strain/stabilizer)
 
 /datum/plant/veg/onion
 	name = "Onion"
@@ -71,7 +71,7 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	harvests = 1
 	endurance = 3
 	genome = 13
-	commuts = list(/datum/plant_gene_strain/splicing,/datum/plant_gene_strain/reagent_adder/toxic)
+	gene_strains = list(/datum/plant_gene_strain/splicing,/datum/plant_gene_strain/reagent_adder/toxic)
 
 /datum/plant/veg/garlic
 	name = "Garlic"
@@ -84,4 +84,4 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	harvests = 1
 	endurance = 3
 	genome = 13
-	commuts = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/terminator)
+	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/terminator)

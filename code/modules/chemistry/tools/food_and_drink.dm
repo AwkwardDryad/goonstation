@@ -239,7 +239,7 @@
 						var/obj/item/reagent_containers/food/snacks/plant/P = src
 						var/doseed = 1
 						var/datum/plantgenes/SRCDNA = P.plantgenes
-						if (!SRCDNA || HYPCheckCommut(SRCDNA,"Seedless")) doseed = 0
+						if (!SRCDNA || Hydro_check_strain(SRCDNA,"Seedless")) doseed = 0
 						if (doseed)
 							var/datum/plant/stored = P.planttype
 							if (istype(stored) && !has_plant_flag(stored,SINGLE_HARVEST))
@@ -255,7 +255,7 @@
 								var/datum/plantgenes/DNA = P.plantgenes
 								var/datum/plantgenes/PDNA = S.plantgenes
 								S.generic_seed_setup(stored)
-								HYPpassplantgenes(DNA,PDNA)
+								Hydro_pass_DNA(DNA,PDNA)
 								if (stored.hybrid)
 									var/datum/plant/hybrid = new /datum/plant(S)
 									for (var/V in stored.vars)

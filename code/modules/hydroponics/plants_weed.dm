@@ -32,8 +32,8 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth > (P.growtime + DNA.growtime) && prob(33))
 			for (var/mob/living/M in range(1,POT))
@@ -47,8 +47,8 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	HYPattacked_proc(var/obj/machinery/plantpot/POT,var/mob/user,var/obj/item/W)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth < (P.growtime + DNA.growtime)) return 0
 		// It's not big enough to be violent yet, so nothing happens
@@ -68,7 +68,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 			boutput(user, "<span class='alert'>The lasher flails at you violently! You might need to weaken it first...</span>")
 			return 1
 		else
-			HYPaddCommut(POT.current, POT.plantgenes, /datum/plant_gene_strain/reagent_adder/lasher)
+			Hydro_add_strain(POT.DNA, /datum/plant_gene_strain/reagent_adder/lasher)
 			return 0
 
 /datum/plant/weed/creeper
@@ -85,17 +85,17 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth > (P.growtime + DNA.growtime) && POT.health > P.starthealth / 2 && prob(33))
 			for (var/obj/machinery/plantpot/C in range(1,POT))
-				var/datum/plant/growing = C.current
-				if (!C.dead && C.current && !istype(growing,/datum/plant/crystal) && !istype(growing,/datum/plant/weed/creeper)) C.health -= 10
-				else if (C.dead) C.HYPdestroyplant()
-				else if (!C.current)
+				var/datum/plant/growing = C.growing
+				if (!C.dead && C.growing && !istype(growing,/datum/plant/crystal) && !istype(growing,/datum/plant/weed/creeper)) C.health -= 10
+				else if (C.dead) C.destroy_plant()
+				else if (!C.growing)
 					var/obj/item/seed/creeper/WS = new(src)
-					C.HYPnewplant(WS)
+					C.create_plant(WS)
 					spawn(0.5 SECONDS)
 						qdel(WS)
 					break
@@ -115,8 +115,8 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth > (P.harvtime + DNA.harvtime) && prob(10))
 			var/obj/overlay/B = new /obj/overlay( POT.loc )
@@ -143,11 +143,11 @@ ABSTRACT_TYPE(/datum/plant/weed)
 			for (var/mob/living/carbon/M in range(radrange,POT))
 				M.changeStatus("radiation", (radstrength)*10, 3)
 			for (var/obj/machinery/plantpot/C in range(radrange,POT))
-				var/datum/plant/growing = C.current
+				var/datum/plant/growing = C.growing
 				if (POT.health <= P.starthealth / 2) break
 				if (istype(growing,/datum/plant/weed/radweed)) continue
-				if (growing) C.HYPmutateplant(radrange * 2)
-				if (growing) C.HYPdamageplant("radiation",rand(0,radrange * 2))
+				if (growing) Hydro_mutate_DNA(C.DNA,radrange * 2)
+				if (growing) C.damage_plant("radiation",rand(0,radrange * 2))
 
 /datum/plant/weed/slurrypod
 	name = "Slurrypod"
@@ -165,7 +165,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	assoc_reagents = list("toxic_slurry")
 	mutations = list(/datum/plantmutation/slurrypod/omega)
 
-	HYPinfusionP(var/obj/item/seed/S,var/reagent)
+	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
 		var/datum/plantgenes/DNA = S.plantgenes
 		switch(reagent)
@@ -178,8 +178,8 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth >= (P.harvtime + DNA.harvtime + 50) && prob(10) && !src.exploding)
 			src.exploding = 1
@@ -198,5 +198,5 @@ ABSTRACT_TYPE(/datum/plant/weed)
 					M.reagents.add_reagent("toxic_slurry", rand(5,20))
 				for (var/obj/machinery/plantpot/C in view(3,POT)) C.reagents.add_reagent("toxic_slurry", rand(5,10))
 
-				POT.HYPdestroyplant()
+				POT.destroy_plant()
 				return

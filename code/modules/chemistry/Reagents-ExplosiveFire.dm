@@ -66,7 +66,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("fire",8)
+				P.damage_plant("fire",8)
 				P.growth -= 12
 
 		combustible/phlogiston/firedust
@@ -128,7 +128,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("poison",1)
+				P.damage_plant("poison",1)
 
 		combustible/kerosene
 			name = "kerosene"
@@ -687,7 +687,7 @@ datum
 				..()
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("poison", 1)
+				P.damage_plant("poison", 1)
 
 			epichlorohydrin
 				name = "epichlorohydrin"

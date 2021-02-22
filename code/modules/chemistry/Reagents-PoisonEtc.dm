@@ -21,7 +21,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("poison", 3 * damage_factor)
+				P.damage_plant("poison", 3 * damage_factor)
 
 			nitrogen_dioxide
 				name = "nitrogen dioxide"
@@ -45,7 +45,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("poison", 3 * damage_factor)
+				P.damage_plant("poison", 3 * damage_factor)
 
 			allyl_chloride
 				name = "allyl chloride"
@@ -119,7 +119,7 @@ datum
 					qdel(O)
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("acid",5)
+				P.damage_plant("acid",5)
 				P.growth -= 3
 
 			reaction_blob(var/obj/blob/B, var/volume)
@@ -174,7 +174,7 @@ datum
 						M.emote("scream")
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("acid", 1)
+				P.damage_plant("acid", 1)
 
 			reaction_blob(var/obj/blob/B, var/volume)
 				if (!blob_damage)
@@ -345,7 +345,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("poison",4)
+				P.damage_plant("poison",4)
 
 		harmful/acetaldehyde
 			name = "acetaldehyde"
@@ -366,7 +366,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("poison",4)
+				P.damage_plant("poison",4)
 
 		harmful/lipolicide
 			name = "lipolicide"
@@ -858,7 +858,7 @@ datum
 					qdel(O)
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("acid",10)
+				P.damage_plant("acid",10)
 				P.growth -= 5
 
 			reaction_blob(var/obj/blob/B, var/volume)
@@ -941,8 +941,8 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				if (prob(80)) P.HYPdamageplant("radiation",5)
-				if (prob(25)) P.HYPmutateplant(1)
+				if (prob(80)) P.damage_plant("radiation",5)
+				if (prob(25)) Hydro_mutate_DNA(P.DNA,1)
 
 		harmful/sodium_thiopental // COGWERKS CHEM REVISION PROJECT. idk some sort of potent opiate or sedative. chloral hydrate? ketamine
 			name = "sodium thiopental"
@@ -1115,7 +1115,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("poison",1)
+				P.damage_plant("poison",1)
 
 		harmful/spider_venom
 			name = "venom"
@@ -1237,11 +1237,11 @@ datum
 
 			on_plant_life(var/obj/machinery/plantpot/P)
 				/*if (prob(80)) P.growth -= rand(1,2)
-				if (prob(16)) P.HYPmutateplant(1)*/
+				if (prob(16)) Hydro_mutate_DNA(P.DNA,1)*/
 				if (prob(40) && P.growth > 1)
 					P.growth--
 				if (prob(24))
-					P.HYPmutateplant(1)
+					Hydro_mutate_DNA(P.DNA,1)
 
 		////////////// work in progress. new mutagen for omega slurrypods - cogwerks
 
@@ -1276,7 +1276,7 @@ datum
 
 			on_plant_life(var/obj/machinery/plantpot/P)
 				P.growth -= rand(1,2)
-				P.HYPmutateplant(1)
+				Hydro_mutate_DNA(P.DNA,1)
 
 		harmful/formaldehyde/werewolf_serum_fake1
 			name = "Werewolf Serum Precursor Alpha"
@@ -1573,7 +1573,7 @@ datum
 
 			on_plant_life(var/obj/machinery/plantpot/P)
 				if (prob(80)) P.growth -= rand(1,3)
-				if (prob(16)) P.HYPmutateplant(1)
+				if (prob(16)) Hydro_mutate_DNA(P.DNA,1)
 
 		harmful/madness_toxin
 			name = "Rajaijah"

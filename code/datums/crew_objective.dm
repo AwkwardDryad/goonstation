@@ -230,10 +230,8 @@ ABSTRACT_TYPE(/datum/objective/crew/botanist)
 		check_completion()
 			var/mutcount = 0
 			for(var/obj/machinery/plantpot/PP as() in machine_registry[MACHINES_PLANTPOTS])
-				if(PP.current)
-					var/datum/plantgenes/DNA = PP.plantgenes
-					var/datum/plantmutation/MUT = DNA.mutation
-					if (MUT)
+				if(PP.growing)
+					if(PP.MUT)
 						mutcount++
 						if(mutcount >= 3) return 1
 			return 0
@@ -253,7 +251,7 @@ ABSTRACT_TYPE(/datum/objective/crew/botanist)
 				if (istype(S) && istype(get_area(S), /area/station/hydroponics))
 					return 0
 			for (var/obj/machinery/plantpot/PP as() in machine_registry[MACHINES_PLANTPOTS])
-				if (PP.current && istype(PP.current, /datum/plant/herb/cannabis))
+				if (PP.growing && istype(PP.growing, /datum/plant/herb/cannabis))
 					if (istype(get_area(PP), /area/station/hydroponics) || istype(get_area(PP), /area/station/hydroponics/lobby))
 						return 0
 			return 1

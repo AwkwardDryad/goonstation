@@ -637,11 +637,11 @@
 
 	if (istype(A, /obj/machinery/plantpot))
 		var/obj/machinery/plantpot/PP = A
-		if (!PP.current || PP.dead)
+		if (!PP.growing || PP.dead)
 			return "<span class='alert'>Cannot scan.</span>"
 
-		P = PP.current
-		DNA = PP.plantgenes
+		P = PP.growing
+		DNA = PP.DNA
 
 	else if (istype(A, /obj/item/seed/))
 		var/obj/item/seed/S = A
@@ -666,5 +666,5 @@
 	if (!P || !istype(P, /datum/plant/) || !DNA || !istype(DNA, /datum/plantgenes/))
 		return "<span class='alert'>Cannot scan.</span>"
 
-	HYPgeneticanalysis(user, A, P, DNA) // Just use the existing proc.
+	Hydro_scan_DNA(user, A, P, DNA) // Just use the existing proc.
 	return

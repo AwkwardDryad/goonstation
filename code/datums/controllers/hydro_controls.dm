@@ -47,10 +47,10 @@ var/global/list/hydro_controller_queue = list(
 						P.mutations += HY_get_mutation_from_path(X)
 						P.mutations -= X
 
-				for (var/X in P.commuts)
+				for (var/X in P.gene_strains)
 					if (ispath(X))
-						P.commuts += HY_get_strain_from_path(X)
-						P.commuts -= X
+						P.gene_strains += HY_get_strain_from_path(X)
+						P.gene_strains -= X
 
 			src.process_queue()
 

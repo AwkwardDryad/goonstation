@@ -431,8 +431,8 @@
 	afterattack(obj/target as obj, mob/user as mob)
 		if(istype(target, /obj/machinery/plantpot))
 			var/obj/machinery/plantpot/pot = target
-			if(pot.current)
-				var/datum/plant/p = pot.current
+			if(pot.growing)
+				var/datum/plant/p = pot.growing
 				if(pot.GetOverlayImage("plant"))
 					plantyboi = pot.GetOverlayImage("plant")
 					plantyboi.pixel_x = 2
@@ -442,7 +442,7 @@
 				if(has_plant_flag(p,GROWTHMODE_WEED))
 					user.visible_message("<b>[user]</b> tries to uproot the [p.name], but it's roots hold firmly to the [pot]!","<span class='alert'>The [p.name] is too strong for you traveller...</span>")
 					return
-				pot.HYPdestroyplant()
+				pot.destroy_plant()
 
 		//check if target is a plant pot to paste in the cosmetic plant overlay
 ///////////////////////////////////// Watering can ///////////////////////////////////////////////

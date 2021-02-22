@@ -51,7 +51,7 @@ ABSTRACT_TYPE(/datum/plant)
 	var/list/required_reagents 			// reagents required for the plant to grow - formated like: list(list(id="poo",amount=100),list(id="thing",amount=number))
 	var/list/harvest_tools 				// For plants that don't harvest normally and need some sort of special tool (mixed list of tool flags and item paths)
 	var/list/mutations = list() 		// what mutant variants does this plant have?
-	var/list/commuts = list() 			// What general mutations can occur in this plant?
+	var/list/gene_strains = list() 			// What general mutations can occur in this plant?
 	var/list/assoc_reagents = list() 	// Used for extractions, harvesting, etc
 
 	// fixed some runtime errors here - singh
@@ -79,25 +79,24 @@ ABSTRACT_TYPE(/datum/plant)
 	#define POT_ACTIONNONE 0
 	#define POT_ACTIONPASSED 1
 	#define POT_ACTIONFAILED 2
-	//defines for action bar harvesting yay :D 0 = no action, 1 = action passed, 2 = action cancelled
-		while(!POT.actionpassed)
+		while(!POT.action_bar_status)
 			sleep(10)
-			if(POT.actionpassed == POT_ACTIONFAILED)
-				POT.actionpassed = POT_ACTIONNONE
+			if(POT.action_bar_status == POT_ACTIONFAILED)
+				POT.action_bar_status = POT_ACTIONNONE
 				return 1
-			else if(POT.actionpassed == POT_ACTIONPASSED)
+			else if(POT.action_bar_status == POT_ACTIONPASSED)
 				break
-		if(!POT.actionpassed)
+		if(!POT.action_bar_status)
 			return 1
-		if(POT.actionpassed == POT_ACTIONFAILED)
-			POT.actionpassed = POT_ACTIONNONE
+		if(POT.action_bar_status == POT_ACTIONFAILED)
+			POT.action_bar_status = POT_ACTIONNONE
 			return 1
-		POT.actionpassed = POT_ACTIONNONE
+		POT.action_bar_status = POT_ACTIONNONE
 
 	proc/HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		lasterr = 0
 		if (!POT) lasterr = 101
-		if (POT.dead || !POT.current) lasterr = 102
+		if (POT.dead || !POT.growing) lasterr = 102
 		if (lasterr)
 			logTheThing("debug", null, null, "<b>Plant HYP</b> [src] in pot [POT] failed with error [.]")
 			remove_plant_flag(src,USE_SPECIAL_PROC)
@@ -107,7 +106,7 @@ ABSTRACT_TYPE(/datum/plant)
 		// If it returns 0, it should halt the proc that called it also
 		lasterr = 0
 		if (!POT || !user) lasterr = 201
-		if (POT.dead || !POT.current) lasterr = 202
+		if (POT.dead || !POT.growing) lasterr = 202
 		if (lasterr)
 			logTheThing("debug", null, null, "<b>Plant HYP</b> [src] in pot [POT] failed with error [.]")
 			remove_plant_flag(src,USE_ATTACKED_PROC)
@@ -116,14 +115,14 @@ ABSTRACT_TYPE(/datum/plant)
 	proc/HYPharvested_proc(var/obj/machinery/plantpot/POT,var/mob/user)
 		lasterr = 0
 		if (!POT || !user) return 301
-		if (POT.dead || !POT.current) return 302
+		if (POT.dead || !POT.growing) return 302
 		if (has_plant_flag(src,NO_HARVEST) || !src.crop) return 303
 		if (lasterr)
 			logTheThing("debug", null, null, "<b>Plant HYP</b> [src] in pot [POT] failed with error [.]")
 			remove_plant_flag(src,USE_HARVESTED_PROC)
 		return lasterr
 
-	proc/HYPinfusionP(var/obj/item/seed/S,var/reagent)
+	proc/infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		var/datum/plantgenes/DNA = S.plantgenes
 
 		var/damage_prob = 100 - (src.endurance + DNA.endurance)
@@ -137,13 +136,13 @@ ABSTRACT_TYPE(/datum/plant)
 			if ("acid")
 				damage_amt = rand(40,50)
 			if ("weedkiller")
-				if (!HYPCheckCommut(DNA,/datum/plant_gene_strain/immunity_toxin) && has_plant_flag(src,GROWTHMODE_WEED))
+				if (!Hydro_check_strain(DNA,/datum/plant_gene_strain/immunity_toxin) && has_plant_flag(src,GROWTHMODE_WEED))
 					damage_amt = rand(50,60)
 			if ("toxin","mercury","chlorine","fluorine","fuel","oil","cleaner")
-				if (!HYPCheckCommut(DNA,/datum/plant_gene_strain/immunity_toxin))
+				if (!Hydro_check_strain(DNA,/datum/plant_gene_strain/immunity_toxin))
 					damage_amt = rand(15,30)
 			if ("plasma")
-				if (!HYPCheckCommut(DNA,/datum/plant_gene_strain/immunity_toxin))
+				if (!Hydro_check_strain(DNA,/datum/plant_gene_strain/immunity_toxin))
 					damage_amt = rand(15,30)
 			if ("blood","bloodc")
 				if (has_plant_flag(src,GROWTHMODE_CARNIVORE))
@@ -152,27 +151,27 @@ ABSTRACT_TYPE(/datum/plant)
 					DNA.endurance += rand(10,30)
 			if ("radium","uranium")
 				damage_amt = rand(5,15)
-				HYPmutateDNA(DNA,1)
-				HYPnewcommutcheck(src,DNA)
-				HYPnewmutationcheck(src,DNA)
+				Hydro_mutate_DNA(DNA,1)
+				Hydro_new_strain_check(src,DNA)
+				Hydro_new_mutation_check(src,DNA)
 			if ("dna_mutagen")
-				HYPmutateDNA(DNA,1)
-				HYPnewcommutcheck(src,DNA)
-				HYPnewmutationcheck(src,DNA)
+				Hydro_mutate_DNA(DNA,1)
+				Hydro_new_strain_check(src,DNA)
+				Hydro_new_mutation_check(src,DNA)
 				if (prob(2))
-					HYPaddCommut(DNA,/datum/plant_gene_strain/unstable)
+					Hydro_add_strain(DNA,/datum/plant_gene_strain/unstable)
 			if ("mutagen")
-				HYPmutateDNA(DNA,2)
-				HYPnewcommutcheck(src,DNA)
-				HYPnewmutationcheck(src,DNA)
+				Hydro_mutate_DNA(DNA,2)
+				Hydro_new_strain_check(src,DNA)
+				Hydro_new_mutation_check(src,DNA)
 				if (prob(5))
-					HYPaddCommut(DNA,/datum/plant_gene_strain/unstable)
+					Hydro_add_strain(DNA,/datum/plant_gene_strain/unstable)
 			if ("ammonia")
 				damage_amt = rand(10,20)
 				DNA.growtime += rand(5,10)
 				DNA.harvtime += rand(2,5)
 				if (prob(5))
-					HYPaddCommut(DNA,/datum/plant_gene_strain/accelerator)
+					Hydro_add_strain(DNA,/datum/plant_gene_strain/accelerator)
 			if ("potash")
 				DNA.cropsize += rand(1,4)
 				DNA.harvests -= rand(0,2)
@@ -182,7 +181,7 @@ ABSTRACT_TYPE(/datum/plant)
 			if ("space_fungus")
 				DNA.endurance += rand(1,3)
 				if (prob(3))
-					HYPaddCommut(DNA,/datum/plant_gene_strain/damage_res)
+					Hydro_add_strain(DNA,/datum/plant_gene_strain/damage_res)
 			if ("mutadone")
 				if (DNA.growtime < 0)
 					DNA.growtime++
@@ -209,7 +208,7 @@ ABSTRACT_TYPE(/datum/plant)
 	var/cropsize = 0
 	var/potency = 0  // Apart from this one - this one deals with reagents.
 	var/endurance = 0
-	var/list/commuts = null // General transferrable mutations
+	var/list/gene_strains = null // General transferrable mutations
 	var/datum/plantmutation/mutation = null // is it mutated? if so which variation?
 	var/list/alleles = list(0,0,0,0,0,0,0)
 	// Order goes:
@@ -252,7 +251,7 @@ ABSTRACT_TYPE(/datum/plant)
 			source = sourcerelay
 		if(duration2)
 			duration = duration2
-		if(plant_pot.current.harvest_tools && (source.equipped() != null))
+		if(plant_pot.growing.harvest_tools && (source.equipped() != null))
 			var/obj/item/I = source.equipped()
 			toolcheck = I
 		..()
@@ -260,27 +259,27 @@ ABSTRACT_TYPE(/datum/plant)
 	onUpdate()
 		if(plant_pot == null || source == null || (get_dist(source, plant_pot) > 1))
 			interrupt(INTERRUPT_ALWAYS)
-			plant_pot.actionpassed = POT_ACTIONFAILED
+			plant_pot.action_bar_status = POT_ACTIONFAILED
 			reset()
 			return
 		if(source && (source.equipped() != toolcheck))
 			interrupt(INTERRUPT_ALWAYS)
-			plant_pot.actionpassed = POT_ACTIONFAILED
+			plant_pot.action_bar_status = POT_ACTIONFAILED
 			reset()
 			return
-		if(!plant_pot.current)
+		if(!plant_pot.growing)
 			interrupt(INTERRUPT_ALWAYS)
-			plant_pot.actionpassed = POT_ACTIONFAILED
+			plant_pot.action_bar_status = POT_ACTIONFAILED
 			reset()
 			return
 		if(plant_pot.dead == 1)
 			interrupt(INTERRUPT_ALWAYS)
-			plant_pot.actionpassed = POT_ACTIONFAILED
+			plant_pot.action_bar_status = POT_ACTIONFAILED
 			reset()
 			return
 		..()
 
 	onEnd()
 		..()
-		plant_pot.actionpassed = POT_ACTIONPASSED
+		plant_pot.action_bar_status = POT_ACTIONPASSED
 		reset()

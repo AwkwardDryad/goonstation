@@ -202,15 +202,15 @@
 				splice_chance -= src.splicing1.seeddamage
 				splice_chance -= src.splicing2.seeddamage
 
-				if (src.splicing1.plantgenes.commuts)
-					for (var/datum/plant_gene_strain/splicing/S in src.splicing1.plantgenes.commuts)
+				if (src.splicing1.plantgenes.gene_strains)
+					for (var/datum/plant_gene_strain/splicing/S in src.splicing1.plantgenes.gene_strains)
 						if (S.negative)
 							splice_chance -= S.splice_mod
 						else
 							splice_chance += S.splice_mod
 
-				if (src.splicing2.plantgenes.commuts)
-					for (var/datum/plant_gene_strain/splicing/S in src.splicing2.plantgenes.commuts)
+				if (src.splicing2.plantgenes.gene_strains)
+					for (var/datum/plant_gene_strain/splicing/S in src.splicing2.plantgenes.gene_strains)
 						if (S.negative)
 							splice_chance -= S.splice_mod
 						else
@@ -307,14 +307,14 @@
 				if (!istype(S.planttype,/datum/plant/) || !istype(S.plantgenes,/datum/plantgenes/))
 					boutput(usr, "<span class='alert'>Genetic structure of seed corrupted. Cannot scan.</span>")
 				else
-					HYPgeneticanalysis(usr,S,S.planttype,S.plantgenes)
+					Hydro_scan_DNA(usr,S,S.planttype,S.plantgenes)
 
 			else if (istype(I,/obj/item/reagent_containers/food/snacks/plant/))
 				var/obj/item/reagent_containers/food/snacks/plant/P = I
 				if (!istype(P.planttype,/datum/plant/) || !istype(P.plantgenes,/datum/plantgenes/))
 					boutput(usr, "<span class='alert'>Genetic structure of item corrupted. Cannot scan.</span>")
 				else
-					HYPgeneticanalysis(usr,P,P.planttype,P.plantgenes)
+					Hydro_scan_DNA(usr,P,P.planttype,P.plantgenes)
 
 			else
 				boutput(usr, "<span class='alert'>Item cannot be scanned.</span>")
@@ -334,7 +334,7 @@
 
 				if (!stored || !DNA)
 					give = 0
-				if (HYPCheckCommut(DNA,/datum/plant_gene_strain/seedless))
+				if (Hydro_check_strain(DNA,/datum/plant_gene_strain/seedless))
 					give = 0
 				if(has_plant_flag(stored,NO_EXTRACT))
 					give = 0
@@ -349,7 +349,7 @@
 						var/datum/plantgenes/SDNA = S.plantgenes
 						if (!stored.unique_seed && !stored.hybrid)
 							S.generic_seed_setup(stored)
-						HYPpassplantgenes(DNA,SDNA)
+						Hydro_pass_DNA(DNA,SDNA)
 
 						S.name = stored.name
 						if (stored.hybrid)
@@ -426,7 +426,7 @@
 						R = input(usr, "Use which reagent to infuse the seed?", "[src.name]", 0) in usable_reagents
 						if (!R || !S)
 							return
-						switch(S.HYPinfusionS(R.id,src))
+						switch(S.infuse_from_seed(R.id,src))
 							if (1) boutput(usr, "<span class='alert'>ERROR: Seed has been destroyed.</span>")
 							if (2) boutput(usr, "<span class='alert'>ERROR: Reagent lost.</span>")
 							if (3) boutput(usr, "<span class='alert'>ERROR: Unknown error. Please try again.</span>")
@@ -461,15 +461,15 @@
 				splice_chance -= seed1.seeddamage
 				splice_chance -= seed2.seeddamage
 
-				if (seed1.plantgenes.commuts)
-					for (var/datum/plant_gene_strain/splicing/S in seed1.plantgenes.commuts)
+				if (seed1.plantgenes.gene_strains)
+					for (var/datum/plant_gene_strain/splicing/S in seed1.plantgenes.gene_strains)
 						if (S.negative)
 							splice_chance -= S.splice_mod
 						else
 							splice_chance += S.splice_mod
 
-				if (seed2.plantgenes.commuts)
-					for (var/datum/plant_gene_strain/splicing/S in seed2.plantgenes.commuts)
+				if (seed2.plantgenes.gene_strains)
+					for (var/datum/plant_gene_strain/splicing/S in seed2.plantgenes.gene_strains)
 						if (S.negative)
 							splice_chance -= S.splice_mod
 						else
@@ -577,8 +577,8 @@
 				if (dominantDNA.mutation)
 					DNA.mutation = new dominantDNA.mutation.type(DNA)
 
-				P.commuts = P1.commuts | P2.commuts // We merge these and share them
-				DNA.commuts = P1DNA.commuts | P2DNA.commuts
+				P.gene_strains = P1.gene_strains | P2.gene_strains // We merge these and share them
+				DNA.gene_strains = P1DNA.gene_strains | P2DNA.gene_strains
 				if(submissiveDNA.mutation)
 					P.assoc_reagents = P1.assoc_reagents | P2.assoc_reagents | submissiveDNA.mutation.assoc_reagents // URS EDIT -- BOTANY UNLEASHED?
 				else
@@ -1537,7 +1537,11 @@
 			if(6)
 				path = pick(concrete_typesof(/datum/plant/weed))
 			if(7)
-				path = pick(concrete_typesof(/datum/plant/artifact))
+				if(prob(30))
+					path = pick(concrete_typesof(/datum/plant/artifact))
+				else
+					path = pick(concrete_typesof(/datum/plant/weed))
+
 		var/datum/plant/p = new path
 		var/obj/item/seed/S
 		if(p.unique_seed)

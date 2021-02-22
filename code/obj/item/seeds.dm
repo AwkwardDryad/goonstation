@@ -100,11 +100,11 @@
 			I.Blend(colorRef, ICON_ADD)
 			UpdateOverlays(image(I),"color")
 
-	proc/HYPinfusionS(var/reagent,var/obj/submachine/seed_manipulator/M)
+	proc/infuse_from_seed(var/reagent,var/obj/submachine/seed_manipulator/M)
 		// The proc for when the manipulator is infusing seeds with a reagent. This is sort of a
 		// framing proc simply to check if the seed is in good enough condition to withstand the
 		// infusion or not - the actual gameplay effects are handled in a different proc:
-		// proc/HYPinfusionP, /datums/plants.dm, line 115
+		// proc/infuse_from_plant, /datums/plants.dm, line 115
 		// Note that this continues down the chain and checks the proc for individual plant
 		// datums after it's finished executing the base plant datum infusion proc.
 
@@ -119,7 +119,7 @@
 			// Whoops, you did it too often and now the seed broke. Good job doofus!!
 
 		var/datum/plant/P = src.planttype
-		if (P.HYPinfusionP(src,reagent) == 99)
+		if (P.infuse_from_plant(src,reagent) == 99)
 			// The proc call both executes the infusion on the species AND performs a check -
 			// The check is for a return value of 99, basically an error code for "Whoops you
 			// destroyed the seed you dumbass".

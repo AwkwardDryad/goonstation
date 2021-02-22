@@ -76,7 +76,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("poison",3)
+				P.damage_plant("poison",3)
 
 		chromium
 			name = "chromium"
@@ -119,7 +119,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("poison",3)
+				P.damage_plant("poison",3)
 
 		ethanol
 			name = "ethanol"
@@ -329,7 +329,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("poison",1)
+				P.damage_plant("poison",1)
 
 		nickel
 			name = "nickel"
@@ -426,9 +426,9 @@ datum
 				return 1 //changed return value to 1 for fluids. remove if this was a bad idea
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				var/datum/plant/growing = P.current
+				var/datum/plant/growing = P.growing
 				if (!has_plant_flag(growing,GROWTHMODE_PLASMAVORE))
-					P.HYPdamageplant("poison",2)
+					P.damage_plant("poison",2)
 
 		platinum
 			name = "platinum"
@@ -656,8 +656,8 @@ datum
 					make_cleanable(/obj/decal/cleanable/greenglow,T)
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				if (prob(80)) P.HYPdamageplant("radiation",3)
-				if (prob(16)) P.HYPmutateplant(1)
+				if (prob(80)) P.damage_plant("radiation",3)
+				if (prob(16)) P.mutate_plant(1)
 
 		sodium
 			name = "sodium"
@@ -687,8 +687,8 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("radiation",2)
-				if (prob(24)) P.HYPmutateplant(1)
+				P.damage_plant("radiation",2)
+				if (prob(24)) P.mutate_plant(1)
 
 		water
 			name = "water"

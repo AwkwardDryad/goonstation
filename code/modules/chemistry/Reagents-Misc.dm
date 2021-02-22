@@ -961,7 +961,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				var/datum/plantgenes/DNA = P.plantgenes
+				var/datum/plantgenes/DNA = P.DNA
 				if (prob(50))
 					DNA.endurance++
 
@@ -2834,9 +2834,9 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				var/datum/plant/growing = P.current
+				var/datum/plant/growing = P.growing
 				if (has_plant_flag(growing,GROWTHMODE_WEED))
-					P.HYPdamageplant("poison",2)
+					P.damage_plant("poison",2)
 					P.growth -= 3
 		safrole
 			name = "safrole"
@@ -2878,8 +2878,8 @@ datum
 				if (prob(80))
 					P.health+=2
 				*/
-				var/datum/plant/growing = P.current
-				var/datum/plantgenes/DNA = P.plantgenes
+				var/datum/plant/growing = P.growing
+				var/datum/plantgenes/DNA = P.DNA
 				if (prob(24))
 					DNA.cropsize++
 				if (DNA.harvests > 1 && prob(24))
@@ -2906,7 +2906,7 @@ datum
 					P.growth+=3
 				if (prob(80))
 					P.health+=3
-				var/datum/plantgenes/DNA = P.plantgenes
+				var/datum/plantgenes/DNA = P.DNA
 				if (prob(50)) DNA.potency++
 				if (DNA.cropsize > 1 && prob(24)) DNA.cropsize--
 
@@ -3002,7 +3002,7 @@ datum
 				return
 */
 			on_plant_life(var/obj/machinery/plantpot/P)
-				var/datum/plant/growing = P.current
+				var/datum/plant/growing = P.growing
 				if (has_plant_flag(growing,GROWTHMODE_CARNIVORE)) P.growth += 3
 
 			on_transfer(var/datum/reagents/source, var/datum/reagents/target, var/trans_amt)
@@ -3699,7 +3699,7 @@ datum
 					holder.my_atom.delStatus("miasma")
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				P.HYPdamageplant("poison",1)
+				P.damage_plant("poison",1)
 
 		sakuride
 			name = "sakuride"

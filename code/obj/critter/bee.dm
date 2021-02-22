@@ -120,7 +120,7 @@
 				nectar_check = initial(nectar_check)
 
 				for (var/obj/machinery/plantpot/planter in view(7, src))
-					if (!planter.reagents || !planter.current || planter.dead)
+					if (!planter.reagents || !planter.growing || planter.dead)
 						continue
 
 					if (planter.reagents.get_reagent_amount("nectar"))
@@ -197,7 +197,7 @@
 		src.attacking = 1
 		if (istype(M, /obj/machinery/plantpot))
 			var/obj/machinery/plantpot/planter = M
-			if (planter.dead || !planter.reagents || !planter.current)
+			if (planter.dead || !planter.reagents || !planter.growing)
 				src.task = "thinking"
 				src.attacking = 0
 				return
@@ -217,14 +217,14 @@
 				src.attacking = 0
 				return
 
-			if (planter.current.assoc_reagents.len || (planter.plantgenes && planter.plantgenes.mutation && planter.plantgenes.mutation.assoc_reagents.len))
-				var/list/additional_reagents = planter.current.assoc_reagents
-				if (planter.plantgenes && planter.plantgenes.mutation && planter.plantgenes.mutation.assoc_reagents.len)
-					additional_reagents = additional_reagents | planter.plantgenes.mutation.assoc_reagents
+			if (planter.growing.assoc_reagents.len || (planter.DNA && planter.DNA.mutation && planter.DNA.mutation.assoc_reagents.len))
+				var/list/additional_reagents = planter.growing.assoc_reagents
+				if (planter.DNA && planter.DNA.mutation && planter.DNA.mutation.assoc_reagents.len)
+					additional_reagents = additional_reagents | planter.DNA.mutation.assoc_reagents
 
-				/*var/associated_reagent = planter.current.associated_reagent
-				if (planter.plantgenes && planter.plantgenes.mutation && planter.plantgenes.mutation.associated_reagent)
-					associated_reagent = planter.plantgenes.mutation.associated_reagent*/
+				/*var/associated_reagent = planter.growing.associated_reagent
+				if (planter.DNA && planter.DNA.mutation && planter.DNA.mutation.associated_reagent)
+					associated_reagent = planter.DNA.mutation.associated_reagent*/
 
 				planter.reagents.remove_reagent("nectar", nectarTransferAmt*0.75)
 				src.reagents.add_reagent("honey", nectarTransferAmt*0.75)
@@ -236,7 +236,7 @@
 				src.reagents.add_reagent("honey", nectarTransferAmt)
 
 			//Bee is good for plants.  Synergy.  Going to hold a business meeting and use only yellow and black in the powerpoints.
-			if (prob(10) && planter.health < planter.current.starthealth)
+			if (prob(10) && planter.health < planter.growing.starthealth)
 				planter.health++
 
 			src.visible_message("<b>[src]</b> [pick("slurps","sips","drinks")] nectar out of [planter].")

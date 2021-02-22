@@ -365,7 +365,7 @@
 				return
 		else if (istype(target, /obj/machinery/plantpot) && user.reagents)
 			var/obj/machinery/plantpot/planter = target
-			if (planter.dead || !planter.reagents || !planter.current)
+			if (planter.dead || !planter.reagents || !planter.growing)
 				return
 
 			var/planterNectarAmt = planter.reagents.get_reagent_amount("nectar")
@@ -378,10 +378,10 @@
 			if (nectarTransferAmt <= 0)
 				return
 
-			if (planter.current.assoc_reagents.len || (planter.plantgenes && planter.plantgenes.mutation && planter.plantgenes.mutation.assoc_reagents.len))
-				var/list/additional_reagents = planter.current.assoc_reagents
-				if (planter.plantgenes && planter.plantgenes.mutation && planter.plantgenes.mutation.assoc_reagents.len)
-					additional_reagents = additional_reagents | planter.plantgenes.mutation.assoc_reagents
+			if (planter.growing.assoc_reagents.len || (planter.DNA && planter.DNA.mutation && planter.DNA.mutation.assoc_reagents.len))
+				var/list/additional_reagents = planter.growing.assoc_reagents
+				if (planter.DNA && planter.DNA.mutation && planter.DNA.mutation.assoc_reagents.len)
+					additional_reagents = additional_reagents | planter.DNA.mutation.assoc_reagents
 
 				planter.reagents.remove_reagent("nectar", nectarTransferAmt*0.75)
 				user.reagents.add_reagent("honey", nectarTransferAmt*0.75)
@@ -393,7 +393,7 @@
 				user.reagents.add_reagent("honey", nectarTransferAmt)
 
 			//Bee is good for plants.  Synergy.  Going to hold a business meeting and use only yellow and black in the powerpoints.
-			if (prob(10) && planter.health < planter.current.starthealth)
+			if (prob(10) && planter.health < planter.growing.starthealth)
 				planter.health++
 
 			user.visible_message("<b>[user]</b> [pick("slurps","sips","drinks")] nectar out of [planter].",\

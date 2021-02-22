@@ -18,8 +18,8 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth > (P.harvtime + DNA.harvtime) && prob(20))
 			POT.visible_message("<span class='alert'><b>[POT.name]</b> vomits profusely!</span>")
@@ -100,8 +100,8 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		var/pr = 20
 		if(src.focused)
@@ -204,8 +204,8 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth > (P.growtime + DNA.growtime) && prob(16))
 			playsound(get_turf(POT),'sound/voice/animal/cat.ogg',30,1,-1)
@@ -215,14 +215,14 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 			var/obj/critter/cat/synth/C = new(POT.loc)
 			C.health = POT.health
 			POT.visible_message("<span class='notice'>The synthcat climbs out of the tray!</span>")
-			POT.HYPdestroyplant()
+			POT.destroy_plant()
 			return
 
 	HYPattacked_proc(var/obj/machinery/plantpot/POT,var/mob/user)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth < (P.growtime + DNA.growtime)) return 0
 
@@ -245,8 +245,8 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 		if (POT.growth > (P.growtime + DNA.growtime) && prob(4))
 			var/MEspeech = pick("Feed me!", "I'm hungryyyy...", "Give me blood!", "I'm starving!", "What's for dinner?")
 			for(var/mob/M in hearers(POT, null)) M.show_message("<B>Man-Eating Plant</B> gurgles, \"[MEspeech]\"")
@@ -255,14 +255,14 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 			ME.health = POT.health * 3
 			ME.friends = ME.friends | POT.contributors
 			POT.visible_message("<span class='notice'>The man-eating plant climbs out of the tray!</span>")
-			POT.HYPdestroyplant()
+			POT.destroy_plant()
 			return
 
 	HYPattacked_proc(var/obj/machinery/plantpot/POT,var/mob/user)
 		..()
 		if (.) return
-		var/datum/plant/P = POT.current
-		var/datum/plantgenes/DNA = POT.plantgenes
+		var/datum/plant/P = POT.growing
+		var/datum/plantgenes/DNA = POT.DNA
 
 		if (POT.growth < (P.growtime + DNA.growtime)) return 0
 

@@ -15,9 +15,9 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	nectarlevel = 5
 	genome = 18
 	assoc_reagents = list("juice_tomato")
-	commuts = list(/datum/plant_gene_strain/splicing,/datum/plant_gene_strain/quality/inferior)
+	gene_strains = list(/datum/plant_gene_strain/splicing,/datum/plant_gene_strain/quality/inferior)
 
-	HYPinfusionP(var/obj/item/seed/S,var/reagent)
+	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
 		var/datum/plantgenes/DNA = S.plantgenes
 		if (!DNA) return
@@ -45,7 +45,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 20
 	nectarlevel = 10
 	mutations = list(/datum/plantmutation/grapes/green, /datum/plantmutation/grapes/fruit)
-	commuts = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/seedless)
+	gene_strains = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/seedless)
 
 /datum/plant/fruit/cherry
 	name = "Cherry"
@@ -60,7 +60,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 20
 	nectarlevel = 10
 	assoc_reagents = list("juice_cherry")
-	commuts = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/seedless)
+	gene_strains = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/seedless)
 
 /datum/plant/fruit/orange
 	name = "Orange"
@@ -75,7 +75,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 21
 	nectarlevel = 10
 	mutations = list(/datum/plantmutation/orange/blood, /datum/plantmutation/orange/clockwork)
-	commuts = list(/datum/plant_gene_strain/splicing,/datum/plant_gene_strain/damage_res/bad)
+	gene_strains = list(/datum/plant_gene_strain/splicing,/datum/plant_gene_strain/damage_res/bad)
 	assoc_reagents = list("juice_orange")
 
 /datum/plant/fruit/melon
@@ -93,9 +93,9 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	assoc_reagents = list("water")
 	nectarlevel = 15
 	mutations = list(/datum/plantmutation/melon/george, /datum/plantmutation/melon/bowling)
-	commuts = list(/datum/plant_gene_strain/immortal,/datum/plant_gene_strain/seedless)
+	gene_strains = list(/datum/plant_gene_strain/immortal,/datum/plant_gene_strain/seedless)
 
-	HYPinfusionP(var/obj/item/seed/S,var/reagent)
+	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
 		var/datum/plantgenes/DNA = S.plantgenes
 		if (!DNA) return
@@ -120,9 +120,9 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 17
 	assoc_reagents = list("capsaicin")
 	mutations = list(/datum/plantmutation/chili/chilly,/datum/plantmutation/chili/ghost)
-	commuts = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/growth_slow)
+	gene_strains = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/growth_slow)
 
-	HYPinfusionP(var/obj/item/seed/S,var/reagent)
+	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
 		var/datum/plantgenes/DNA = S.plantgenes
 		if (!DNA) return
@@ -153,7 +153,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 19
 	mutations = list(/datum/plantmutation/apple/poison)
 	assoc_reagents = list("juice_apple")
-	commuts = list(/datum/plant_gene_strain/quality,/datum/plant_gene_strain/unstable)
+	gene_strains = list(/datum/plant_gene_strain/quality,/datum/plant_gene_strain/unstable)
 
 /datum/plant/fruit/banana
 	name = "Banana"
@@ -167,7 +167,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	endurance = 3
 	genome = 15
 	assoc_reagents = list("potassium")
-	commuts = list(/datum/plant_gene_strain/immortal,/datum/plant_gene_strain/growth_slow)
+	gene_strains = list(/datum/plant_gene_strain/immortal,/datum/plant_gene_strain/growth_slow)
 
 /datum/plant/fruit/lime
 	name = "Lime"
@@ -180,7 +180,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 3
 	endurance = 3
 	genome = 21
-	commuts = list(/datum/plant_gene_strain/photosynthesis,/datum/plant_gene_strain/splicing/bad)
+	gene_strains = list(/datum/plant_gene_strain/photosynthesis,/datum/plant_gene_strain/splicing/bad)
 	assoc_reagents = list("juice_lime")
 
 /datum/plant/fruit/lemon
@@ -207,7 +207,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 4
 	endurance = 10
 	genome = 19
-	commuts = list(/datum/plant_gene_strain/damage_res,/datum/plant_gene_strain/stabilizer)
+	gene_strains = list(/datum/plant_gene_strain/damage_res,/datum/plant_gene_strain/stabilizer)
 
 /datum/plant/fruit/avocado
 	name = "Avocado"
@@ -232,11 +232,11 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 2
 	endurance = 2
 	genome = 18
-	commuts = list(/datum/plant_gene_strain/mutations,/datum/plant_gene_strain/terminator)
+	gene_strains = list(/datum/plant_gene_strain/mutations,/datum/plant_gene_strain/terminator)
 	mutations = list(/datum/plantmutation/eggplant/literal)
 	assoc_reagents = list("nicotine")
 
-	HYPinfusionP(var/obj/item/seed/S,var/reagent)
+	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
 		var/datum/plantgenes/DNA = S.plantgenes
 		if (!DNA) return
@@ -308,12 +308,12 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	endurance = 5
 	genome = 19
 	nectarlevel = 10
-	commuts = list(/datum/plant_gene_strain/quality)
+	gene_strains = list(/datum/plant_gene_strain/quality)
 
 
 /*
 	mutations = list(/datum/plantmutation/pear/sickly)
-	HYPinfusionP(var/obj/item/seed/S,var/reagent)
+	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
 		var/datum/plantgenes/DNA = S.plantgenes
 		if (!DNA) return
@@ -335,4 +335,4 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 17
 	nectarlevel = 10
 	assoc_reagents = list("juice_peach")
-	commuts = list(/datum/plant_gene_strain/quality)
+	gene_strains = list(/datum/plant_gene_strain/quality)

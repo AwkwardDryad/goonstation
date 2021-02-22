@@ -32,7 +32,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	nectarlevel = 10
 	genome = 3
 	mutations = list(/datum/plantmutation/nureous/fuzzy)
-	commuts = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/damage_res/bad)
+	gene_strains = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/damage_res/bad)
 	assoc_reagents = list("anti_rad")
 
 /datum/plant/herb/asomna
@@ -64,7 +64,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 0
 	genome = 16
 	nectarlevel = 5
-	commuts = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
+	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 	assoc_reagents = list("silver_sulfadiazine")
 	mutations = list(/datum/plantmutation/commol/burning)
 
@@ -81,7 +81,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 0
 	genome = 16
 	nectarlevel = 5
-	commuts = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
+	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 	assoc_reagents = list("ipecac")
 	mutations = list(/datum/plantmutation/ipecacuanha/bilious,/datum/plantmutation/ipecacuanha/invigorating)
 
@@ -132,7 +132,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	assoc_reagents = list("THC","CBD")
 	mutations = list(/datum/plantmutation/cannabis/rainbow,/datum/plantmutation/cannabis/death,
 	/datum/plantmutation/cannabis/white,/datum/plantmutation/cannabis/ultimate)
-	commuts = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
+	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 
 /datum/plant/herb/catnip
 	name = "Nepeta Cataria"
@@ -206,7 +206,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	nectarlevel = 5
 	assoc_reagents = list("nicotine")
 	mutations = list(/datum/plantmutation/tobacco/twobacco)
-	commuts = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
+	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 
 /datum/plant/herb/grass
 	name = "Grass"
@@ -221,7 +221,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 10
 	genome = 4
 	assoc_reagents = list("grassgro")
-	commuts = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
+	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
 
 /datum/plant/herb/witchhazel
 	name = "Witch Hazel"
@@ -243,14 +243,14 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
 		if(.) return
-		var/datum/plantgenes/DNA = POT.plantgenes
-		if(HYPCheckCommut(DNA,/datum/plant_gene_strain/seedless))
+		var/datum/plantgenes/DNA = POT.DNA
+		if(Hydro_check_strain(DNA,/datum/plant_gene_strain/seedless))
 			return
-		var/datum/plant/P = POT.current
+		var/datum/plant/P = POT.growing
 		if (POT.growth > (P.harvtime + DNA.harvtime) && prob((10+DNA.cropsize))) //incrase probability with yield (10% is decent as a base level)
 			var/obj/item/seed/S
-			if (POT.current.unique_seed)
-				S = unpool(POT.current.unique_seed)
+			if (POT.growing.unique_seed)
+				S = unpool(POT.growing.unique_seed)
 				S.set_loc(POT)
 			else
 				S = unpool(/obj/item/seed)
@@ -259,25 +259,25 @@ ABSTRACT_TYPE(/datum/plant/herb)
 			var/datum/plantgenes/HDNA = DNA
 			var/datum/plantgenes/SDNA = S.plantgenes
 
-			if (!POT.current.unique_seed && !POT.current.hybrid)
-				S.generic_seed_setup(POT.current)
-			var/seedname = "[POT.current.name]"
-			var/datum/plantmutation/MUT = POT.plantgenes.mutation
+			if (!POT.growing.unique_seed && !POT.growing.hybrid)
+				S.generic_seed_setup(POT.growing)
+			var/seedname = "[POT.growing.name]"
+			var/datum/plantmutation/MUT = POT.DNA.mutation
 
 			if (istype(MUT,/datum/plantmutation/))
 				if (!MUT.name_prefix && !MUT.name_prefix && MUT.name)
 					seedname = "[MUT.name]"
 				else if (MUT.name_prefix || MUT.name_suffix)
-					seedname = "[MUT.name_prefix][POT.current.name][MUT.name_suffix]"
+					seedname = "[MUT.name_prefix][POT.growing.name][MUT.name_suffix]"
 			S.name = "[seedname] seed"
-			HYPpassplantgenes(HDNA,SDNA)
+			Hydro_pass_DNA(HDNA,SDNA)
 			S.generation = POT.generation
 
-			if (POT.current.hybrid)
+			if (POT.growing.hybrid)
 				var/datum/plant/hybrid = new /datum/plant(S)
-				for(var/V in POT.current.vars)
-					if (issaved(POT.current.vars[V]) && V != "holder")
-						hybrid.vars[V] = POT.current.vars[V]
+				for(var/V in POT.growing.vars)
+					if (issaved(POT.growing.vars[V]) && V != "holder")
+						hybrid.vars[V] = POT.growing.vars[V]
 				S.planttype = hybrid
 			S.set_loc(get_turf(POT))
 
@@ -311,10 +311,10 @@ ABSTRACT_TYPE(/datum/plant/herb)
 		if(HYPaction_bar(POT,user,50)==1) //if it returned the escape value
 			return 1 //escape harvest
 		user.visible_message("<span style='color:red'><b>[user.name] yanks the mandrake out of the pot!</b></span>")
-		if((POT.current.cropsize+POT.plantgenes.cropsize) > 0) //Caps the max output to 1 Mandrake by doing a fucky-wucky to the genes on harvest.
-			POT.plantgenes.cropsize = 0
+		if((POT.growing.cropsize+POT.DNA.cropsize) > 0) //Caps the max output to 1 Mandrake by doing a fucky-wucky to the genes on harvest.
+			POT.growing.cropsize = 0
 		POT.health = 1
-		if((POT.current.cropsize+POT.plantgenes.cropsize) > 0)
+		if((POT.growing.cropsize+POT.DNA.cropsize) > 0)
 			playsound(POT.loc, 'sound/voice/screams/mandrake_scree.ogg', 100, 0, 0, null)
 			for (var/mob/living/M in all_hearers(world.view, POT.loc))
 				if(issilicon(M) || isintangible(M))
@@ -347,4 +347,4 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 1
 	preferred_water_level = 4
 	assoc_reagents = list("heather_oil")
-	commuts = list(/datum/plant_gene_strain/slippery)
+	gene_strains = list(/datum/plant_gene_strain/slippery)

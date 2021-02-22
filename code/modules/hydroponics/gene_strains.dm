@@ -9,7 +9,7 @@
 	proc/on_process(var/obj/machinery/plantpot/PP)
 		if (!PP)
 			return 1
-		if (!PP.current)
+		if (!PP.growing)
 			return 1
 		if (!prob(process_proc_chance))
 			return 1
@@ -116,7 +116,7 @@
 	on_process(var/obj/machinery/plantpot/PP)
 		if (..())
 			return
-		PP.HYPdamageplant("frailty",1)
+		PP.damage_plant("frailty",1)
 
 /datum/plant_gene_strain/seedless
 	name = "Seedless"
@@ -136,7 +136,7 @@
 	on_process(var/obj/machinery/plantpot/PP)
 		if (..())
 			return
-		PP.HYPkillplant()
+		PP.kill_plant()
 
 /datum/plant_gene_strain/unstable
 	name = "Unstable"
@@ -146,7 +146,7 @@
 	on_process(var/obj/machinery/plantpot/PP)
 		if (..())
 			return
-		PP.HYPmutateplant(1)
+		PP.mutate_plant(1)
 
 /datum/plant_gene_strain/stabilizer
 	name = "Stabilizer"
@@ -160,7 +160,7 @@
 	on_process(var/obj/machinery/plantpot/PP)
 		if (..())
 			return
-		var/datum/plantgenes/DNA = PP.plantgenes
+		var/datum/plantgenes/DNA = PP.DNA
 		DNA.growtime++
 		DNA.harvtime++
 

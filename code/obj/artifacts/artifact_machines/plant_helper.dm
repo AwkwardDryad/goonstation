@@ -31,7 +31,7 @@
 		if (..())
 			return
 		for (var/obj/machinery/plantpot/P in range(O,src.field_radius))
-			var/datum/plant/growing = P.current
+			var/datum/plant/growing = P.growing
 			for (var/X in src.helpers)
 				if (X == "water")
 					var/wateramt = P.reagents.get_reagent_amount("water")
@@ -48,4 +48,4 @@
 						P.health -= 3
 				if (X == "mutation" && growing)
 					if (prob(8))
-						P.HYPmutateplant()
+						Hydro_mutate_DNA(P.DNA,1)

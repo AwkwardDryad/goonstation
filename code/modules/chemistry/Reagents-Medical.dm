@@ -1031,7 +1031,7 @@ datum
 				return
 
 			on_plant_life(var/obj/machinery/plantpot/P)
-				var/datum/plantgenes/DNA = P.plantgenes
+				var/datum/plantgenes/DNA = P.DNA
 				if (!prob(20) && P.growth > 5)
 					P.growth -= 5
 				if (DNA.growtime < 0 && prob(50))

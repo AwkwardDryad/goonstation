@@ -14,7 +14,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 1
 	endurance = 0
 	genome = 10
-	commuts = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
+	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
 
 /datum/plant/crop/wheat
 	name = "Wheat"
@@ -29,9 +29,9 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	endurance = 0
 	genome = 10
 	mutations = list(/datum/plantmutation/wheat/steelwheat, /datum/plantmutation/wheat/durum)
-	commuts = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
+	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
 
-	HYPinfusionP(var/obj/item/seed/S,var/reagent)
+	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
 		var/datum/plantgenes/DNA = S.plantgenes
 		if (!DNA) return
@@ -50,7 +50,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 1
 	endurance = 0
 	genome = 10
-	commuts = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
+	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
 
 /datum/plant/crop/rice
 	name = "Rice"
@@ -64,7 +64,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 1
 	endurance = 0
 	genome = 8
-	commuts = list(/datum/plant_gene_strain/yield,/datum/plant_gene_strain/health_poor)
+	gene_strains = list(/datum/plant_gene_strain/yield,/datum/plant_gene_strain/health_poor)
 
 /datum/plant/crop/beans
 	name = "Bean"
@@ -78,7 +78,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	endurance = 0
 	genome = 6
 	mutations = list(/datum/plantmutation/beans/jelly)
-	commuts = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/metabolism_slow)
+	gene_strains = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/metabolism_slow)
 	assoc_reagents = list("nitrogen")
 
 /datum/plant/crop/peas
@@ -92,7 +92,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 4
 	endurance = 0
 	genome = 8
-	commuts = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/metabolism_slow)
+	gene_strains = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/metabolism_slow)
 
 /datum/plant/crop/corn
 	name = "Corn"
@@ -106,7 +106,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	endurance = 2
 	genome = 10
 	mutations = list(/datum/plantmutation/corn/clear)
-	commuts = list(/datum/plant_gene_strain/photosynthesis,/datum/plant_gene_strain/splicing/bad)
+	gene_strains = list(/datum/plant_gene_strain/photosynthesis,/datum/plant_gene_strain/splicing/bad)
 	assoc_reagents = list("cornstarch")
 
 /datum/plant/crop/synthmeat
@@ -123,9 +123,9 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	genome = 7
 	assoc_reagents = list("synthflesh")
 	mutations = list(/datum/plantmutation/synthmeat/butt,/datum/plantmutation/synthmeat/limb,/datum/plantmutation/synthmeat/brain,/datum/plantmutation/synthmeat/heart,/datum/plantmutation/synthmeat/eye)
-	commuts = list(/datum/plant_gene_strain/yield,/datum/plant_gene_strain/unstable)
+	gene_strains = list(/datum/plant_gene_strain/yield,/datum/plant_gene_strain/unstable)
 
-	HYPinfusionP(var/obj/item/seed/S,var/reagent)
+	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
 		var/datum/plantgenes/DNA = S.plantgenes
 		if (!DNA) return
@@ -148,7 +148,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 1
 	endurance = 0
 	genome = 8
-	commuts = list(/datum/plant_gene_strain/quality,/datum/plant_gene_strain/terminator)
+	gene_strains = list(/datum/plant_gene_strain/quality,/datum/plant_gene_strain/terminator)
 	assoc_reagents = list("sugar")
 
 /datum/plant/crop/soy
@@ -162,7 +162,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 3
 	endurance = 1
 	genome = 7
-	commuts = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/quality/inferior)
+	gene_strains = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/quality/inferior)
 	assoc_reagents = list("grease")
 	mutations = list(/datum/plantmutation/soy/soylent)
 
@@ -179,7 +179,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	endurance = 10
 	genome = 6
 
-	HYPinfusionP(var/obj/item/seed/S,var/reagent)
+	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
 		var/datum/plantgenes/DNA = S.plantgenes
 		if (!DNA) return
@@ -200,7 +200,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 4
 	endurance = 0
 	genome = 5
-	commuts = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/metabolism_slow)
+	gene_strains = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/metabolism_slow)
 
 /datum/plant/crop/tree // :effort:
 	name = "Tree"
@@ -215,7 +215,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	endurance = 5
 	genome = 20
 	mutations = list(/datum/plantmutation/tree/money, /datum/plantmutation/tree/rubber,/datum/plantmutation/tree/sassafras, /datum/plantmutation/tree/dog,/datum/plantmutation/tree/paper)
-	commuts = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/metabolism_slow,/datum/plant_gene_strain/resistance_drought)
+	gene_strains = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/metabolism_slow,/datum/plant_gene_strain/resistance_drought)
 
 /datum/plant/crop/coffee
 	name = "Coffee"
@@ -228,4 +228,4 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 5
 	endurance = 0
 	genome = 6
-	commuts = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/metabolism_slow)
+	gene_strains = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/metabolism_slow)
