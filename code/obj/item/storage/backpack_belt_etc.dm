@@ -439,7 +439,8 @@
 	spawn_contents = list(/obj/item/gardentrowel,
 	/obj/item/plantanalyzer,
 	/obj/item/device/reagentscanner,
-//	/obj/item/wirecutters/green,
+//  /obj/item/wirecutters/green,
+//	/obj/item/screwdriver/green,
 	/obj/item/seed_gachapon,
 	/obj/item/reagent_containers/glass/bottle/happyplant,
 	/obj/item/satchel/hydro)

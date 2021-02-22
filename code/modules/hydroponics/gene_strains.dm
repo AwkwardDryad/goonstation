@@ -193,12 +193,10 @@
 /datum/plant_gene_strain/slippery
 	name = "Slippery"
 	desc = "Overproduces oil, coating nearby tiles in the slippery substance" //I am an asshole.
-	process_proc_chance = 100
+	process_proc_chance = 25
 
 	on_process(var/obj/machinery/plantpot/PP)
 		if(..())
-			return
-		if(!prob(75))
 			return
 
 		var/list/turflist = list()
@@ -218,3 +216,22 @@
 				T.UpdateOverlays(null, "wet_overlay")
 
 		playsound(PP.loc, 'sound/impact_sounds/Liquid_Slosh_1.ogg', 25, 1, 0.3)
+
+/datum/plant_gene_strain/pollen
+	name = "High Pollen Production"
+	desc = "This plant will produce clouds of irritating pollen. Bees love it!"
+
+	on_process(var/obj/machinery/plantpot/PP)
+		if(..())
+			return
+
+		var/turf/T = PP.loc
+		var/max_produce_pollen = PP.DNA.cropsize / 2  //blatantly stolen Miasma code
+		if (T.active_airborne_liquid && prob(90))
+			var/obj/fluid/F = T.active_airborne_liquid
+			if (F.group && F.group.reagents && F.group.reagents.total_volume > max_produce_pollen)
+				max_produce_pollen = 0
+
+		if (max_produce_pollen)
+			T.fluid_react_single("pollen", 3, airborne = 1)
+

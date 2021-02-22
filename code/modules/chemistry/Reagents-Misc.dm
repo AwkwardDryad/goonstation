@@ -3701,6 +3701,30 @@ datum
 			on_plant_life(var/obj/machinery/plantpot/P)
 				P.damage_plant("poison",1)
 
+		pollen
+			name = "pollen"
+			id = "pollen"
+			description = "Gross plant gametes produced by even grosser nature."
+			reagent_state = GAS
+			fluid_r = 255
+			fluid_b = 0
+			fluid_g = 255
+			transparency = 95
+			hygiene_value = -0.5
+			smoke_spread_mod = 3
+
+
+			on_add()
+				if (holder && ismob(holder.my_atom))
+					holder.my_atom.setStatus("miasma", duration = INFINITE_STATUS)
+
+			on_remove()
+				if (ismob(holder.my_atom))
+					holder.my_atom.delStatus("miasma")
+
+			on_plant_life(var/obj/machinery/plantpot/P)
+				P.damage_plant("poison",1)
+
 		sakuride
 			name = "sakuride"
 			id = "sakuride"
