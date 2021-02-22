@@ -239,6 +239,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	harvest_tools = list(TOOL_CUTTING,TOOL_SAWING,TOOL_SNIPPING)
 	harvest_tool_message = "<span style=\"color:green\"><b>You carefully slice segments off the plant and harvest the sprigs of witch hazel.</b></span>"
 	harvest_tool_fail_message = "<b>Hmm...You'll need a tool capable of cutting these branches...</b>"
+	gene_strains = list(/datum/plant_gene_strain/yield/stunted,/datum/plant_gene_strain/pollen)
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -347,4 +348,4 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 1
 	preferred_water_level = 4
 	assoc_reagents = list("heather_oil")
-	gene_strains = list(/datum/plant_gene_strain/slippery)
+	gene_strains = list(/datum/plant_gene_strain/slippery,/datum/plant_gene_strain/seedless)
