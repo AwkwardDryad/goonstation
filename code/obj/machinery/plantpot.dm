@@ -56,6 +56,7 @@
 	var/list/contributors = list() // Who helped grow this plant? Mainly used for critters.
 
 	var/action_bar_status //holds defines for action bar harvesting yay :D
+	
 	New()
 		..()
 		DNA = new /datum/plantgenes(src)
@@ -77,59 +78,6 @@
 	disposing()
 		radio_controller.remove_object(src, "[report_freq]")
 		..()
-
-	proc/post_alert(var/alert_msg)
-		var/datum/radio_frequency/frequency = radio_controller.return_frequency("[report_freq]")
-		if(!frequency || !alert_msg) 
-			return
-		var/datum/signal/signal = get_free_signal()
-		signal.source = src
-		signal.transmission_method = 1
-		signal.data["data"] = alert_msg
-		signal.data["netid"] = net_id
-
-		frequency.post_signal(src, signal)
-
-	proc/update_water_level() //checks reagent contents of the pot, then returns the curent water level
-		var/growing_total_volume = (src.reagents ? src.reagents.total_volume : 0)
-		var/growing_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
-		switch(growing_water_level)
-			if(0 to 0) growing_water_level = 1
-			if(1 to 40) growing_water_level = 2
-			if(41 to 100) growing_water_level = 3
-			if(101 to 200) growing_water_level = 4
-			if(201 to INFINITY) growing_water_level = 5
-		if(growing_water_level != src.water_level)
-			src.water_level = growing_water_level
-			src.do_update_water_icon = 1
-		if(!growing)
-			switch(growing_total_volume)
-				if(0 to 0) growing_total_volume = 1
-				if(1 to 40) growing_total_volume = 2
-				if(41 to 100) growing_total_volume = 3
-				if(101 to 200) growing_total_volume = 4
-				if(201 to INFINITY) growing_total_volume = 5
-			if(growing_total_volume != src.total_volume)
-				src.total_volume = growing_total_volume
-				src.do_update_water_icon = 1
-
-		if(src.do_update_water_icon)
-			src.update_water_icon()
-			src.do_update_water_icon = 0
-
-		return growing_water_level
-
-	proc/water_preferred_vs_growing()
-		var/growing_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
-		switch(growing_water_level)
-			if(0 to 0)
-				return "no water"
-			if(1 to 40) growing_water_level = 1
-			if(40 to 100) growing_water_level = 2
-			if(100 to 200) growing_water_level = 3
-			if(200 to INFINITY) growing_water_level = 4
-
-		. = abs(growing.preferred_water_level-growing_water_level)
 
 	on_reagent_change()
 		src.do_update_water_icon = 1
@@ -1332,6 +1280,59 @@
 		if(!growing)
 			return
 		Hydro_add_strain(DNA,strain)
+
+	proc/post_alert(var/alert_msg)
+		var/datum/radio_frequency/frequency = radio_controller.return_frequency("[report_freq]")
+		if(!frequency || !alert_msg) 
+			return
+		var/datum/signal/signal = get_free_signal()
+		signal.source = src
+		signal.transmission_method = 1
+		signal.data["data"] = alert_msg
+		signal.data["netid"] = net_id
+
+		frequency.post_signal(src, signal)
+
+	proc/update_water_level() //checks reagent contents of the pot, then returns the curent water level
+		var/growing_total_volume = (src.reagents ? src.reagents.total_volume : 0)
+		var/growing_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
+		switch(growing_water_level)
+			if(0 to 0) growing_water_level = 1
+			if(1 to 40) growing_water_level = 2
+			if(41 to 100) growing_water_level = 3
+			if(101 to 200) growing_water_level = 4
+			if(201 to INFINITY) growing_water_level = 5
+		if(growing_water_level != src.water_level)
+			src.water_level = growing_water_level
+			src.do_update_water_icon = 1
+		if(!growing)
+			switch(growing_total_volume)
+				if(0 to 0) growing_total_volume = 1
+				if(1 to 40) growing_total_volume = 2
+				if(41 to 100) growing_total_volume = 3
+				if(101 to 200) growing_total_volume = 4
+				if(201 to INFINITY) growing_total_volume = 5
+			if(growing_total_volume != src.total_volume)
+				src.total_volume = growing_total_volume
+				src.do_update_water_icon = 1
+
+		if(src.do_update_water_icon)
+			src.update_water_icon()
+			src.do_update_water_icon = 0
+
+		return growing_water_level
+
+	proc/water_preferred_vs_growing()
+		var/growing_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
+		switch(growing_water_level)
+			if(0 to 0)
+				return "no water"
+			if(1 to 40) growing_water_level = 1
+			if(40 to 100) growing_water_level = 2
+			if(100 to 200) growing_water_level = 3
+			if(200 to INFINITY) growing_water_level = 4
+
+		. = abs(growing.preferred_water_level-growing_water_level)
 
 //children of plantpots
 /obj/machinery/plantpot/hightech
