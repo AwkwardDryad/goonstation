@@ -890,11 +890,12 @@ ABSTRACT_TYPE(/datum/job/civilian)
 	limit = 5
 	#endif
 	wages = PAY_TRADESMAN
-	slot_belt = /obj/item/device/pda2/botanist
+	slot_belt = /obj/item/storage/belt/botany
 	slot_jump = /obj/item/clothing/under/rank/hydroponics
 	slot_foot = /obj/item/clothing/shoes/brown
 	slot_glov = /obj/item/clothing/gloves/black
 	slot_poc1 = /obj/item/paper/botany_guide
+	slot_poc2 = /obj/item/device/pda2/botanist
 	slot_ears = /obj/item/device/radio/headset/civilian
 
 	New()
