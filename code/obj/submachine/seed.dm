@@ -1393,10 +1393,10 @@
 	deconstruct_flags = DECON_SCREWDRIVER | DECON_WIRECUTTERS | DECON_MULTITOOL
 	icon = 'icons/obj/vending.dmi'
 	icon_state = "seed_market"
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 	var/tickets = 0
-	var/tab = 2
+	var/tab = 1
 	var/list/crop = list()
 	var/list/fruit = list()
 	var/list/vegetable = list()

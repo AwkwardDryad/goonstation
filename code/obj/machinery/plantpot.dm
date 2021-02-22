@@ -17,8 +17,8 @@
 	desc = "A tray filled with nutrient solution capable of sustaining plantlife."
 	icon = 'icons/obj/hydroponics/machines_hydroponics.dmi'
 	icon_state = "tray"
-	anchored = 0
-	density = 1
+	anchored = FALSE
+	density = TRUE
 	mats = 2
 	flags = NOSPLASH
 	processing_tier = PROCESSING_SIXTEENTH
@@ -28,13 +28,13 @@
 	var/datum/plantgenes/DNA = null 		// Set this up in New
 	var/datum/plantmutation/MUT = null		// Also set up in New
 	var/tickcount = 0  						// Automatic. Tracks how many ticks have elapsed, for CPU efficiency things.
-	var/dead = 0       						// Automatic. If the plant is dead.
 	var/growth = 0     						// Automatic. How developed the plant is.
 	var/health = 0     						// Set this when you plant a seed. Plant dies when this hits 0.
 	var/harvests = 0  						// Set this when you plant a seed. How many times you can harvest it before it dies. Plant dies when it hits 0.
 	var/recently_harvested = 0 				// Automatic. A time delay between harvests.
 	var/generation = 0 						// Automatic. Just a fun thing to track how many generations a plant has been bred.
-	var/weedproof = 0  						// Does this tray block weeds from appearing in it? (Won't stop deliberately planted weeds)
+	var/dead = FALSE       					// Automatic. If the plant is dead.	
+	var/weedproof = FALSE  					// Does this tray block weeds from appearing in it? (Won't stop deliberately planted weeds)
 
 	var/report_freq = 1433 					//Radio channel to report plant status/death/whatever.
 	var/net_id = null
@@ -43,8 +43,8 @@
 	var/grow_level = 1 						// Same as the above except for growing plant growth
 	var/total_volume = 4 					// How much volume total is actually in the tray because why the fuck was water the only reagent being counted towards the level
 
-	var/health_warning = 0
-	var/harvest_warning = 0
+	var/health_warning = FALSE
+	var/harvest_warning = FALSE
 	var/image/water_sprite = null
 	var/image/water_meter = null
 	var/image/plant_sprite = null
@@ -234,14 +234,14 @@
 			src.harvest_warning = 1
 			do_update_overlays = TRUE
 		else if(harvest_warning && !is_harvestable())	// If the plant can't be harvested, do not display an indicator
-			src.harvest_warning = 0
+			src.harvest_warning = FALSE
 			do_update_overlays = TRUE
 
 		if(!health_warning && src.health <= growing.starthealth / 2)	// Does the plant need to be sent to medbay?
 			src.health_warning = 1
 			do_update_overlays = TRUE
 		else if(health_warning && src.health > growing.starthealth / 2)
-			src.health_warning = 0
+			src.health_warning = FALSE
 			do_update_overlays = TRUE
 
 		// Have we lost all health or growth, or used up all available harvests? If so, this plant
@@ -280,11 +280,11 @@
 			if(src.anchored)
 				user.visible_message("<b>[user]</b> unbolts the [src] from the floor.")
 				playsound(src.loc, "sound/items/Screwdriver.ogg", 100, 1)
-				src.anchored = 0
+				src.anchored = FALSE
 			else
 				user.visible_message("<b>[user]</b> secures the [src] to the floor.")
 				playsound(src.loc, "sound/items/Screwdriver.ogg", 100, 1)
-				src.anchored = 1
+				src.anchored = TRUE
 
 		else if(W.firesource)	// These are for burning down plants with.
 			if(isweldingtool(W) && !W:try_weld(usr, 3, noisy = 0, burn_eyes = 1))
@@ -311,7 +311,7 @@
 					destroy_plant()
 					return
 				else
-					damage_plant("physical",150,1)
+					damage_plant("physical",150,TRUE)
 					src.visible_message("<span class='alert'>[user.name] cuts at [src] with [W]!</span>")
 
 		else if(istype(W, /obj/item/seed/))	// Planting a seed in the tray.
@@ -632,14 +632,12 @@
 			if(src.growth >= growing.harvtime - DNA.harvtime) 
 				return TRUE
 			else 
-				return FALSE
+				return
 		if(!growing.crop || has_plant_flag(growing,NO_HARVEST))
-			return FALSE
+			return
 
 		if(src.growth >= growing.harvtime - DNA.harvtime)
 			return TRUE
-		else
-			return FALSE
 
 	proc/harvest(var/mob/living/user,var/obj/item/satchel/SA)
 		if(!user)
@@ -667,7 +665,7 @@
 
 		if(hydro_controls)
 			src.recently_harvested = 1
-			src.harvest_warning = 0
+			src.harvest_warning = FALSE
 			SPAWN_DBG(hydro_controls.delay_between_harvests)
 				src.recently_harvested = 0
 		else
@@ -1063,7 +1061,7 @@
 
 		mutate_plant(1)
 		post_alert("event_new")
-		src.recently_harvested = 0
+		src.recently_harvested = FALSE
 		update_tray_overlays()
 		update_name()
 
@@ -1075,12 +1073,12 @@
 	proc/kill_plant()	// Simple proc to kill the plant without clearing the plantpot out altogether.
 		src.health = 0
 		src.harvests = 0
-		src.dead = 1
-		src.recently_harvested = 0
 		src.grow_level = 0
+		src.dead = TRUE
+		src.recently_harvested = FALSE
+		src.health_warning = FALSE
+		src.harvest_warning = FALSE
 		post_alert("event_death")
-		src.health_warning = 0
-		src.harvest_warning = 0
 		update_tray_overlays()
 		update_name()
 
@@ -1089,7 +1087,7 @@
 		src.growing = null
 		src.growth = 0
 		src.grow_level = 1
-		src.dead = 0
+		src.dead = FALSE
 		src.harvests = 0
 		src.recently_harvested = 0
 		src.health_warning = 0
@@ -1109,19 +1107,21 @@
 		update_tray_overlays()
 		post_alert("event_cleared")
 
-	proc/damage_plant(var/damage_source, var/damage_amount, var/bypass_resistance = 0)
+	proc/damage_plant(var/damage_source, var/damage_amount, var/bypass_resistance = FALSE)
 		if(!damage_source || damage_amount < 1 || !damage_amount)
-			return 0
+			return
 		if(!growing || !DNA)
-			return 0
+			return
 		var/damage_prob = 100
 
 		if(!bypass_resistance)
 			switch(damage_source)
 				if("poison")
-					if(Hydro_check_strain(DNA,/datum/plant_gene_strain/immunity_toxin)) return 0
+					if(Hydro_check_strain(DNA,/datum/plant_gene_strain/immunity_toxin)) 
+						return
 				if("radiation")
-					if(Hydro_check_strain(DNA,/datum/plant_gene_strain/immunity_radiation)) return 0
+					if(Hydro_check_strain(DNA,/datum/plant_gene_strain/immunity_radiation))
+						return
 				if("drought")
 					if(Hydro_check_strain(DNA,/datum/plant_gene_strain/resistance_drought) && damage_prob > 0) damage_prob /= 2
 					if(Hydro_check_strain(DNA,/datum/plant_gene_strain/metabolism_fast)) damage_amount *= 2
@@ -1141,14 +1141,14 @@
 							damage_amount /= D.damage_mult
 
 			damage_prob -= growing.endurance + DNA.endurance
-			if(damage_prob < 1) return 0
+			if(damage_prob < 1) 
+				return
 			if(damage_prob > 100) damage_prob = 100
 
 		if(growing.endurance + DNA.endurance < 0) damage_amount -= growing.endurance + DNA.endurance
 		if(prob(damage_prob))
 			src.health -= damage_amount
-			return 1
-		else return 0
+			return TRUE
 
 	proc/add_harvest_reagents(var/obj/item/I,var/special_condition = null)
 		// This is called during harvest to add reagents from the plant to a new piece of produce.
@@ -1318,7 +1318,7 @@
 
 		if(src.do_update_water_icon)
 			src.update_water_icon()
-			src.do_update_water_icon = 0
+			src.do_update_water_icon = FALSE
 
 		return growing_water_level
 
@@ -1404,10 +1404,10 @@
 	desc = "A special lamp that emits ultraviolet light to help plants grow quicker."
 	icon = 'icons/obj/hydroponics/machines_hydroponics.dmi'
 	icon_state = "growlamp0" // sprites by Clarks
-	density = 1
-	anchored = 0
+	density = TRUE
+	anchored = FALSE
 	mats = 6
-	var/active = 0
+	var/active = FALSE
 	var/datum/light/light
 
 	New()
@@ -1454,16 +1454,18 @@
 			playsound(src.loc, "sound/items/Screwdriver.ogg", 100, 1)
 			src.anchored = !src.anchored
 
+#define MODE_LOW 0
+#define MODE_HIGH 1
 /obj/machinery/hydro_mister
 	name = "\improper Botanical Mister"
 	desc = "A device that constantly sprays small amounts of chemical onto nearby plants."
 	icon = 'icons/obj/chemical.dmi'
 	icon_state = "fogmachine0"
-	density = 1
-	anchored = 0
+	density = TRUE
+	anchored = FALSE
 	mats = 6
-	var/active = 0
-	var/mode = 1
+	var/active = FALSE
+	var/mode = MODE_LOW
 
 	New()
 		..()
@@ -1486,8 +1488,8 @@
 				src.reagents.trans_to(P, 1 + (mode * 4))
 			if(src.reagents.total_volume < 10)
 				src.visible_message("\The [src] sputters and runs out of liquid.")
-				src.active = 0
-				src.mode = 0
+				src.active = FALSE
+				src.mode = MODE_LOW
 
 	attackby(obj/item/W as obj, mob/user as mob)
 		if(istype(W, /obj/item/reagent_containers/glass/))
@@ -1505,18 +1507,18 @@
 	attack_hand(var/mob/user as mob)
 		src.add_fingerprint(user)
 		if(!src.active)
-			src.active = 1
-			src.mode = 0
+			src.active = TRUE
+			src.mode = MODE_LOW
 			user.visible_message("<b>[user]</b> switches [src.name] on to low power mode.")
 			src.visible_message("\The [src] starts to hum, emitting a fine mist.")
 		else
 			if(!src.mode)
-				src.mode = 1
+				src.mode = MODE_HIGH
 				user.visible_message("<b>[user]</b> switches [src.name] to high power mode.")
 				src.visible_message("\The [src] starts to <em>really</em> emit a fine mist!")
 			else
-				src.active = 0
-				src.mode = 0
+				src.active = FALSE
+				src.mode = MODE_LOW
 				user.visible_message("<b>[user]</b> switches [src.name] off.")
 				src.visible_message("\The [src] goes quiet.")
 
@@ -1524,4 +1526,4 @@
 		playsound(get_turf(src), "sound/misc/lightswitch.ogg", 50, 1)
 
 	is_open_container()
-		return 1 // :I
+		return TRUE // :I
