@@ -1328,6 +1328,9 @@
 					hybrid.vars[V] = growing.vars[V]
 			. = hybrid
 
+	proc/Pot_add_gene_strain(var/strain) //for varediting! : requires a gene strain path
+		Hydro_add_strain(DNA,strain)
+
 //children of plantpots
 /obj/machinery/plantpot/hightech
 	name = "high-tech hydroponics tray"
