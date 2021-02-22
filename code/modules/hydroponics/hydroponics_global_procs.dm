@@ -28,7 +28,7 @@ proc/Hydro_new_mutation_check(var/datum/plant/P,var/datum/plantgenes/DNA,var/obj
             if(prob(chance) && Hydro_full_mutation_check(DNA))
                 DNA.mutation = HY_get_mutation_from_path(MUT.type)
                 if(T)
-                    T.update_tray_overlays()
+                    T.update_plant_overlays()
                     T.update_name()
                 break
 

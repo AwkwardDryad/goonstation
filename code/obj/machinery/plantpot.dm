@@ -79,8 +79,7 @@
 		..()
 
 	on_reagent_change()
-		src.do_update_water_icon = 1
-		src.update_water_level()
+		update_water_level()
 
 	process()
 		..()
@@ -100,7 +99,7 @@
 		if(has_plant_flag(growing,SIMPLE_GROWTH))	// Simplegrowth essentially skips all simulation whatsoever and just adds one growth point per tick
 			src.growth++
 		else
-			var/compared_water = water_preferred_vs_growing()
+			var/compared_water = abs(water_preferred_vs_growing()) // What is the deviation between the plant's preferred water and the current water level? 
 
 			if(compared_water != "no water")
 				var/is_slow_metabolism = Hydro_check_strain(DNA,/datum/plant_gene_strain/metabolism_slow)
@@ -154,39 +153,6 @@
 					var/datum/reagent/growing_reagent = src.reagents.reagent_list[growing_id]
 					if(growing_reagent)
 						growing_reagent.on_plant_life(src)
-
-			/* DEPRECATED, IN COMMENTS FOR THE MOMENT FOR TESTING
-			// Now we do a similar thing for gene strains, except with these we do a hard-coded
-			// thing right here since the gene strains themselves are just text strings.
-			for (var/X in DNA.gene_strains)
-				switch(X)
-					if("Unstable")
-						if(prob(18))
-							mutate_plant(1)
-						// Unstable causes the plant to mutate on its own every so often.
-						// Players might want this or might not, so it's neither good nor bad.
-					if("Accelerator")
-						if(prob(10))
-							DNA.growtime--
-							DNA.harvtime--
-						// This gene strain should be kept rare. It boosts the growth rate genes
-						// which makes the plant grow faster permanently. As of the time of writing
-						// I don't think anyone's discovered it so if it needs a downside, we can
-						// figure it out later.
-					if("Poor Health")
-						if(prob(24))
-							damage_plant("frailty",1)
-						// Poor Health is a bad strain to have that causes the plant to slowly take
-						// damage for sod all reason. It's basically a weak wuss plant strain.
-					if("Rapid Growth")
-						src.growth += 2
-						// Basically like rapid metabolism with no downsides.
-					if("Stunted Growth")
-						if(src.growth > 1)
-							src.growth--
-						// Slow down growth. We don't want this to reduce src.growth to zero in
-						// any case, because that means the plant would die.
-			*/
 
 			if(DNA.gene_strains)
 				for (var/datum/plant_gene_strain/X in DNA.gene_strains)
@@ -327,6 +293,7 @@
 					logTheThing("combat", user, null, "plants a [SEED.planttype] seed at [log_loc(src)].")
 				if(!(user in src.contributors))
 					src.contributors += user
+				update_water_info_display()
 			else
 				user.show_text("You plant the seed, but nothing happens.","red")
 				pool (SEED)
@@ -889,6 +856,8 @@
 			for(var/obj/I in src.contents)
 				I.set_loc(user.loc)
 
+			update_water_info_display()
+
 		// Now we determine the harvests remaining or grant extra ones.
 		if(!Hydro_check_strain(DNA,/datum/plant_gene_strain/immortal))	// Immortal is a gene strain that means infinite harvests as long as the plant is kept alive.
 			if(src.health >= growing.starthealth * 4)
@@ -1208,11 +1177,21 @@
 
 		UpdateOverlays(src.water_sprite, "water_fluid")
 		UpdateOverlays(src.water_meter, "water_meter")
+		update_water_info_display()
+
+	proc/update_water_info_display()
+		var/water_difference = water_preferred_vs_growing()
+		if(water_difference == "no_water" || water_difference < 0)	// if the water difference is negative, the water level is too low
+			UpdateOverlays(image(icon,"water+",6),"water_info_display")
+		else if(water_difference > 0) 
+			UpdateOverlays(image(icon,"water-",6),"water_info_display")
+		else if(GetOverlayImage("water_info_display"))
+			ClearSpecificOverlays("water_info_display")
 
 	proc/update_water_level() //checks reagent contents of the pot, then returns the curent water level
 		var/growing_total_volume = (src.reagents ? src.reagents.total_volume : 0)
 		var/growing_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
-		var/do_update_water_icon = FALSE
+		var/update_water_overlays = FALSE
 		switch(growing_water_level)
 			if(0 to 0) growing_water_level = 1
 			if(1 to 40) growing_water_level = 2
@@ -1221,7 +1200,7 @@
 			if(201 to INFINITY) growing_water_level = 5
 		if(growing_water_level != src.water_level)
 			src.water_level = growing_water_level
-			do_update_water_icon = TRUE
+			update_water_overlays = TRUE
 		if(!growing)
 			switch(growing_total_volume)
 				if(0 to 0) growing_total_volume = 1
@@ -1231,11 +1210,10 @@
 				if(201 to INFINITY) growing_total_volume = 5
 			if(growing_total_volume != src.total_volume)
 				src.total_volume = growing_total_volume
-				do_update_water_icon = TRUE
+				update_water_overlays = TRUE
 
-		if(src.do_update_water_icon)
+		if(update_water_overlays)
 			src.update_water_icon()
-			do_update_water_icon = FALSE
 
 		return growing_water_level
 
@@ -1268,7 +1246,8 @@
 			if(100 to 200) growing_water_level = 3
 			if(200 to INFINITY) growing_water_level = 4
 
-		. = abs(growing.preferred_water_level-growing_water_level)
+		if(growing)
+			. = growing_water_level-growing.preferred_water_level
 
 	proc/is_harvestable()
 		if(!growing || !DNA || health < 1 || harvests < 1 || recently_harvested) return 0
