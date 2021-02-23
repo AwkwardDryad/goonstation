@@ -1494,15 +1494,9 @@
 
 	proc/vend_item(var/mob/user)
 		var/path = text2path(target_path)
-		var/datum/plant/p = new path
-		var/obj/item/seed/S
-		if(p.unique_seed)
-			S = unpool(p.unique_seed)
-		else
-			S = unpool(/obj/item/seed)
-			S.removecolor()
-		S.generic_seed_setup(p)
-		user.put_in_hand_or_drop(S)
+		var/datum/plant/PLANT = new path
+		var/obj/item/seed/SEED = Hydro_seed_setup(PLANT,TRUE)
+		user.put_in_hand_or_drop(SEED)
 
 	proc/gachapon(var/mob/user)
 		tickets -= gacha_cost

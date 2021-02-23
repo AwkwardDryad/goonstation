@@ -377,22 +377,8 @@
 
 	afterattack(atom/target as obj|mob|turf, mob/user as mob, flag)
 		if (isturf(target) && selected)
-			var/obj/item/seed/S
-			// if (selected.unique_seed)
-			// 	S = new selected.unique_seed(src.loc)
-			// else
-			// 	S = new /obj/item/seed(src.loc,0)
-			// S.generic_seed_setup(selected)
-			if (selected.unique_seed)
-				S = unpool(selected.unique_seed)
-				S.set_loc(src.loc)
-			else
-				S = unpool(/obj/item/seed)
-				S.set_loc(src.loc)
-				S.removecolor()
-			S.generic_seed_setup(selected)
-
-
+			var/obj/item/seed/S = Hydro_seed_setup(selected,TRUE)
+			S.set_loc(src.loc)
 
 /obj/item/seedplanter/hidden
 	desc = "This is supposed to be a cyborg part. You're not quite sure what it's doing here."

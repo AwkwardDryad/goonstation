@@ -308,12 +308,7 @@
 				user.show_text("You need to select something to plant first.","red")
 				return
 			user.visible_message("<span class='notice'>[user] plants a seed in the [src].</span>")
-			var/obj/item/seed/SEED
-			if(SP.selected.unique_seed)
-				SEED = unpool(SP.selected.unique_seed)
-			else
-				SEED = unpool(/obj/item/seed)
-			SEED.generic_seed_setup(SP.selected)
+			var/obj/item/seed/SEED = Hydro_seed_setup(SP.selected,TRUE)
 			SEED.set_loc(src)
 			if(SEED.planttype)
 				src.create_plant(SEED)
@@ -726,15 +721,8 @@
 					add_harvest_reagents(CROP,quality_status)
 
 				else if(istype(CROP,/obj/item/seed/))	// Passing genes to seeds
-					var/obj/item/seed/S = CROP
-					if(growing.unique_seed)
-						S = unpool(growing.unique_seed)
-						S.set_loc(src)
-					else
-						S = unpool(/obj/item/seed)
-						S.set_loc(src)
-						S.removecolor()
-
+					var/obj/item/seed/S = Hydro_seed_setup(CROP)
+					S.set_loc(src)
 					var/datum/plantgenes/seed_DNA = S.plantgenes
 					if(!growing.unique_seed && !growing.hybrid)
 						S.generic_seed_setup(growing)
@@ -777,14 +765,8 @@
 					S.update_stack_appearance()
 
 				if(((has_plant_flag(growing,SINGLE_HARVEST) || has_plant_flag(growing,FORCE_SEED_ON_HARVEST)) && prob(80)) && !istype(CROP,/obj/item/seed/) && !Hydro_check_strain(DNA,/datum/plant_gene_strain/seedless))
-					var/obj/item/seed/S
-					if(growing.unique_seed)
-						S = unpool(growing.unique_seed)
-						S.set_loc(src)
-					else
-						S = unpool(/obj/item/seed)
-						S.set_loc(src)
-						S.removecolor()
+					var/obj/item/seed/S = Hydro_seed_setup(growing)
+					S.set_loc(src)
 					var/datum/plantgenes/seed_DNA = S.plantgenes
 					if(!growing.unique_seed && !growing.hybrid)
 						S.generic_seed_setup(growing)
