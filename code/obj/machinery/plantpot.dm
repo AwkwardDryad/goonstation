@@ -42,6 +42,7 @@
 	var/water_level = 4 					// Used for efficiency in the update_plant_overlays proc with water level changing
 	var/grow_level = 1 						// Same as the above except for growing plant growth
 	var/total_volume = 4 					// How much volume total is actually in the tray because why the fuck was water the only reagent being counted towards the level
+	var/stored_tickets = 0
 
 	var/health_warning = FALSE
 	var/harvest_warning = FALSE
@@ -53,6 +54,7 @@
 	var/growth_rate = 2
 
 	var/list/contributors = list() // Who helped grow this plant? Mainly used for critters.
+	var/list/datum/contextAction/potActions
 
 	var/action_bar_status //holds defines for action bar harvesting yay :D
 	
@@ -226,21 +228,8 @@
 			if(istype(src.growing,/datum/plant/maneater))	// We want to be able to feed stuff to maneaters, such as meat, people, etc.
 				handle_maneater_interaction(W,user)
 			if(src.growing.harvest_tools)	// Checks to see if the plant requires a specific tool to harvest, rather than an empty hand.
-				var/passed
-				for(var/i in 1 to length(growing.harvest_tools))
-					if(ispath(growing.harvest_tools[i]))
-						if(istype(W,growing.harvest_tools[i]))
-							passed = TRUE
-							break
-					else if(istool(W,growing.harvest_tools[i]))
-						passed = TRUE
-						break
-				if(passed)
-					if(growing.harvest_tool_message)
-						user.show_text(growing.harvest_tool_message)
-					harvest(user,null)
-					return
-
+				check_for_valid_harvest_tool(W,user)
+				return
 		if(istool(W, TOOL_SCREWING | TOOL_WRENCHING))	// These allow you to unanchor the plantpots to move them around, or re-anchor them.
 			if(src.anchored)
 				user.visible_message("<b>[user]</b> unbolts the [src] from the floor.")
@@ -252,7 +241,7 @@
 				src.anchored = TRUE
 
 		else if(W.firesource)	// These are for burning down plants with.
-			if(isweldingtool(W) && !W:try_weld(usr, 3, noisy = 0, burn_eyes = 1))
+			if(isweldingtool(W) && !W:try_weld(user, 3, noisy = 0, burn_eyes = 1))
 				return
 			else if(istype(W, /obj/item/device/light/zippo) && !W:on)
 				boutput(user, "<span class='alert'>It would help if you lit it first, dumbass!</span>")
@@ -376,88 +365,12 @@
 		if(isAI(user) || isobserver(user))
 			return
 		src.add_fingerprint(user)
-		if(src.growing)
-			if(src.dead)
-				user.show_text("You clear the dead plant out of the tray.","blue")
-				destroy_plant()
-				return
-
-			if(is_harvestable())
-				if(!growing.harvest_tools) //if the plant needs a specific tool or set of tools to harvest
-					harvest(user,null)
-				else
-					if(!growing.harvest_tool_fail_message)
-						user.show_text("<b>You don't have the right tool to harvest this plant!</b>","red")
-					else
-						user.show_text(growing.harvest_tool_fail_message)
-			else
-				user.show_text("You check [name] and the tray.")
-
-				if(src.recently_harvested)
-					user.show_text("This plant has been harvested recently. It needs some time to regenerate.")
-				if(!src.reagents.has_reagent("water"))
-					user.show_text("The tray is completely dry.","red")
-				else
-					if(src.reagents.get_reagent_amount("water") > 200)
-						user.show_text("The tray has too much water.","red")
-					if(src.reagents.get_reagent_amount("water") < 40)
-						user.show_text("The tray's water level looks a little low.","red")
-				if(src.health >= growing.starthealth * 4)
-					user.show_text("The plant is flourishing!","green")
-				else if(src.health >= growing.starthealth * 2)
-					user.show_text("The plant looks very healthy.","green")
-				else if(src.health <= growing.starthealth / 2)
-					user.show_text("The plant is in poor condition.","red")
-				if(MUT)
-					user.show_text("The plant looks strange...","red")
-
-				var/reag_list = ""
-				for(var/growing_id in src.reagents.reagent_list)
-					var/datum/reagent/growing_reagent = src.reagents.reagent_list[growing_id]
-					reag_list += "[reag_list ? ", " : " "][growing_reagent.name]"
-
-				user.show_text("There is a total of [src.reagents.total_volume] units of solution.")
-				user.show_text("The solution seems to contain [reag_list].")
-		else	// If there's no plant, just check what reagents are in there.
-			user.show_text("You check the solution in [src.name].")
-			var/reag_list = ""
-			for(var/growing_id in src.reagents.reagent_list)
-				var/datum/reagent/growing_reagent = src.reagents.reagent_list[growing_id]
-				reag_list += "[reag_list ? ", " : " "][growing_reagent.name]"
-
-			user.show_text("There is a total of [src.reagents.total_volume] units of solution.")
-			user.show_text("The solution seems to contain [reag_list].")
-		return
-
-	MouseDrop(over_object, src_location, over_location)
-		..()
-		if(!isliving(usr))
+		if(growing && dead)
+			user.show_text("You clear the dead plant out of the tray.","blue")
+			destroy_plant()
 			return
-		if(get_dist(src, usr) > 1)
-			usr.show_text("You need to be closer to empty the tray out!","red")
-			return
-
-		if(src.growing)
-			trigger_attacked_proc(usr)
-
-			if(has_plant_flag(growing,GROWTHMODE_WEED))	// Use weedkiller to get rid of the weeds since you can't clear them out by hand.
-				if(alert("Clear this tray?",,"Yes","No") == "Yes")
-					usr.visible_message("<b>[usr.name]</b> dumps out the tray's contents.")
-					usr.show_text("Weeds still infest the tray. You'll need something a bit more thorough to get rid of them.","red")
-					src.growth = 0
-					src.reagents.clear_reagents()
-			else
-				if(alert("Clear this tray?",,"Yes","No") == "Yes")
-					usr.visible_message("<b>[usr.name]</b> dumps out the tray's contents.")
-					src.reagents.clear_reagents()
-					src.do_update_overlays = TRUE
-					destroy_plant()
-		else
-			if(alert("Clear this tray?",,"Yes","No") == "Yes")
-				usr.visible_message("<b>[usr.name]</b> dumps out the tray's contents.")
-				src.reagents.clear_reagents()
-				src.do_update_overlays = TRUE
-		return
+		update_context_actions()
+		user.showContextActions(potActions,src)
 
 	MouseDrop_T(atom/over_object as obj, mob/user as mob) // ty to Razage for the initial code
 		if(!in_interact_range(src,user) || !in_interact_range(src,over_object) || is_incapacitated(user) || isAI(user))
@@ -1244,6 +1157,28 @@
 		if(src.growth >= growing.harvtime - DNA.harvtime)
 			return TRUE
 
+	proc/check_for_valid_harvest_tool(var/obj/item/W,var/mob/user)
+		if(!W)
+			return
+		var/passed
+		for(var/i in 1 to length(growing.harvest_tools))
+			if(ispath(growing.harvest_tools[i]))
+				if(istype(W,growing.harvest_tools[i]))
+					passed = TRUE
+					break
+			else if(istool(W,growing.harvest_tools[i]))
+				passed = TRUE
+				break
+		if(passed)
+			if(growing.harvest_tool_message)
+				user.show_text(growing.harvest_tool_message)
+			harvest(user,null)
+		else
+			if(!growing.harvest_tool_fail_message)
+				user.show_text("<b>You don't have the right tool to harvest this plant!</b>","red")
+			else
+				user.show_text(growing.harvest_tool_fail_message)
+
 	proc/setup_hybrid(var/datum/plant/P)
 		if(growing.hybrid)	// Copy the genes from the plant we're harvesting to the new piece of produce.
 			var/datum/plant/hybrid = new /datum/plant(P)
@@ -1301,6 +1236,106 @@
 			qdel (W)
 			if(!(user in src.contributors))
 				src.contributors += user
+
+	//Context Menu Procs
+	//----------------//
+	proc/update_context_actions()
+		potActions = list()
+		if(stored_tickets)
+			potActions += new /datum/contextAction/plantpot/tickets
+		if(is_harvestable())
+			potActions += new /datum/contextAction/plantpot/harvest
+		potActions += new /datum/contextAction/plantpot/check
+		if(reagents.total_volume)
+			potActions += new /datum/contextAction/plantpot/remove_reagents
+		if(reagents.total_volume || growing)
+			potActions += new /datum/contextAction/plantpot/clear
+		potActions += new /datum/contextAction/plantpot/close
+
+	proc/context_claim_tickets(var/mob/user)
+		return
+
+	proc/context_harvest(var/mob/user,var/obj/item/satchel/SA)
+		if(!is_harvestable())
+			return
+		if(!growing.harvest_tools) //if the plant needs a specific tool or set of tools to harvest
+			if(SA)
+				harvest(user,SA)
+			else
+				harvest(user,null)
+		else
+			check_for_valid_harvest_tool(user,user.equipped(),user)
+
+	proc/context_check(var/mob/user)
+		if(growing)
+			user.show_text("You check [name] and the tray.")
+
+			if(src.recently_harvested)
+				user.show_text("This plant has been harvested recently. It needs some time to regenerate.")
+			if(!src.reagents.has_reagent("water"))
+				user.show_text("The tray is completely dry.","red")
+			else
+				if(src.reagents.get_reagent_amount("water") > 200)
+					user.show_text("The tray has too much water.","red")
+				if(src.reagents.get_reagent_amount("water") < 40)
+					user.show_text("The tray's water level looks a little low.","red")
+			if(src.health >= growing.starthealth * 4)
+				user.show_text("The plant is flourishing!","green")
+			else if(src.health >= growing.starthealth * 2)
+				user.show_text("The plant looks very healthy.","green")
+			else if(src.health <= growing.starthealth / 2)
+				user.show_text("The plant is in poor condition.","red")
+			if(MUT)
+				user.show_text("The plant looks strange...","red")
+
+			var/reag_list = ""
+			for(var/growing_id in src.reagents.reagent_list)
+				var/datum/reagent/growing_reagent = src.reagents.reagent_list[growing_id]
+				reag_list += "[reag_list ? ", " : " "][growing_reagent.name]"
+
+			user.show_text("There is a total of [src.reagents.total_volume] units of solution.")
+			user.show_text("The solution seems to contain [reag_list].")
+		else	// If there's no plant, just check what reagents are in there.
+			user.show_text("You check the solution in [src.name].")
+			var/reag_list = ""
+			for(var/growing_id in src.reagents.reagent_list)
+				var/datum/reagent/growing_reagent = src.reagents.reagent_list[growing_id]
+				reag_list += "[reag_list ? ", " : " "][growing_reagent.name]"
+
+			user.show_text("There is a total of [src.reagents.total_volume] units of solution.")
+			user.show_text("The solution seems to contain [reag_list].")
+
+	proc/context_remove_reagents(var/mob/user)
+		if(!reagents.total_volume)
+			return
+		var/remove_amount = input(user, "How much reagent would you like to remove?", "Total Volume: [reagents.total_volume]") as num
+		if(remove_amount)
+			if(remove_amount > reagents.total_volume)
+				remove_amount = reagents.total_volume
+			user.visible_message("<b>[user.name]</b> opens the tap on the [name] and drains some of its contents onto the [get_turf(loc)]")
+			reagents.remove_any(remove_amount)
+
+	proc/context_clear_all(var/mob/user)
+		if(src.growing)
+			trigger_attacked_proc(user)
+
+			if(has_plant_flag(growing,GROWTHMODE_WEED))	// Use weedkiller to get rid of the weeds since you can't clear them out by hand.
+				if(tgui_alert(user, "Clear this tray?", "Confirmation", list("Yes", "No")) == "Yes")
+					user.visible_message("<b>[user.name]</b> dumps out the tray's contents.")
+					user.show_text("Weeds still infest the tray. You'll need something a bit more thorough to get rid of them.","red")
+					src.growth = 0
+					src.reagents.clear_reagents()
+			else
+				if(tgui_alert(user, "Clear this tray?", "Confirmation", list("Yes", "No")) == "Yes")
+					user.visible_message("<b>[user.name]</b> dumps out the tray's contents.")
+					src.reagents.clear_reagents()
+					src.do_update_overlays = TRUE
+					destroy_plant()
+		else
+			if(tgui_alert(user, "Clear this tray?", "Confirmation", list("Yes", "No")) == "Yes")
+				user.visible_message("<b>[user.name]</b> dumps out the tray's contents.")
+				src.reagents.clear_reagents()
+				src.do_update_overlays = TRUE
 
 //children of plantpots
 /obj/machinery/plantpot/hightech
