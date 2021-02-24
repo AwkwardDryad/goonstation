@@ -1564,7 +1564,7 @@
 			return
 		switch(action)
 			if("spawn_item")
-				if((params["cost"] != 0) && ((tickets - params["cost"]) <= 0))
+				if((tickets - params["cost"]) < 0)
 					return
 				target_path = params["target_path"]
 				tickets -= params["cost"]
@@ -1583,7 +1583,7 @@
 		user.playsound_local(src.loc, "keyboard", 50, 1)
 
 	proc/gachapon(var/mob/user)
-		if((tickets - gacha_cost) <= 0)
+		if((tickets - gacha_cost) < 0)
 			return
 		tickets -= gacha_cost
 		user.put_in_hand_or_drop(new /obj/item/seed_gachapon)
