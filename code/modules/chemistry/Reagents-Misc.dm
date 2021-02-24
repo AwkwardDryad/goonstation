@@ -1867,10 +1867,12 @@ datum
 				M.reagents.add_reagent("histamine", 0.3 * mult)
 				..()
 
-/* 			reaction_obj(var/obj/O, var/volume)
-				if(reagent_state == LIQUID || prob(2 * volume - min(14 + T0C - holder.total_temperature, 100) * 0.1))
-					explode(list(get_turf(O)), "splash on [key_name(O)]") */
-
+			reaction_obj(var/obj/O, var/volume)
+				if(istype(O, /obj/critter/domestic_bee))
+					var/currentpollen = O.reagents.get_reagent_amount("pollen")
+					if(currentpollen < 15) //cap pollen on bee to 15 so it doesn't completely fill the bee and block out nectar. Those fuzzy bumblebutts are only so big.
+						var/pollenTransferAmt = min((15 - currentpollen), volume)
+						O.reagents.add_reagent("pollen", pollenTransferAmt)
 		martian_flesh
 			name = "martian flesh"
 			id = "martian_flesh"

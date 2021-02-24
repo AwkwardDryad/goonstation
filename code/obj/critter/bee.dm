@@ -239,6 +239,14 @@
 			if (prob(10) && planter.health < planter.growing.starthealth)
 				planter.health++
 
+			//Robust pollination action
+			var/currentPollenAmt = src.reagents.get_reagent_amount("pollen")
+
+			if (prob(10) && currentPollenAmt > 5)
+				planter.growth++
+				planter.reagents.add_reagent("nectar", 5)
+				src.reagents.remove_reagent("pollen", 5)
+
 			src.visible_message("<b>[src]</b> [pick("slurps","sips","drinks")] nectar out of [planter].")
 			src.health = min(initial(src.health), src.health + 5)
 
