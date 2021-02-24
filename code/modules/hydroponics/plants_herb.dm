@@ -249,14 +249,8 @@ ABSTRACT_TYPE(/datum/plant/herb)
 			return
 		var/datum/plant/P = POT.growing
 		if (POT.growth > (P.harvtime + DNA.harvtime) && prob((10+DNA.cropsize))) //incrase probability with yield (10% is decent as a base level)
-			var/obj/item/seed/S
-			if (POT.growing.unique_seed)
-				S = unpool(POT.growing.unique_seed)
-				S.set_loc(POT)
-			else
-				S = unpool(/obj/item/seed)
-				S.set_loc(POT)
-				S.removecolor()
+			var/obj/item/seed/S = Hydro_seed_setup(POT.growing)
+			S.set_loc(POT)
 			var/datum/plantgenes/HDNA = DNA
 			var/datum/plantgenes/SDNA = S.plantgenes
 

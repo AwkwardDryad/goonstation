@@ -1,3 +1,16 @@
+proc/Hydro_seed_setup(var/datum/plant/PLANT,var/generic) // Creates a spawnable seed!
+    var/obj/item/seed/SEED
+    if(PLANT.unique_seed)
+        SEED = unpool(PLANT.unique_seed)
+    else
+        SEED = unpool(/obj/item/seed)
+        SEED.removecolor()
+
+    if(generic)
+        SEED.generic_seed_setup(PLANT)
+
+    . = SEED
+
 proc/Hydro_mutate_DNA(var/datum/plantgenes/DNA,var/severity = 1) // This proc jumbles up the variables in a plant's genes.
     if(!DNA)
         return
@@ -28,7 +41,7 @@ proc/Hydro_new_mutation_check(var/datum/plant/P,var/datum/plantgenes/DNA,var/obj
             if(prob(chance) && Hydro_full_mutation_check(DNA))
                 DNA.mutation = HY_get_mutation_from_path(MUT.type)
                 if(T)
-                    T.update_tray_overlays()
+                    T.update_plant_overlays()
                     T.update_name()
                 break
 

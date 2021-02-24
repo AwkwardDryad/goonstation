@@ -39,9 +39,10 @@
 	var/report_freq = 1433 					//Radio channel to report plant status/death/whatever.
 	var/net_id = null
 
-	var/water_level = 4 					// Used for efficiency in the update_tray_overlays proc with water level changing
+	var/water_level = 4 					// Used for efficiency in the update_plant_overlays proc with water level changing
 	var/grow_level = 1 						// Same as the above except for growing plant growth
 	var/total_volume = 4 					// How much volume total is actually in the tray because why the fuck was water the only reagent being counted towards the level
+	var/stored_tickets = 0
 
 	var/health_warning = FALSE
 	var/harvest_warning = FALSE
@@ -49,13 +50,14 @@
 	var/image/water_meter = null
 	var/image/plant_sprite = null
 											// We have these here as a check for whether or not the plant needs to update its sprite.
-	var/do_update_overlays = FALSE 					// this is now a var on the pot itself so you can actually call it outside of process()
-	var/do_update_water_icon = 1 			// this handles the water overlays specifically (water and water level) It's set to 1 by default so it'll update on spawn
+	var/do_update_overlays = FALSE 			// Does the plant pot need to update its plant overlays?
 	var/growth_rate = 2
 
 	var/list/contributors = list() // Who helped grow this plant? Mainly used for critters.
+	var/list/datum/contextAction/potActions
 
-	var/action_bar_status //holds defines for action bar harvesting yay :D
+	var/action_bar_status // holds defines for action bar harvesting yay :D
+	var/tickets_ready = FALSE // Are there tickets waiting to be claimed?
 	
 	New()
 		..()
@@ -67,7 +69,7 @@
 		reagents.add_reagent("water", 200)	// 200 is the exact maximum amount of WATER a plantpot can hold before it is considered full
 		src.water_meter = image('icons/obj/hydroponics/machines_hydroponics.dmi', "wat-[src.water_level]")
 		src.plant_sprite = image('icons/obj/hydroponics/plants_weed.dmi', "")
-		update_tray_overlays()
+		update_plant_overlays()
 
 		SPAWN_DBG(0.5 SECONDS)
 			radio_controller?.add_object(src, "[report_freq]")
@@ -80,13 +82,12 @@
 		..()
 
 	on_reagent_change()
-		src.do_update_water_icon = 1
-		src.update_water_level()
+		update_water_level()
 
 	process()
 		..()
 		if(do_update_overlays)	// We skip every other tick. Another cpu-conserving measure.
-			update_tray_overlays()
+			update_plant_overlays()
 			update_name()
 		if(!src.growing || src.dead)	// If the plantpot is empty or contains a dead plant, we don't need to do anything
 			return
@@ -101,7 +102,7 @@
 		if(has_plant_flag(growing,SIMPLE_GROWTH))	// Simplegrowth essentially skips all simulation whatsoever and just adds one growth point per tick
 			src.growth++
 		else
-			var/compared_water = water_preferred_vs_growing()
+			var/compared_water = abs(water_preferred_vs_growing()) // What is the deviation between the plant's preferred water and the current water level? 
 
 			if(compared_water != "no water")
 				var/is_slow_metabolism = Hydro_check_strain(DNA,/datum/plant_gene_strain/metabolism_slow)
@@ -155,39 +156,6 @@
 					var/datum/reagent/growing_reagent = src.reagents.reagent_list[growing_id]
 					if(growing_reagent)
 						growing_reagent.on_plant_life(src)
-
-			/* DEPRECATED, IN COMMENTS FOR THE MOMENT FOR TESTING
-			// Now we do a similar thing for gene strains, except with these we do a hard-coded
-			// thing right here since the gene strains themselves are just text strings.
-			for (var/X in DNA.gene_strains)
-				switch(X)
-					if("Unstable")
-						if(prob(18))
-							mutate_plant(1)
-						// Unstable causes the plant to mutate on its own every so often.
-						// Players might want this or might not, so it's neither good nor bad.
-					if("Accelerator")
-						if(prob(10))
-							DNA.growtime--
-							DNA.harvtime--
-						// This gene strain should be kept rare. It boosts the growth rate genes
-						// which makes the plant grow faster permanently. As of the time of writing
-						// I don't think anyone's discovered it so if it needs a downside, we can
-						// figure it out later.
-					if("Poor Health")
-						if(prob(24))
-							damage_plant("frailty",1)
-						// Poor Health is a bad strain to have that causes the plant to slowly take
-						// damage for sod all reason. It's basically a weak wuss plant strain.
-					if("Rapid Growth")
-						src.growth += 2
-						// Basically like rapid metabolism with no downsides.
-					if("Stunted Growth")
-						if(src.growth > 1)
-							src.growth--
-						// Slow down growth. We don't want this to reduce src.growth to zero in
-						// any case, because that means the plant would die.
-			*/
 
 			if(DNA.gene_strains)
 				for (var/datum/plant_gene_strain/X in DNA.gene_strains)
@@ -251,7 +219,7 @@
 			return
 
 		if(do_update_overlays)
-			update_tray_overlays()
+			update_plant_overlays()
 			update_name()
 
 		return
@@ -261,21 +229,8 @@
 			if(istype(src.growing,/datum/plant/maneater))	// We want to be able to feed stuff to maneaters, such as meat, people, etc.
 				handle_maneater_interaction(W,user)
 			if(src.growing.harvest_tools)	// Checks to see if the plant requires a specific tool to harvest, rather than an empty hand.
-				var/passed
-				for(var/i in 1 to length(growing.harvest_tools))
-					if(ispath(growing.harvest_tools[i]))
-						if(istype(W,growing.harvest_tools[i]))
-							passed = TRUE
-							break
-					else if(istool(W,growing.harvest_tools[i]))
-						passed = TRUE
-						break
-				if(passed)
-					if(growing.harvest_tool_message)
-						user.show_text(growing.harvest_tool_message)
-					harvest(user,null)
-					return
-
+				check_for_valid_harvest_tool(W,user)
+				return
 		if(istool(W, TOOL_SCREWING | TOOL_WRENCHING))	// These allow you to unanchor the plantpots to move them around, or re-anchor them.
 			if(src.anchored)
 				user.visible_message("<b>[user]</b> unbolts the [src] from the floor.")
@@ -287,7 +242,7 @@
 				src.anchored = TRUE
 
 		else if(W.firesource)	// These are for burning down plants with.
-			if(isweldingtool(W) && !W:try_weld(usr, 3, noisy = 0, burn_eyes = 1))
+			if(isweldingtool(W) && !W:try_weld(user, 3, noisy = 0, burn_eyes = 1))
 				return
 			else if(istype(W, /obj/item/device/light/zippo) && !W:on)
 				boutput(user, "<span class='alert'>It would help if you lit it first, dumbass!</span>")
@@ -328,6 +283,7 @@
 					logTheThing("combat", user, null, "plants a [SEED.planttype] seed at [log_loc(src)].")
 				if(!(user in src.contributors))
 					src.contributors += user
+				update_water_info_display()
 			else
 				user.show_text("You plant the seed, but nothing happens.","red")
 				pool (SEED)
@@ -342,12 +298,7 @@
 				user.show_text("You need to select something to plant first.","red")
 				return
 			user.visible_message("<span class='notice'>[user] plants a seed in the [src].</span>")
-			var/obj/item/seed/SEED
-			if(SP.selected.unique_seed)
-				SEED = unpool(SP.selected.unique_seed)
-			else
-				SEED = unpool(/obj/item/seed)
-			SEED.generic_seed_setup(SP.selected)
+			var/obj/item/seed/SEED = Hydro_seed_setup(SP.selected,TRUE)
 			SEED.set_loc(src)
 			if(SEED.planttype)
 				src.create_plant(SEED)
@@ -371,7 +322,7 @@
 					src.contributors += user
 				if(!W.reagents.total_volume)
 					user.show_text("<b>[W] is now empty.</b>","red")
-				update_tray_overlays()
+				update_plant_overlays()
 				return
 
 
@@ -415,88 +366,12 @@
 		if(isAI(user) || isobserver(user))
 			return
 		src.add_fingerprint(user)
-		if(src.growing)
-			if(src.dead)
-				user.show_text("You clear the dead plant out of the tray.","blue")
-				destroy_plant()
-				return
-
-			if(is_harvestable())
-				if(!growing.harvest_tools) //if the plant needs a specific tool or set of tools to harvest
-					harvest(user,null)
-				else
-					if(!growing.harvest_tool_fail_message)
-						user.show_text("<b>You don't have the right tool to harvest this plant!</b>","red")
-					else
-						user.show_text(growing.harvest_tool_fail_message)
-			else
-				user.show_text("You check [name] and the tray.")
-
-				if(src.recently_harvested)
-					user.show_text("This plant has been harvested recently. It needs some time to regenerate.")
-				if(!src.reagents.has_reagent("water"))
-					user.show_text("The tray is completely dry.","red")
-				else
-					if(src.reagents.get_reagent_amount("water") > 200)
-						user.show_text("The tray has too much water.","red")
-					if(src.reagents.get_reagent_amount("water") < 40)
-						user.show_text("The tray's water level looks a little low.","red")
-				if(src.health >= growing.starthealth * 4)
-					user.show_text("The plant is flourishing!","green")
-				else if(src.health >= growing.starthealth * 2)
-					user.show_text("The plant looks very healthy.","green")
-				else if(src.health <= growing.starthealth / 2)
-					user.show_text("The plant is in poor condition.","red")
-				if(MUT)
-					user.show_text("The plant looks strange...","red")
-
-				var/reag_list = ""
-				for(var/growing_id in src.reagents.reagent_list)
-					var/datum/reagent/growing_reagent = src.reagents.reagent_list[growing_id]
-					reag_list += "[reag_list ? ", " : " "][growing_reagent.name]"
-
-				user.show_text("There is a total of [src.reagents.total_volume] units of solution.")
-				user.show_text("The solution seems to contain [reag_list].")
-		else	// If there's no plant, just check what reagents are in there.
-			user.show_text("You check the solution in [src.name].")
-			var/reag_list = ""
-			for(var/growing_id in src.reagents.reagent_list)
-				var/datum/reagent/growing_reagent = src.reagents.reagent_list[growing_id]
-				reag_list += "[reag_list ? ", " : " "][growing_reagent.name]"
-
-			user.show_text("There is a total of [src.reagents.total_volume] units of solution.")
-			user.show_text("The solution seems to contain [reag_list].")
-		return
-
-	MouseDrop(over_object, src_location, over_location)
-		..()
-		if(!isliving(usr))
+		if(growing && dead)
+			user.show_text("You clear the dead plant out of the tray.","blue")
+			destroy_plant()
 			return
-		if(get_dist(src, usr) > 1)
-			usr.show_text("You need to be closer to empty the tray out!","red")
-			return
-
-		if(src.growing)
-			trigger_attacked_proc(usr)
-
-			if(has_plant_flag(growing,GROWTHMODE_WEED))	// Use weedkiller to get rid of the weeds since you can't clear them out by hand.
-				if(alert("Clear this tray?",,"Yes","No") == "Yes")
-					usr.visible_message("<b>[usr.name]</b> dumps out the tray's contents.")
-					usr.show_text("Weeds still infest the tray. You'll need something a bit more thorough to get rid of them.","red")
-					src.growth = 0
-					src.reagents.clear_reagents()
-			else
-				if(alert("Clear this tray?",,"Yes","No") == "Yes")
-					usr.visible_message("<b>[usr.name]</b> dumps out the tray's contents.")
-					src.reagents.clear_reagents()
-					src.do_update_overlays = TRUE
-					destroy_plant()
-		else
-			if(alert("Clear this tray?",,"Yes","No") == "Yes")
-				usr.visible_message("<b>[usr.name]</b> dumps out the tray's contents.")
-				src.reagents.clear_reagents()
-				src.do_update_overlays = TRUE
-		return
+		update_context_actions()
+		user.showContextActions(potActions,src)
 
 	MouseDrop_T(atom/over_object as obj, mob/user as mob) // ty to Razage for the initial code
 		if(!in_interact_range(src,user) || !in_interact_range(src,over_object) || is_incapacitated(user) || isAI(user))
@@ -547,101 +422,13 @@
 
 		return //Just toss out the rest of the signal then I guess
 
-	proc/update_water_icon()
-		var/datum/color/average
-		src.water_sprite = image('icons/obj/hydroponics/machines_hydroponics.dmi',"wat-[src.total_volume]")
-		src.water_sprite.layer = 3
-		src.water_meter = image('icons/obj/hydroponics/machines_hydroponics.dmi',"ind-wat-[src.water_level]")
-		if(src.reagents.total_volume)
-			average = src.reagents.get_average_color()
-			src.water_sprite.color = average.to_rgba()
-
-		UpdateOverlays(src.water_sprite, "water_fluid")
-		UpdateOverlays(src.water_meter, "water_meter")
-
-	proc/update_tray_overlays() //plant icon stuffs
-		src.water_meter = image('icons/obj/hydroponics/machines_hydroponics.dmi',"ind-wat-[src.water_level]")
-		UpdateOverlays(water_meter, "water_meter")
-		if(!src.growing)
-			UpdateOverlays(null, "harvest_display")
-			UpdateOverlays(null, "health_display")
-			UpdateOverlays(null, "plant")
-			UpdateOverlays(null, "plantdeath")
-			return
-
-		var/iconname = 'icons/obj/hydroponics/plants_weed.dmi'
-		if(growing.plant_icon)
-			iconname = growing.plant_icon
-		else if(MUT?.iconmod)
-			if(MUT.plant_icon)
-				iconname = MUT.plant_icon
-			else
-				iconname = growing.plant_icon
-
-		if(src.dead)
-			UpdateOverlays(hydro_controls.pot_death_display, "plantdeath")
-			UpdateOverlays(null, "harvest_display")
-			UpdateOverlays(null, "health_display")
-		else
-			UpdateOverlays(null, "plantdeath")
-			if(src.harvest_warning)
-				UpdateOverlays(hydro_controls.pot_harvest_display, "harvest_display")
-			else
-				UpdateOverlays(null, "harvest_display")
-
-			if(src.health_warning)
-				UpdateOverlays(hydro_controls.pot_health_display, "health_display")
-			else
-				UpdateOverlays(null, "health_display")
-
-		var/planticon = null
-		if(MUT?.iconmod)
-			planticon = "[MUT.iconmod]-G[src.grow_level]"
-		else if(growing.sprite)
-			planticon = "[growing.sprite]-G[src.grow_level]"
-		else if(growing.override_icon_state)
-			planticon = "[growing.override_icon_state]-G[src.grow_level]"
-		else
-			planticon = "[growing.name]-G[src.grow_level]"
-
-		src.plant_sprite.icon = iconname
-		src.plant_sprite.icon_state = planticon
-		src.plant_sprite.layer = 4
-		UpdateOverlays(plant_sprite, "plant")
-
-	proc/update_name()
-		if(!src.growing)
-			src.name = "hydroponics tray"
-			return
-		if(growing && has_plant_flag(growing,NO_SCAN))
-			src.name = "\improper strange plant"
-		else
-			if(istype(MUT,/datum/plantmutation/))
-				if(!MUT.name_prefix && !MUT.name_prefix && MUT.name)
-					src.name = "\improper [MUT.name] plant"
-				else if(MUT.name_prefix || MUT.name_suffix)
-					src.name = "\improper [MUT.name_prefix][growing.name][MUT.name_suffix] plant"
-			else
-				src.name = "\improper [growing.name] plant" //TODO: add optional suffix eg. "tree"
-		if(src.dead)
-			src.name = "dead " + src.name
-
-	proc/is_harvestable()
-		if(!growing || !DNA || health < 1 || harvests < 1 || recently_harvested) return 0
-		if(MUT && MUT.harvest_override && MUT.crop)
-			if(src.growth >= growing.harvtime - DNA.harvtime) 
-				return TRUE
-			else 
-				return
-		if(!growing.crop || has_plant_flag(growing,NO_HARVEST))
-			return
-
-		if(src.growth >= growing.harvtime - DNA.harvtime)
-			return TRUE
+	//Beeg Core Procs	// Procs that make plant pots plant pot. o.o
+	//-------------//
 
 	proc/harvest(var/mob/living/user,var/obj/item/satchel/SA)
 		if(!user)
 			return
+		var/added_tickets
 		var/satchelpick = 0
 		if(SA)
 			if(SA.contents.len >= SA.maxitems)
@@ -742,7 +529,9 @@
 			user.show_text("You can't seem to find anything that looks harvestable.","red")
 		else
 			var/seedcount = 0
+			var/itemcount = getamount
 			while (getamount > 0)
+				added_tickets += 1 // one ticked for each plant harvested!
 				// Start up the loop of grabbing all our produce. Remember, each iteration of
 				// this loop is for one item each.
 				var/quality_score = base_quality_score
@@ -776,11 +565,12 @@
 				if(istype(CROP, /obj/item/plant/))
 					var/obj/item/plant/PLANT = CROP
 					CROP.name = "[PLANT.crop_prefix][CROP.name][PLANT.crop_suffix]"
-
+					if(PLANT.brewable)
+						added_tickets += 1 //bonus points for produce!
 				else if(istype(CROP, /obj/item/reagent_containers/food/snacks/plant))
 					var/obj/item/reagent_containers/food/snacks/plant/SNACK = CROP
 					CROP.name = "[SNACK.crop_prefix][CROP.name][SNACK.crop_suffix]"
-
+					added_tickets += 1 //more bonus points for produce!
 				CROP.name = lowertext(CROP.name)
 
 				switch(quality_score)
@@ -788,14 +578,18 @@
 						if(prob(min(100, quality_score - 15)))
 							CROP.name = "jumbo [CROP.name]"
 							quality_status = "jumbo"
+							added_tickets += 3 
 						else
 							CROP.name = "[pick("perfect","amazing","incredible","supreme")] [CROP.name]"
+							added_tickets += 2
 					if(20 to 24)
 						if(prob(4))
 							CROP.name = "jumbo [CROP.name]"
 							quality_status = "jumbo"
+							added_tickets += 3
 						else
 							CROP.name = "[pick("superior","excellent","exceptional","wonderful")] [CROP.name]"
+							added_tickets += 1
 					if(15 to 19)
 						CROP.name = "[pick("quality","prime","grand","great")] [CROP.name]"
 					if(10 to 14)
@@ -849,15 +643,8 @@
 					add_harvest_reagents(CROP,quality_status)
 
 				else if(istype(CROP,/obj/item/seed/))	// Passing genes to seeds
-					var/obj/item/seed/S = CROP
-					if(growing.unique_seed)
-						S = unpool(growing.unique_seed)
-						S.set_loc(src)
-					else
-						S = unpool(/obj/item/seed)
-						S.set_loc(src)
-						S.removecolor()
-
+					var/obj/item/seed/S = Hydro_seed_setup(CROP)
+					S.set_loc(src)
 					var/datum/plantgenes/seed_DNA = S.plantgenes
 					if(!growing.unique_seed && !growing.hybrid)
 						S.generic_seed_setup(growing)
@@ -900,14 +687,8 @@
 					S.update_stack_appearance()
 
 				if(((has_plant_flag(growing,SINGLE_HARVEST) || has_plant_flag(growing,FORCE_SEED_ON_HARVEST)) && prob(80)) && !istype(CROP,/obj/item/seed/) && !Hydro_check_strain(DNA,/datum/plant_gene_strain/seedless))
-					var/obj/item/seed/S
-					if(growing.unique_seed)
-						S = unpool(growing.unique_seed)
-						S.set_loc(src)
-					else
-						S = unpool(/obj/item/seed)
-						S.set_loc(src)
-						S.removecolor()
+					var/obj/item/seed/S = Hydro_seed_setup(growing)
+					S.set_loc(src)
 					var/datum/plantgenes/seed_DNA = S.plantgenes
 					if(!growing.unique_seed && !growing.hybrid)
 						S.generic_seed_setup(growing)
@@ -938,7 +719,7 @@
 			// +10: if HP >= 400% w/ 30% chance
 			// Mutations can add or remove this, of course
 			// @TODO adjust this later, this is just to fix runtimes and make it slightly consistent
-			if (base_quality_score >= 1 && prob(10))
+			if(base_quality_score >= 1 && prob(10))
 				if(base_quality_score > 20)
 					JOB_XP(user, "Botanist", 3)
 				if(base_quality_score > 11)
@@ -946,8 +727,11 @@
 				else
 					JOB_XP(user, "Botanist", 1)
 
-			var/list/harvest_string = list("You harvest [getamount] item")
-			if(getamount > 1)
+			if(added_tickets)
+				add_tickets(added_tickets)
+
+			var/list/harvest_string = list("You harvest [itemcount] item")
+			if(itemcount > 1)
 				harvest_string += "s"
 			if(seedcount)
 				harvest_string += " and [seedcount] seed"
@@ -979,6 +763,8 @@
 			for(var/obj/I in src.contents)
 				I.set_loc(user.loc)
 
+			update_water_info_display()
+
 		// Now we determine the harvests remaining or grant extra ones.
 		if(!Hydro_check_strain(DNA,/datum/plant_gene_strain/immortal))	// Immortal is a gene strain that means infinite harvests as long as the plant is kept alive.
 			if(src.health >= growing.starthealth * 4)
@@ -994,7 +780,7 @@
 
 		//do we have to run the next life tick manually? maybe
 		playsound(src.loc, "rustle", 50, 1, -5, 2)
-		update_tray_overlays()
+		update_plant_overlays()
 		update_name()
 
 		if(has_plant_flag(growing,SINGLE_HARVEST))	// These plants always die after one harvest
@@ -1062,7 +848,7 @@
 		mutate_plant(1)
 		post_alert("event_new")
 		src.recently_harvested = FALSE
-		update_tray_overlays()
+		update_plant_overlays()
 		update_name()
 
 		/*if(usr && ishellbanned(usr)) //Haw haw
@@ -1079,7 +865,7 @@
 		src.health_warning = FALSE
 		src.harvest_warning = FALSE
 		post_alert("event_death")
-		update_tray_overlays()
+		update_plant_overlays()
 		update_name()
 
 	proc/destroy_plant()	// This resets the plantpot back to it's base state, apart from reagents.
@@ -1104,7 +890,7 @@
 		DNA.mutation = null
 
 		src.generation = 0
-		update_tray_overlays()
+		update_plant_overlays()
 		post_alert("event_cleared")
 
 	proc/damage_plant(var/damage_source, var/damage_amount, var/bypass_resistance = FALSE)
@@ -1199,6 +985,255 @@
 			for(var/X in putreagents)
 				I.reagents.add_reagent(X,putamount,,, 1)
 
+	proc/trigger_attacked_proc(var/obj/W,var/mob/user)
+		if(has_plant_flag(growing,USE_ATTACKED_PROC))	// Does the plant do anything special when smacked?
+			if(MUT)
+				// If we've got a mutation, we want to check if the mutation has its own special
+				// proc that overrides the regular one.
+				switch (MUT.attacked_proc_override)	// See special proc for values
+					if(0)
+						if(growing.HYPattacked_proc(src,user,W))
+							return
+					if(1)
+						if(MUT.HYPattacked_proc_M(src,user,W)) 
+							return
+					else
+						if(growing.HYPattacked_proc(src,user,W) || MUT.HYPattacked_proc_M(src,user,W))
+							return
+			else
+				if(growing.HYPattacked_proc(src,user,W))
+					return
+
+	proc/add_gene_strain_pot(var/strain) //for varediting! : requires a gene strain path
+		if(!growing)
+			return
+		Hydro_add_strain(DNA,strain)
+
+	proc/post_alert(var/alert_msg)
+		var/datum/radio_frequency/frequency = radio_controller.return_frequency("[report_freq]")
+		if(!frequency || !alert_msg) 
+			return
+		var/datum/signal/signal = get_free_signal()
+		signal.source = src
+		signal.transmission_method = 1
+		signal.data["data"] = alert_msg
+		signal.data["netid"] = net_id
+
+		frequency.post_signal(src, signal)
+
+	proc/ticket_animation_setup()
+		var/obj/pseudo_anim = new
+		pseudo_anim.set_loc(get_turf(src.loc))
+		pseudo_anim.mouse_opacity = 0
+		pseudo_anim.icon = icon
+		pseudo_anim.icon_state = "tickets-animated"
+		SPAWN_DBG(1.7 SECONDS)
+			UpdateOverlays(image(icon,"tickets-unanimated",6),"tickets")
+			qdel(pseudo_anim)
+			tickets_ready = TRUE
+
+	proc/add_tickets(var/amount)
+		if(!amount)
+			return
+		if(tickets_ready)
+			vend_tickets()
+			ticket_animation_setup()
+		else
+			ticket_animation_setup()
+		stored_tickets += amount
+			
+	proc/vend_tickets(var/mob/user)
+		if(!tickets_ready)
+			return
+		ClearSpecificOverlays("tickets")
+		tickets_ready = FALSE
+		var/obj/item/hydro_ticket/TICKET = new /obj/item/hydro_ticket
+		TICKET.value = stored_tickets
+		stored_tickets = 0
+		TICKET.update_sprite()
+		if(user)
+			user.put_in_hand_or_drop(TICKET)
+		else
+			TICKET.set_loc(get_turf(src.loc))
+
+	//Visual Procs	// Things that give visual feedback to YOU the player (^-^)
+	//----------//
+	proc/update_plant_overlays() //plant icon stuffs
+		src.water_meter = image('icons/obj/hydroponics/machines_hydroponics.dmi',"ind-wat-[src.water_level]")
+		UpdateOverlays(water_meter, "water_meter")
+		if(!src.growing)
+			UpdateOverlays(null, "harvest_display")
+			UpdateOverlays(null, "health_display")
+			UpdateOverlays(null, "plant")
+			UpdateOverlays(null, "plantdeath")
+			return
+
+		var/iconname = 'icons/obj/hydroponics/plants_weed.dmi'
+		if(growing.plant_icon)
+			iconname = growing.plant_icon
+		else if(MUT?.iconmod)
+			if(MUT.plant_icon)
+				iconname = MUT.plant_icon
+			else
+				iconname = growing.plant_icon
+
+		if(src.dead)
+			UpdateOverlays(hydro_controls.pot_death_display, "plantdeath")
+			UpdateOverlays(null, "harvest_display")
+			UpdateOverlays(null, "health_display")
+		else
+			UpdateOverlays(null, "plantdeath")
+			if(src.harvest_warning)
+				UpdateOverlays(hydro_controls.pot_harvest_display, "harvest_display")
+			else
+				UpdateOverlays(null, "harvest_display")
+
+			if(src.health_warning)
+				UpdateOverlays(hydro_controls.pot_health_display, "health_display")
+			else
+				UpdateOverlays(null, "health_display")
+
+		var/planticon = null
+		if(MUT?.iconmod)
+			planticon = "[MUT.iconmod]-G[src.grow_level]"
+		else if(growing.sprite)
+			planticon = "[growing.sprite]-G[src.grow_level]"
+		else if(growing.override_icon_state)
+			planticon = "[growing.override_icon_state]-G[src.grow_level]"
+		else
+			planticon = "[growing.name]-G[src.grow_level]"
+
+		src.plant_sprite.icon = iconname
+		src.plant_sprite.icon_state = planticon
+		src.plant_sprite.layer = 4
+		UpdateOverlays(plant_sprite, "plant")
+
+	proc/update_water_icon()
+		var/datum/color/average
+		src.water_sprite = image('icons/obj/hydroponics/machines_hydroponics.dmi',"wat-[src.total_volume]")
+		src.water_sprite.layer = 3
+		src.water_meter = image('icons/obj/hydroponics/machines_hydroponics.dmi',"ind-wat-[src.water_level]")
+		if(src.reagents.total_volume)
+			average = src.reagents.get_average_color()
+			src.water_sprite.color = average.to_rgba()
+
+		UpdateOverlays(src.water_sprite, "water_fluid")
+		UpdateOverlays(src.water_meter, "water_meter")
+		update_water_info_display()
+
+	proc/update_water_info_display()
+		var/water_difference = water_preferred_vs_growing()
+		if(water_difference == "no_water" || water_difference < 0)	// if the water difference is negative, the water level is too low
+			UpdateOverlays(image(icon,"water+",6),"water_info_display")
+		else if(water_difference > 0) 
+			UpdateOverlays(image(icon,"water-",6),"water_info_display")
+		else if(GetOverlayImage("water_info_display"))
+			ClearSpecificOverlays("water_info_display")
+
+	proc/update_water_level() //checks reagent contents of the pot, then returns the curent water level
+		var/growing_total_volume = (src.reagents ? src.reagents.total_volume : 0)
+		var/growing_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
+		var/update_water_overlays = FALSE
+		switch(growing_water_level)
+			if(0 to 0) growing_water_level = 1
+			if(1 to 40) growing_water_level = 2
+			if(41 to 100) growing_water_level = 3
+			if(101 to 200) growing_water_level = 4
+			if(201 to INFINITY) growing_water_level = 5
+		if(growing_water_level != src.water_level)
+			src.water_level = growing_water_level
+			update_water_overlays = TRUE
+		if(!growing)
+			switch(growing_total_volume)
+				if(0 to 0) growing_total_volume = 1
+				if(1 to 40) growing_total_volume = 2
+				if(41 to 100) growing_total_volume = 3
+				if(101 to 200) growing_total_volume = 4
+				if(201 to INFINITY) growing_total_volume = 5
+			if(growing_total_volume != src.total_volume)
+				src.total_volume = growing_total_volume
+				update_water_overlays = TRUE
+
+		if(update_water_overlays)
+			src.update_water_icon()
+
+		return growing_water_level
+
+	proc/update_name()
+		if(!src.growing)
+			src.name = "hydroponics tray"
+			return
+		if(growing && has_plant_flag(growing,NO_SCAN))
+			src.name = "\improper strange plant"
+		else
+			if(istype(MUT,/datum/plantmutation/))
+				if(!MUT.name_prefix && !MUT.name_prefix && MUT.name)
+					src.name = "\improper [MUT.name] plant"
+				else if(MUT.name_prefix || MUT.name_suffix)
+					src.name = "\improper [MUT.name_prefix][growing.name][MUT.name_suffix] plant"
+			else
+				src.name = "\improper [growing.name] plant" //TODO: add optional suffix eg. "tree"
+		if(src.dead)
+			src.name = "dead " + src.name
+
+	//Helper Procs	// Things that slim down the code a little to make it more readable and modular!
+	//----------//
+	proc/water_preferred_vs_growing()
+		var/growing_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
+		switch(growing_water_level)
+			if(0 to 0)
+				return "no water"
+			if(1 to 40) growing_water_level = 1
+			if(40 to 100) growing_water_level = 2
+			if(100 to 200) growing_water_level = 3
+			if(200 to INFINITY) growing_water_level = 4
+
+		if(growing)
+			. = growing_water_level-growing.preferred_water_level
+
+	proc/is_harvestable()
+		if(!growing || !DNA || health < 1 || harvests < 1 || recently_harvested) return 0
+		if(MUT && MUT.harvest_override && MUT.crop)
+			if(src.growth >= growing.harvtime - DNA.harvtime) 
+				return TRUE
+			else 
+				return
+		if(!growing.crop || has_plant_flag(growing,NO_HARVEST))
+			return
+
+		if(src.growth >= growing.harvtime - DNA.harvtime)
+			return TRUE
+
+	proc/check_for_valid_harvest_tool(var/obj/item/W,var/mob/user)
+		if(!W)
+			return
+		var/passed
+		for(var/i in 1 to length(growing.harvest_tools))
+			if(ispath(growing.harvest_tools[i]))
+				if(istype(W,growing.harvest_tools[i]))
+					passed = TRUE
+					break
+			else if(istool(W,growing.harvest_tools[i]))
+				passed = TRUE
+				break
+		if(passed)
+			if(growing.harvest_tool_message)
+				user.show_text(growing.harvest_tool_message)
+			harvest(user,null)
+		else
+			if(!growing.harvest_tool_fail_message)
+				user.show_text("<b>You don't have the right tool to harvest this plant!</b>","red")
+			else
+				user.show_text(growing.harvest_tool_fail_message)
+
+	proc/setup_hybrid(var/datum/plant/P)
+		if(growing.hybrid)	// Copy the genes from the plant we're harvesting to the new piece of produce.
+			var/datum/plant/hybrid = new /datum/plant(P)
+			for(var/V in growing.vars)
+				if(issaved(growing.vars[V]) && V != "holder")
+					hybrid.vars[V] = growing.vars[V]
+			. = hybrid
+
 	proc/handle_maneater_interaction(var/obj/item/W,var/mob/user) //used to interact with the maneater in attackby
 		if(istype(W, /obj/item/grab) && iscarbon(W:affecting) && istype(src.growing,/datum/plant/maneater))
 			if(src.growth < 60)
@@ -1249,90 +1284,105 @@
 			if(!(user in src.contributors))
 				src.contributors += user
 
-	proc/trigger_attacked_proc(var/obj/W,var/mob/user)
-		if(has_plant_flag(growing,USE_ATTACKED_PROC))	// Does the plant do anything special when smacked?
-			if(MUT)
-				// If we've got a mutation, we want to check if the mutation has its own special
-				// proc that overrides the regular one.
-				switch (MUT.attacked_proc_override)	// See special proc for values
-					if(0)
-						if(growing.HYPattacked_proc(src,user,W))
-							return
-					if(1)
-						if(MUT.HYPattacked_proc_M(src,user,W)) 
-							return
-					else
-						if(growing.HYPattacked_proc(src,user,W) || MUT.HYPattacked_proc_M(src,user,W))
-							return
+	//Context Menu Procs
+	//----------------//
+	proc/update_context_actions()
+		potActions = list()
+		if(tickets_ready)
+			potActions += new /datum/contextAction/plantpot/tickets
+		if(is_harvestable())
+			potActions += new /datum/contextAction/plantpot/harvest
+		potActions += new /datum/contextAction/plantpot/check
+		if(reagents.total_volume)
+			potActions += new /datum/contextAction/plantpot/remove_reagents
+		if(reagents.total_volume || growing)
+			potActions += new /datum/contextAction/plantpot/clear
+		potActions += new /datum/contextAction/plantpot/close
+
+	proc/context_claim_tickets(var/mob/user)
+		vend_tickets(user)
+
+	proc/context_harvest(var/mob/user,var/obj/item/satchel/SA)
+		if(!is_harvestable())
+			return
+		if(!growing.harvest_tools) //if the plant needs a specific tool or set of tools to harvest
+			if(SA)
+				harvest(user,SA)
 			else
-				if(growing.HYPattacked_proc(src,user,W))
-					return
+				harvest(user,null)
+		else
+			check_for_valid_harvest_tool(user,user.equipped(),user)
 
-	proc/setup_hybrid(var/datum/plant/P)
-		if(growing.hybrid)	// Copy the genes from the plant we're harvesting to the new piece of produce.
-			var/datum/plant/hybrid = new /datum/plant(P)
-			for(var/V in growing.vars)
-				if(issaved(growing.vars[V]) && V != "holder")
-					hybrid.vars[V] = growing.vars[V]
-			. = hybrid
+	proc/context_check(var/mob/user)
+		if(growing)
+			user.show_text("You check [name] and the tray.")
 
-	proc/add_gene_strain_pot(var/strain) //for varediting! : requires a gene strain path
-		if(!growing)
+			if(src.recently_harvested)
+				user.show_text("This plant has been harvested recently. It needs some time to regenerate.")
+			if(!src.reagents.has_reagent("water"))
+				user.show_text("The tray is completely dry.","red")
+			else
+				if(src.reagents.get_reagent_amount("water") > 200)
+					user.show_text("The tray has too much water.","red")
+				if(src.reagents.get_reagent_amount("water") < 40)
+					user.show_text("The tray's water level looks a little low.","red")
+			if(src.health >= growing.starthealth * 4)
+				user.show_text("The plant is flourishing!","green")
+			else if(src.health >= growing.starthealth * 2)
+				user.show_text("The plant looks very healthy.","green")
+			else if(src.health <= growing.starthealth / 2)
+				user.show_text("The plant is in poor condition.","red")
+			if(MUT)
+				user.show_text("The plant looks strange...","red")
+
+			var/reag_list = ""
+			for(var/growing_id in src.reagents.reagent_list)
+				var/datum/reagent/growing_reagent = src.reagents.reagent_list[growing_id]
+				reag_list += "[reag_list ? ", " : " "][growing_reagent.name]"
+
+			user.show_text("There is a total of [src.reagents.total_volume] units of solution.")
+			user.show_text("The solution seems to contain [reag_list].")
+		else	// If there's no plant, just check what reagents are in there.
+			user.show_text("You check the solution in [src.name].")
+			var/reag_list = ""
+			for(var/growing_id in src.reagents.reagent_list)
+				var/datum/reagent/growing_reagent = src.reagents.reagent_list[growing_id]
+				reag_list += "[reag_list ? ", " : " "][growing_reagent.name]"
+
+			user.show_text("There is a total of [src.reagents.total_volume] units of solution.")
+			user.show_text("The solution seems to contain [reag_list].")
+
+	proc/context_remove_reagents(var/mob/user)
+		if(!reagents.total_volume)
 			return
-		Hydro_add_strain(DNA,strain)
+		var/remove_amount = input(user, "How much reagent would you like to remove?", "Total Volume: [reagents.total_volume]") as num
+		if(remove_amount)
+			if(remove_amount > reagents.total_volume)
+				remove_amount = reagents.total_volume
+			user.visible_message("<b>[user.name]</b> opens the tap on the [name] and drains some of its contents onto the [get_turf(loc)]")
+			reagents.remove_any(remove_amount)
 
-	proc/post_alert(var/alert_msg)
-		var/datum/radio_frequency/frequency = radio_controller.return_frequency("[report_freq]")
-		if(!frequency || !alert_msg) 
-			return
-		var/datum/signal/signal = get_free_signal()
-		signal.source = src
-		signal.transmission_method = 1
-		signal.data["data"] = alert_msg
-		signal.data["netid"] = net_id
+	proc/context_clear_all(var/mob/user)
+		if(src.growing)
+			trigger_attacked_proc(user)
 
-		frequency.post_signal(src, signal)
-
-	proc/update_water_level() //checks reagent contents of the pot, then returns the curent water level
-		var/growing_total_volume = (src.reagents ? src.reagents.total_volume : 0)
-		var/growing_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
-		switch(growing_water_level)
-			if(0 to 0) growing_water_level = 1
-			if(1 to 40) growing_water_level = 2
-			if(41 to 100) growing_water_level = 3
-			if(101 to 200) growing_water_level = 4
-			if(201 to INFINITY) growing_water_level = 5
-		if(growing_water_level != src.water_level)
-			src.water_level = growing_water_level
-			src.do_update_water_icon = 1
-		if(!growing)
-			switch(growing_total_volume)
-				if(0 to 0) growing_total_volume = 1
-				if(1 to 40) growing_total_volume = 2
-				if(41 to 100) growing_total_volume = 3
-				if(101 to 200) growing_total_volume = 4
-				if(201 to INFINITY) growing_total_volume = 5
-			if(growing_total_volume != src.total_volume)
-				src.total_volume = growing_total_volume
-				src.do_update_water_icon = 1
-
-		if(src.do_update_water_icon)
-			src.update_water_icon()
-			src.do_update_water_icon = FALSE
-
-		return growing_water_level
-
-	proc/water_preferred_vs_growing()
-		var/growing_water_level = (src.reagents ? src.reagents.get_reagent_amount("water") : 0)
-		switch(growing_water_level)
-			if(0 to 0)
-				return "no water"
-			if(1 to 40) growing_water_level = 1
-			if(40 to 100) growing_water_level = 2
-			if(100 to 200) growing_water_level = 3
-			if(200 to INFINITY) growing_water_level = 4
-
-		. = abs(growing.preferred_water_level-growing_water_level)
+			if(has_plant_flag(growing,GROWTHMODE_WEED))	// Use weedkiller to get rid of the weeds since you can't clear them out by hand.
+				if(tgui_alert(user, "Clear this tray?", "Confirmation", list("Yes", "No")) == "Yes")
+					user.visible_message("<b>[user.name]</b> dumps out the tray's contents.")
+					user.show_text("Weeds still infest the tray. You'll need something a bit more thorough to get rid of them.","red")
+					src.growth = 0
+					src.reagents.clear_reagents()
+			else
+				if(tgui_alert(user, "Clear this tray?", "Confirmation", list("Yes", "No")) == "Yes")
+					user.visible_message("<b>[user.name]</b> dumps out the tray's contents.")
+					src.reagents.clear_reagents()
+					src.do_update_overlays = TRUE
+					destroy_plant()
+		else
+			if(tgui_alert(user, "Clear this tray?", "Confirmation", list("Yes", "No")) == "Yes")
+				user.visible_message("<b>[user.name]</b> dumps out the tray's contents.")
+				src.reagents.clear_reagents()
+				src.do_update_overlays = TRUE
 
 //children of plantpots
 /obj/machinery/plantpot/hightech

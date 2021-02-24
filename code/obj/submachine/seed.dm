@@ -1385,6 +1385,72 @@
 				return
 		..()
 
+/obj/item/hydro_ticket
+	name = "ticket"
+	desc = "a reward for growing plants!"
+	icon = 'icons/obj/hydroponics/items_hydroponics.dmi'
+	icon_state = "ticket-1" 
+	var/value = 1
+
+	proc/update_sprite()
+		if(value >= 30)
+			icon_state = "ticket-3"
+		else if(value >= 15)
+			icon_state = "ticket-2"
+		else if(value >= 1)
+			icon_state = "ticket-1"
+		if(value > 1)
+			name = "stack of tickets"
+			desc = "a reward for growing plants! There are [value] tickets in this stack!"
+		else if(value <= 1)
+			name = "ticket"
+			desc = "a reward for growing plants!"
+			if(value < 1)
+				value = 1
+
+	attackby(var/obj/item/W,var/mob/user)
+		if(istype(W,/obj/item/hydro_ticket))
+			var/obj/item/hydro_ticket/TICKET = W
+			user.u_equip(TICKET)
+			value += TICKET.value
+			update_sprite()
+			qdel(TICKET)
+		else
+			..()
+
+	attack_hand(var/mob/user)
+		if(loc == user)
+			var/amount = round(input("How many tickets would you like to take from the [name]?") as null|num)
+			if(!amount)
+				return
+			if(amount > value)
+				amount = value
+			if(amount && loc == user && !user.equipped())
+				var/obj/item/hydro_ticket/TICKET = new /obj/item/hydro_ticket
+				src.value -= amount
+				TICKET.value = amount
+				TICKET.update_sprite()
+				user.put_in_hand_or_drop(TICKET)
+
+				if(!value)
+					user.u_equip(src)
+					qdel(src)
+				else
+					update_sprite()
+		else
+			..()
+
+	MouseDrop_T(atom/movable/O as mob|obj, mob/user as mob)
+		SPAWN_DBG(0.2 SECONDS)
+			if(istype(O,/obj/item/hydro_ticket))
+				for(var/obj/item/hydro_ticket/TICKET in range(1,user))
+					if(TICKET == src)
+						continue
+					value += TICKET.value
+					qdel(TICKET)
+					update_sprite()
+					sleep(0.2 SECONDS)
+
 /obj/submachine/seed_vendor
 	name = "seed market"
 	desc = "A vending....gachapon....ticket machine....Someone had waaay too much fun making this thing."
@@ -1465,6 +1531,13 @@
 			return
 		ui_interact(user)
 
+	attackby(var/obj/item/W,var/mob/user)
+		if(istype(W,/obj/item/hydro_ticket))
+			var/obj/item/hydro_ticket/TICKET = W
+			user.u_equip(TICKET)
+			tickets += TICKET.value
+			qdel(W)
+
 	ui_interact(mob/user, datum/tgui/ui)
 		ui = tgui_process.try_update_ui(user, src, ui)
 		if(!ui)
@@ -1494,15 +1567,9 @@
 
 	proc/vend_item(var/mob/user)
 		var/path = text2path(target_path)
-		var/datum/plant/p = new path
-		var/obj/item/seed/S
-		if(p.unique_seed)
-			S = unpool(p.unique_seed)
-		else
-			S = unpool(/obj/item/seed)
-			S.removecolor()
-		S.generic_seed_setup(p)
-		user.put_in_hand_or_drop(S)
+		var/datum/plant/PLANT = new path
+		var/obj/item/seed/SEED = Hydro_seed_setup(PLANT,TRUE)
+		user.put_in_hand_or_drop(SEED)
 
 	proc/gachapon(var/mob/user)
 		tickets -= gacha_cost
@@ -1577,7 +1644,7 @@
 				UpdateOverlays(image('icons/obj/items/figures.dmi',"cap-cap1"),"cap")
 				open = FALSE
 
-	attack_hand(mob/user)
+	attack_hand(var/mob/user)
 		if(src.loc != user)
 			..()
 		else if(stored_seed && open)
@@ -1585,5 +1652,3 @@
 			stored_seed = null
 			underlays -= underlay_color
 			underlays -= underlay
-
-

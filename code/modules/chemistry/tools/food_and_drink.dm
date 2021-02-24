@@ -243,18 +243,11 @@
 						if (doseed)
 							var/datum/plant/stored = P.planttype
 							if (istype(stored) && !has_plant_flag(stored,SINGLE_HARVEST))
-								var/obj/item/seed/S
-								if (stored.unique_seed)
-									S = unpool(stored.unique_seed)
-									S.set_loc(user.loc)
-								else
-									S = unpool(/obj/item/seed)
-									S.set_loc(user.loc)
-									S.removecolor()
+								var/obj/item/seed/S = Hydro_seed_setup(stored,TRUE)
+								S.set_loc(user.loc)
 
 								var/datum/plantgenes/DNA = P.plantgenes
 								var/datum/plantgenes/PDNA = S.plantgenes
-								S.generic_seed_setup(stored)
 								Hydro_pass_DNA(DNA,PDNA)
 								if (stored.hybrid)
 									var/datum/plant/hybrid = new /datum/plant(S)

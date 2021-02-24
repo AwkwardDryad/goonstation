@@ -784,6 +784,70 @@
 			var/obj/item/c = target
 			user.put_in_hand_or_drop(c)
 
+/datum/contextAction/plantpot
+	icon = 'icons/ui/context16x16.dmi'
+	name = "Cake action"
+	desc = "You shouldn't be reading this, bug."
+	icon_state = "wrench"
+
+	checkRequirements(var/atom/target, var/mob/user)
+		return TRUE
+
+	tickets
+		name = "claim tickets"
+		desc = "claim your tickets!"
+		icon_state = "ticket"
+
+		execute(var/atom/target, var/mob/user)
+			var/obj/machinery/plantpot/POT = target
+			POT.context_claim_tickets(user)
+
+	harvest
+		name = "harvest"
+		desc = "harvest the tray!"
+		icon_state = "leaf"
+
+		execute(var/atom/target, var/mob/user)
+			var/obj/machinery/plantpot/POT = target
+			if(istype(user.equipped(),/obj/item/satchel))
+				POT.context_harvest(user,user.equipped())
+			else
+				POT.context_harvest(user)
+
+	check
+		name = "check tray"
+		desc = "examine the tray."
+		icon_state = "eye"
+
+		execute(var/atom/target, var/mob/user)
+			var/obj/machinery/plantpot/POT = target
+			POT.context_check(user)
+
+	remove_reagents
+		name = "remove reagents"
+		desc = "remove a number of reagents from the tray."
+		icon_state = "drop-"
+
+		execute(var/atom/target, var/mob/user)
+			var/obj/machinery/plantpot/POT = target
+			POT.context_remove_reagents(user)
+
+	clear
+		name = "clear plant tray"
+		desc = "clear all reagents and the plant in the tray."
+		icon_state = "caution"
+
+		execute(var/atom/target, var/mob/user)
+			var/obj/machinery/plantpot/POT = target
+			POT.context_clear_all(user)
+
+	close
+		name = "close"
+		desc = "close this menu."
+		icon_state = "close"
+
+		execute(var/atom/target, var/mob/user)
+			user.closeContextActions()
 /*
 	offered
 		icon = null
