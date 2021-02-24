@@ -16,6 +16,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	genome = 30
 	assoc_reagents = list("space_fungus")
 	mutations = list(/datum/plantmutation/fungus/amanita,/datum/plantmutation/fungus/psilocybin,/datum/plantmutation/fungus/cloak)
+	ticket_cost = 50
 
 /datum/plant/weed/lasher
 	name = "Lasher"
@@ -28,6 +29,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	endurance = 50
 	genome = 5
 	mutations = list(/datum/plantmutation/lasher/berries)
+	ticket_cost = 150
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -81,6 +83,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	harvtime = 100
 	endurance = 40
 	genome = 8
+	ticket_cost = 100
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -111,6 +114,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	genome = 40
 	assoc_reagents = list("radium")
 	mutations = list(/datum/plantmutation/radweed/redweed,/datum/plantmutation/radweed/safeweed)
+	ticket_cost = 200
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -164,6 +168,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	var/exploding = 0
 	assoc_reagents = list("toxic_slurry")
 	mutations = list(/datum/plantmutation/slurrypod/omega)
+	ticket_cost = 150
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
