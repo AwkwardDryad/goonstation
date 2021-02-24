@@ -1359,7 +1359,7 @@
 		if(remove_amount)
 			if(remove_amount > reagents.total_volume)
 				remove_amount = reagents.total_volume
-			user.visible_message("<b>[user.name]</b> opens the tap on the [name] and drains some of its contents onto the [get_turf(loc)]")
+			user.visible_message("<b>[user.name]</b> opens the tap on the [name] and drains some of its contents onto the [get_turf(loc)].")
 			reagents.remove_any(remove_amount)
 
 	proc/context_clear_all(var/mob/user)
