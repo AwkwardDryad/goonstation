@@ -1835,11 +1835,13 @@ datum
 			id = "pollen"
 			description = "A pollen-derivative with a number of proteins and other nutrients vital to space bee health. Not palatable for humans, but at least Russian dissidents have never been killed with it."
 			reagent_state = SOLID
-			fluid_r = 191
-			fluid_g = 191
-			fluid_b = 61
-			transparency = 255
+			fluid_r = 255
+			fluid_g = 255
+			fluid_b = 0
+			transparency = 95
 			value = 3
+			smoke_spread_mod = 3
+			depletion_rate = 0.4
 
 			reaction_mob(var/mob/living/M, var/method=TOUCH, var/volume_passed)
 				. = ..()
@@ -1851,10 +1853,19 @@ datum
 				if(method == INGEST)
 					var/mob/living/H = M
 					if (H.bioHolder && H.bioHolder.HasEffect("bee"))
-						boutput(M, "<span class='notice'>That tasted amazing!</span>")
+						M.show_text("That tasted amazing!", "red")
 					else
-						boutput(M, "<span class='alert'>Ugh! Eating that was a terrible idea!</span>")
-						M.setStatus("weakened", max(M.getStatusDuration("weakened"), 30))
+						M.show_text("Ugh! Ingesting that was a terrible idea!", "red")
+
+			on_mob_life(var/mob/M, var/mult = 1) //Causes sneezing and decays into a small amount of histamine.
+				if(!M)
+					M = holder.my_atom
+				if(H.bioHolder && H.bioHolder.HasEffect("bee")
+					return
+				if(probmult(25))
+					M.emote(pick( "sneeze", "cough"))
+				M.reagents.add_reagent("histamine", 0.3 * mult)
+				..()
 
 		martian_flesh
 			name = "martian flesh"
@@ -3685,30 +3696,6 @@ datum
 			fluid_r = 160
 			fluid_b = 160
 			fluid_g = 25
-			transparency = 95
-			hygiene_value = -0.5
-			smoke_spread_mod = 3
-
-
-			on_add()
-				if (holder && ismob(holder.my_atom))
-					holder.my_atom.setStatus("miasma", duration = INFINITE_STATUS)
-
-			on_remove()
-				if (ismob(holder.my_atom))
-					holder.my_atom.delStatus("miasma")
-
-			on_plant_life(var/obj/machinery/plantpot/P)
-				P.damage_plant("poison",1)
-
-		pollen
-			name = "pollen"
-			id = "pollen"
-			description = "Gross plant gametes produced by even grosser nature."
-			reagent_state = GAS
-			fluid_r = 255
-			fluid_b = 0
-			fluid_g = 255
 			transparency = 95
 			hygiene_value = -0.5
 			smoke_spread_mod = 3
