@@ -172,7 +172,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	var/exploding = 0
 	assoc_reagents = list("toxic_slurry")
 	mutations = list(/datum/plantmutation/slurrypod/omega)
-	ticket_cost = 150
+	ticket_cost = 50
 	vending_details = "Will explode if not quickly harvested, spreading toxic goop. Contains toxic slurry"
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)

@@ -1601,6 +1601,7 @@
 	name = "NaNo Gacha! Capsule"
 	desc = "NanoTrasen's failed attempt at making hydroponics more attractive to new recruits."
 	icon = 'icons/obj/items/figures.dmi'
+	w_class = 1.0
 	var/obj/item/stored_seed
 	var/image/underlay
 	var/image/underlay_color
