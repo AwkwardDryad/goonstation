@@ -56,7 +56,8 @@
 	var/list/contributors = list() // Who helped grow this plant? Mainly used for critters.
 	var/list/datum/contextAction/potActions
 
-	var/action_bar_status //holds defines for action bar harvesting yay :D
+	var/action_bar_status // holds defines for action bar harvesting yay :D
+	var/tickets_ready = FALSE // Are there tickets waiting to be claimed?
 	
 	New()
 		..()
@@ -427,6 +428,7 @@
 	proc/harvest(var/mob/living/user,var/obj/item/satchel/SA)
 		if(!user)
 			return
+		var/added_tickets
 		var/satchelpick = 0
 		if(SA)
 			if(SA.contents.len >= SA.maxitems)
@@ -527,7 +529,9 @@
 			user.show_text("You can't seem to find anything that looks harvestable.","red")
 		else
 			var/seedcount = 0
+			var/itemcount = getamount
 			while (getamount > 0)
+				added_tickets += 1 // one ticked for each plant harvested!
 				// Start up the loop of grabbing all our produce. Remember, each iteration of
 				// this loop is for one item each.
 				var/quality_score = base_quality_score
@@ -561,11 +565,12 @@
 				if(istype(CROP, /obj/item/plant/))
 					var/obj/item/plant/PLANT = CROP
 					CROP.name = "[PLANT.crop_prefix][CROP.name][PLANT.crop_suffix]"
-
+					if(PLANT.brewable)
+						added_tickets += 1 //bonus points for produce!
 				else if(istype(CROP, /obj/item/reagent_containers/food/snacks/plant))
 					var/obj/item/reagent_containers/food/snacks/plant/SNACK = CROP
 					CROP.name = "[SNACK.crop_prefix][CROP.name][SNACK.crop_suffix]"
-
+					added_tickets += 1 //more bonus points for produce!
 				CROP.name = lowertext(CROP.name)
 
 				switch(quality_score)
@@ -573,14 +578,18 @@
 						if(prob(min(100, quality_score - 15)))
 							CROP.name = "jumbo [CROP.name]"
 							quality_status = "jumbo"
+							added_tickets += 3 
 						else
 							CROP.name = "[pick("perfect","amazing","incredible","supreme")] [CROP.name]"
+							added_tickets += 2
 					if(20 to 24)
 						if(prob(4))
 							CROP.name = "jumbo [CROP.name]"
 							quality_status = "jumbo"
+							added_tickets += 3
 						else
 							CROP.name = "[pick("superior","excellent","exceptional","wonderful")] [CROP.name]"
+							added_tickets += 1
 					if(15 to 19)
 						CROP.name = "[pick("quality","prime","grand","great")] [CROP.name]"
 					if(10 to 14)
@@ -710,7 +719,7 @@
 			// +10: if HP >= 400% w/ 30% chance
 			// Mutations can add or remove this, of course
 			// @TODO adjust this later, this is just to fix runtimes and make it slightly consistent
-			if (base_quality_score >= 1 && prob(10))
+			if(base_quality_score >= 1 && prob(10))
 				if(base_quality_score > 20)
 					JOB_XP(user, "Botanist", 3)
 				if(base_quality_score > 11)
@@ -718,8 +727,11 @@
 				else
 					JOB_XP(user, "Botanist", 1)
 
-			var/list/harvest_string = list("You harvest [getamount] item")
-			if(getamount > 1)
+			if(added_tickets)
+				add_tickets(added_tickets)
+
+			var/list/harvest_string = list("You harvest [itemcount] item")
+			if(itemcount > 1)
 				harvest_string += "s"
 			if(seedcount)
 				harvest_string += " and [seedcount] seed"
@@ -1009,6 +1021,41 @@
 
 		frequency.post_signal(src, signal)
 
+	proc/ticket_animation_setup()
+		var/obj/pseudo_anim = new
+		pseudo_anim.set_loc(get_turf(src.loc))
+		pseudo_anim.mouse_opacity = 0
+		pseudo_anim.icon = icon
+		pseudo_anim.icon_state = "tickets-animated"
+		SPAWN_DBG(1.7 SECONDS)
+			UpdateOverlays(image(icon,"tickets-unanimated",6),"tickets")
+			qdel(pseudo_anim)
+			tickets_ready = TRUE
+
+	proc/add_tickets(var/amount)
+		if(!amount)
+			return
+		if(tickets_ready)
+			vend_tickets()
+			ticket_animation_setup()
+		else
+			ticket_animation_setup()
+		stored_tickets += amount
+			
+	proc/vend_tickets(var/mob/user)
+		if(!tickets_ready)
+			return
+		ClearSpecificOverlays("tickets")
+		tickets_ready = FALSE
+		var/obj/item/hydro_ticket/TICKET = new /obj/item/hydro_ticket
+		TICKET.value = stored_tickets
+		stored_tickets = 0
+		TICKET.update_sprite()
+		if(user)
+			user.put_in_hand_or_drop(TICKET)
+		else
+			TICKET.set_loc(get_turf(src.loc))
+
 	//Visual Procs	// Things that give visual feedback to YOU the player (^-^)
 	//----------//
 	proc/update_plant_overlays() //plant icon stuffs
@@ -1241,7 +1288,7 @@
 	//----------------//
 	proc/update_context_actions()
 		potActions = list()
-		if(stored_tickets)
+		if(tickets_ready)
 			potActions += new /datum/contextAction/plantpot/tickets
 		if(is_harvestable())
 			potActions += new /datum/contextAction/plantpot/harvest
@@ -1253,7 +1300,7 @@
 		potActions += new /datum/contextAction/plantpot/close
 
 	proc/context_claim_tickets(var/mob/user)
-		return
+		vend_tickets(user)
 
 	proc/context_harvest(var/mob/user,var/obj/item/satchel/SA)
 		if(!is_harvestable())
