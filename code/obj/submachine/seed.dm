@@ -1389,8 +1389,13 @@
 	name = "ticket"
 	desc = "a reward for growing plants!"
 	icon = 'icons/obj/hydroponics/items_hydroponics.dmi'
-	icon_state = "ticket-1" 
+	icon_state = "ticket-1"
+	inventory_counter_enabled = 1
 	var/value = 1
+
+	New()
+		..()
+		inventory_counter.update_number(value)
 
 	proc/update_sprite()
 		if(value >= 30)
@@ -1407,6 +1412,7 @@
 			desc = "a reward for growing plants!"
 			if(value < 1)
 				value = 1
+		inventory_counter.update_number(value)
 
 	attackby(var/obj/item/W,var/mob/user)
 		if(istype(W,/obj/item/hydro_ticket))
