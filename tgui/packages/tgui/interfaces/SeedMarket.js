@@ -44,8 +44,8 @@ function check_tab(plant_lists, tickets, context){
 }
 
 export const SeedMarket = (props, context) => {
-    const { data } = useBackend(context);
-    const { tickets, tab, plant_lists } = data;
+    const { data, act } = useBackend(context);
+    const { tickets, plant_lists, gacha_cost} = data;
     return(
         <Window
             title = "Seed Market"
@@ -55,6 +55,18 @@ export const SeedMarket = (props, context) => {
             <NoticeBox success>
                 <strong>Stored Tickets:</strong> {tickets}
             </NoticeBox>
+            <Button
+                icon="eject"
+                disabled={tickets < 1}
+                onClick={() => act("eject")}>
+                Eject Tickets
+            </Button>
+            <Button
+                icon="heart"
+                disabled={tickets < gacha_cost}
+                onClick={() => act("gachapon")}>
+                Gachapon! : {gacha_cost}
+            </Button>
             <Setup/>
             {check_tab(plant_lists, tickets, context)}
             </Window.Content>

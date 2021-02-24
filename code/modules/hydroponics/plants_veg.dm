@@ -59,6 +59,7 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	genome = 16
 	nectarlevel = 6
 	gene_strains = list(/datum/plant_gene_strain/damage_res,/datum/plant_gene_strain/stabilizer)
+	vending_details = "Makes great French fries, batteries and captains."
 
 /datum/plant/veg/onion
 	name = "Onion"
@@ -85,3 +86,4 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	endurance = 3
 	genome = 13
 	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/terminator)
+	vending_details = "Contains holy water. Not recommended for vampires."

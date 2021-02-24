@@ -19,3 +19,4 @@ ABSTRACT_TYPE(/datum/plant/flower)
 	genome = 7
 	mutations = list()
 	gene_strains = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/damage_res/bad)
+	vending_details = "Every rose has its thorn, and the ones on these might prick you if you pick them up while not wearing gloves; use wirecutters to remove them. Every rose has a name too; Examine it to find it!"

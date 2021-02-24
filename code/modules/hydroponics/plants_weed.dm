@@ -17,6 +17,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	assoc_reagents = list("space_fungus")
 	mutations = list(/datum/plantmutation/fungus/amanita,/datum/plantmutation/fungus/psilocybin,/datum/plantmutation/fungus/cloak)
 	ticket_cost = 50
+	vending_details = "Contains, as you'd expect, space fungus, which is great for boosting endurance."
 
 /datum/plant/weed/lasher
 	name = "Lasher"
@@ -30,6 +31,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	genome = 5
 	mutations = list(/datum/plantmutation/lasher/berries)
 	ticket_cost = 150
+	vending_details = "Will lash out at nearby people with its thorns."
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -84,6 +86,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	endurance = 40
 	genome = 8
 	ticket_cost = 100
+	vending_details = "Attacks other plants and spreads into adjacent empty pots."
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -115,6 +118,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	assoc_reagents = list("radium")
 	mutations = list(/datum/plantmutation/radweed/redweed,/datum/plantmutation/radweed/safeweed)
 	ticket_cost = 200
+	vending_details = "Emits radiation, affecting nearby plants and people."
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -169,6 +173,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	assoc_reagents = list("toxic_slurry")
 	mutations = list(/datum/plantmutation/slurrypod/omega)
 	ticket_cost = 150
+	vending_details = "Will explode if not quickly harvested, spreading toxic goop. Contains toxic slurry"
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()

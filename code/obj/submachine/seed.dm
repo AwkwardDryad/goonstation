@@ -1564,11 +1564,15 @@
 			return
 		switch(action)
 			if("spawn_item")
+				if((tickets - params["cost"]) <= 0)
+					return
 				target_path = params["target_path"]
 				tickets -= params["cost"]
 				vend_item(ui.user)
 			if("gachapon")
 				gachapon(ui.user)
+			if("eject")
+				eject(ui.user)
 				
 
 	proc/vend_item(var/mob/user)
@@ -1576,10 +1580,22 @@
 		var/datum/plant/PLANT = new path
 		var/obj/item/seed/SEED = Hydro_seed_setup(PLANT,TRUE)
 		user.put_in_hand_or_drop(SEED)
+		user.playsound_local(src.loc, "keyboard", 50, 1)
 
 	proc/gachapon(var/mob/user)
+		if((tickets - gacha_cost) <= 0)
+			return
 		tickets -= gacha_cost
 		user.put_in_hand_or_drop(new /obj/item/seed_gachapon)
+		user.playsound_local(user.loc, 'sound/machines/capsulebuy.ogg', 50, 1)
+
+	proc/eject(var/mob/user)
+		var/obj/item/hydro_ticket/TICKET = new /obj/item/hydro_ticket
+		TICKET.value = tickets
+		tickets = 0
+		TICKET.update_sprite()
+		user.put_in_hand_or_drop(TICKET)
+		playsound(user.loc, 'sound/machines/ping.ogg', 20, 1)
 
 /obj/item/seed_gachapon
 	name = "NaNo Gacha! Capsule"

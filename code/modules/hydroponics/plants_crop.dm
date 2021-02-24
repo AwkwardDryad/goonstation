@@ -15,6 +15,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	endurance = 0
 	genome = 10
 	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
+	vending_details = "Produces bamboo stalks, which can be cut down to produce edible shoots."
 
 /datum/plant/crop/wheat
 	name = "Wheat"
@@ -30,6 +31,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	genome = 10
 	mutations = list(/datum/plantmutation/wheat/steelwheat, /datum/plantmutation/wheat/durum)
 	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
+	vending_details = "Processes into flour."
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
@@ -51,6 +53,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	endurance = 0
 	genome = 10
 	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
+	vending_details = "Processes into oatmeal."
 
 /datum/plant/crop/rice
 	name = "Rice"
@@ -65,6 +68,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	endurance = 0
 	genome = 8
 	gene_strains = list(/datum/plant_gene_strain/yield,/datum/plant_gene_strain/health_poor)
+	vending_details = "Processes into rice."
 
 /datum/plant/crop/beans
 	name = "Bean"
@@ -80,6 +84,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	mutations = list(/datum/plantmutation/beans/jelly)
 	gene_strains = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/metabolism_slow)
 	assoc_reagents = list("nitrogen")
+	vending_details = "Contains nitrogen. Eating it allows fart propulsion in Space!"
 
 /datum/plant/crop/peas
 	name = "Peas"
@@ -108,6 +113,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	mutations = list(/datum/plantmutation/corn/clear)
 	gene_strains = list(/datum/plant_gene_strain/photosynthesis,/datum/plant_gene_strain/splicing/bad)
 	assoc_reagents = list("cornstarch")
+	vending_details = "Processes into popcorn. Contains corn starch."
 
 /datum/plant/crop/synthmeat
 	name = "Synthmeat"
@@ -150,6 +156,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	genome = 8
 	gene_strains = list(/datum/plant_gene_strain/quality,/datum/plant_gene_strain/terminator)
 	assoc_reagents = list("sugar")
+	vending_details = "Processes into sugar. Contains, you guessed it, sugar."
 
 /datum/plant/crop/soy
 	name = "Soybean"
@@ -165,6 +172,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	gene_strains = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/quality/inferior)
 	assoc_reagents = list("grease")
 	mutations = list(/datum/plantmutation/soy/soylent)
+	vending_details = "Processes into milk. Conveniently contains space soybean oil."
 
 /datum/plant/crop/peanut
 	name = "Peanut"
@@ -178,6 +186,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 1
 	endurance = 10
 	genome = 6
+	vending_details = "Processes into peanut butter."
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
@@ -201,6 +210,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	endurance = 0
 	genome = 5
 	gene_strains = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/metabolism_slow)
+	vending_details = "Processes into fabric when used in a material processor."
 
 /datum/plant/crop/tree // :effort:
 	name = "Tree"
@@ -216,6 +226,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	genome = 20
 	mutations = list(/datum/plantmutation/tree/money, /datum/plantmutation/tree/rubber,/datum/plantmutation/tree/sassafras, /datum/plantmutation/tree/dog,/datum/plantmutation/tree/paper)
 	gene_strains = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/metabolism_slow,/datum/plant_gene_strain/resistance_drought)
+	vending_details = "Chainsaw the resulting log to get your very own barricade."
 
 /datum/plant/crop/coffee
 	name = "Coffee"
@@ -229,3 +240,4 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	endurance = 0
 	genome = 6
 	gene_strains = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/metabolism_slow)
+	vending_details = "Extracts into...coffee."

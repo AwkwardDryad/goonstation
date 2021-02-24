@@ -77,6 +77,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	mutations = list(/datum/plantmutation/orange/blood, /datum/plantmutation/orange/clockwork)
 	gene_strains = list(/datum/plant_gene_strain/splicing,/datum/plant_gene_strain/damage_res/bad)
 	assoc_reagents = list("juice_orange")
+	vending_details = "Contains orange juice."
 
 /datum/plant/fruit/melon
 	name = "Melon"
@@ -94,6 +95,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	nectarlevel = 15
 	mutations = list(/datum/plantmutation/melon/george, /datum/plantmutation/melon/bowling)
 	gene_strains = list(/datum/plant_gene_strain/immortal,/datum/plant_gene_strain/seedless)
+	vending_details = "Contains water, unsurprisingly."
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
@@ -121,6 +123,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	assoc_reagents = list("capsaicin")
 	mutations = list(/datum/plantmutation/chili/chilly,/datum/plantmutation/chili/ghost)
 	gene_strains = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/growth_slow)
+	vending_details = "Processes into hot sauce. Contains capsaicin."
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
@@ -154,6 +157,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	mutations = list(/datum/plantmutation/apple/poison)
 	assoc_reagents = list("juice_apple")
 	gene_strains = list(/datum/plant_gene_strain/quality,/datum/plant_gene_strain/unstable)
+	vending_details = "Contains apple juice. Heals 1 unit of TOX, BURN, BRUTE, OXY, and BRAIN per bite."
 
 /datum/plant/fruit/banana
 	name = "Banana"
@@ -168,6 +172,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 15
 	assoc_reagents = list("potassium")
 	gene_strains = list(/datum/plant_gene_strain/immortal,/datum/plant_gene_strain/growth_slow)
+	vending_details = "Contains potassium. Yummy."
 
 /datum/plant/fruit/lime
 	name = "Lime"
@@ -182,6 +187,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 21
 	gene_strains = list(/datum/plant_gene_strain/photosynthesis,/datum/plant_gene_strain/splicing/bad)
 	assoc_reagents = list("juice_lime")
+	vending_details = "Contains lime juice, as you'd expect."
 
 /datum/plant/fruit/lemon
 	name = "Lemon"
@@ -195,6 +201,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	endurance = 3
 	genome = 21
 	assoc_reagents = list("juice_lemon")
+	vending_details = "Contains lemon juice. Clearly."
 
 /datum/plant/fruit/pumpkin
 	name = "Pumpkin"
@@ -208,6 +215,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	endurance = 10
 	genome = 19
 	gene_strains = list(/datum/plant_gene_strain/damage_res,/datum/plant_gene_strain/stabilizer)
+	vending_details = "Make your own lantern!"
 
 /datum/plant/fruit/avocado
 	name = "Avocado"
@@ -235,6 +243,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	gene_strains = list(/datum/plant_gene_strain/mutations,/datum/plant_gene_strain/terminator)
 	mutations = list(/datum/plantmutation/eggplant/literal)
 	assoc_reagents = list("nicotine")
+	vending_details = "Contains nicotine."
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
@@ -256,6 +265,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 18
 	nectarlevel = 10
 	assoc_reagents = list("juice_strawberry")
+	vending_details = "Contains strawberry juice."
 
 /datum/plant/fruit/blueberry
 	name = "Blueberry"
@@ -270,6 +280,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 18
 	nectarlevel = 10
 	assoc_reagents = list("juice_blueberry")
+	vending_details = "Contains blueberry juice."
 
 /datum/plant/fruit/coconut
 	name = "Coconut"
@@ -283,6 +294,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	endurance = 5
 	genome = 19
 	assoc_reagents = list("coconut_milk")
+	vending_details = "Contains coconut milk, which is distinct from regular space milk."
 
 /datum/plant/fruit/pineapple
 	name = "Pineapple"
@@ -295,6 +307,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 4
 	endurance = 10
 	genome = 21
+	vending_details = "Contains pineapple juice. Don't get in it your eyes."
 
 /datum/plant/fruit/pear
 	name = "Pear"
@@ -309,6 +322,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 19
 	nectarlevel = 10
 	gene_strains = list(/datum/plant_gene_strain/quality)
+	vending_details = "Can be fermented into cider."
 
 
 /*
@@ -336,3 +350,4 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	nectarlevel = 10
 	assoc_reagents = list("juice_peach")
 	gene_strains = list(/datum/plant_gene_strain/quality)
+	vending_details = "Contains peach juice. May contain The Presidents of the United States of America song references."

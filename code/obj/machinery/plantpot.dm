@@ -1031,6 +1031,7 @@
 		pseudo_anim.mouse_opacity = 0
 		pseudo_anim.icon = icon
 		pseudo_anim.icon_state = "tickets-animated"
+		playsound(src.loc, "sound/machines/printer_thermal.ogg", 50, 1)
 		SPAWN_DBG(1.7 SECONDS)
 			UpdateOverlays(image(icon,"tickets-unanimated",6),"tickets")
 			qdel(pseudo_anim)

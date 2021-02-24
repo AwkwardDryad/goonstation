@@ -18,6 +18,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	assoc_reagents = list("salicylic_acid")
 	mutations = list(/datum/plantmutation/contusine/shivering,/datum/plantmutation/contusine/quivering)
 	ticket_cost = 50
+	vending_details = "Contains salicylic acid."
 
 /datum/plant/herb/nureous
 	name = "Nureous"
@@ -35,6 +36,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	mutations = list(/datum/plantmutation/nureous/fuzzy)
 	gene_strains = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/damage_res/bad)
 	assoc_reagents = list("anti_rad")
+	vending_details = "Contains potassium iodide."
 
 /datum/plant/herb/asomna
 	name = "Asomna"
@@ -52,6 +54,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	assoc_reagents = list("ephedrine")
 	mutations = list(/datum/plantmutation/asomna/robust)
 	ticket_cost = 50
+	vending_details = "Contains ephedrine."
 
 /datum/plant/herb/commol
 	name = "Commol"
@@ -70,6 +73,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	assoc_reagents = list("silver_sulfadiazine")
 	mutations = list(/datum/plantmutation/commol/burning)
 	ticket_cost = 50
+	vending_details = "Contains silver sulfadiazine."
 
 /datum/plant/herb/ipecacuanha
 	name = "Ipecacuanha"
@@ -87,6 +91,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 	assoc_reagents = list("ipecac")
 	mutations = list(/datum/plantmutation/ipecacuanha/bilious,/datum/plantmutation/ipecacuanha/invigorating)
+	vending_details = "contains space ipecac."
 
 /datum/plant/herb/venne
 	name = "Venne"
@@ -104,6 +109,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	assoc_reagents = list("charcoal")
 	mutations = list(/datum/plantmutation/venne/toxic,/datum/plantmutation/venne/curative)
 	ticket_cost = 25
+	vending_details = "Contains charcoal."
 
 /datum/plant/herb/mint
 	name = "Mint"
@@ -119,6 +125,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	nectarlevel = 5
 	genome = 1
 	assoc_reagents = list("mint")
+	vending_details = "Contains, as you'd expect, mint."
 
 /datum/plant/herb/cannabis
 	name = "Cannabis"
@@ -138,6 +145,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	/datum/plantmutation/cannabis/white,/datum/plantmutation/cannabis/ultimate)
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 	ticket_cost = 100
+	vending_details = "Make your own joints by combining a leaf with a sheet of paper."
 
 /datum/plant/herb/catnip
 	name = "Nepeta Cataria"
@@ -153,6 +161,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 1
 	assoc_reagents = list("catonium")
 	ticket_cost = 100
+	vending_details = "Extract catonium to synthesize cat drugs."
 
 /datum/plant/herb/hcordata
 	name = "Houttuynia Cordata"
@@ -170,6 +179,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 1
 	assoc_reagents = list("mercury")
 	ticket_cost = 25
+	vending_details = "Fish mint, contains mercury."
 
 /datum/plant/herb/poppy
 	name = "Poppy"
@@ -185,6 +195,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 1
 	assoc_reagents = list("morphine")
 	ticket_cost = 100
+	vending_details = "Extracts into morphine."
 
 /datum/plant/herb/aconite
 	name = "Aconite"
@@ -199,6 +210,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 1
 	assoc_reagents = list("wolfsbane")
 	ticket_cost = 100
+	vending_details = "Contains aconitum. Wards aways and smites werewolves."
 
 /datum/plant/herb/tobacco
 	name = "Tobacco"
@@ -217,6 +229,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	mutations = list(/datum/plantmutation/tobacco/twobacco)
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 	ticket_cost = 100
+	vending_details = "Contains nicotine, naturally."
 
 /datum/plant/herb/grass
 	name = "Grass"
@@ -232,6 +245,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 4
 	assoc_reagents = list("grassgro")
 	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
+	vending_details = "Harvested leaves can be extracted into Grass Gro, which makes lovely grass grow when poured onto floor tiles."
 
 /datum/plant/herb/witchhazel
 	name = "Witch Hazel"
@@ -251,6 +265,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	harvest_tool_fail_message = "<b>Hmm...You'll need a tool capable of cutting these branches...</b>"
 	gene_strains = list(/datum/plant_gene_strain/yield/stunted,/datum/plant_gene_strain/pollen)
 	ticket_cost = 150
+	vending_details = "Known for its violent projectile seeds."
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -310,6 +325,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	assoc_reagents = list("mandrake")
 	required_reagents = list(list(id="poo",amount=100))
 	ticket_cost = 300
+	vending_details = "A mysterious plant said to have interesting reactions to blood and sharp objects. Needs at least 100 units of compost to grow."
 
 	HYPharvested_proc(var/obj/machinery/plantpot/POT,var/mob/user)
 		if (.) return
@@ -355,3 +371,4 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	assoc_reagents = list("heather_oil")
 	gene_strains = list(/datum/plant_gene_strain/slippery,/datum/plant_gene_strain/seedless)
 	ticket_cost = 50
+	vending_details = "Contains heather oil."
