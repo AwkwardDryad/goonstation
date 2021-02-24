@@ -17,6 +17,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 3
 	assoc_reagents = list("salicylic_acid")
 	mutations = list(/datum/plantmutation/contusine/shivering,/datum/plantmutation/contusine/quivering)
+	ticket_cost = 50
 
 /datum/plant/herb/nureous
 	name = "Nureous"
@@ -50,6 +51,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 3
 	assoc_reagents = list("ephedrine")
 	mutations = list(/datum/plantmutation/asomna/robust)
+	ticket_cost = 50
 
 /datum/plant/herb/commol
 	name = "Commol"
@@ -67,6 +69,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 	assoc_reagents = list("silver_sulfadiazine")
 	mutations = list(/datum/plantmutation/commol/burning)
+	ticket_cost = 50
 
 /datum/plant/herb/ipecacuanha
 	name = "Ipecacuanha"
@@ -100,6 +103,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 1
 	assoc_reagents = list("charcoal")
 	mutations = list(/datum/plantmutation/venne/toxic,/datum/plantmutation/venne/curative)
+	ticket_cost = 25
 
 /datum/plant/herb/mint
 	name = "Mint"
@@ -133,6 +137,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	mutations = list(/datum/plantmutation/cannabis/rainbow,/datum/plantmutation/cannabis/death,
 	/datum/plantmutation/cannabis/white,/datum/plantmutation/cannabis/ultimate)
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
+	ticket_cost = 100
 
 /datum/plant/herb/catnip
 	name = "Nepeta Cataria"
@@ -147,6 +152,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 0
 	genome = 1
 	assoc_reagents = list("catonium")
+	ticket_cost = 100
 
 /datum/plant/herb/hcordata
 	name = "Houttuynia Cordata"
@@ -163,6 +169,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 0
 	genome = 1
 	assoc_reagents = list("mercury")
+	ticket_cost = 25
 
 /datum/plant/herb/poppy
 	name = "Poppy"
@@ -177,6 +184,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 0
 	genome = 1
 	assoc_reagents = list("morphine")
+	ticket_cost = 100
 
 /datum/plant/herb/aconite
 	name = "Aconite"
@@ -190,6 +198,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 0
 	genome = 1
 	assoc_reagents = list("wolfsbane")
+	ticket_cost = 100
 
 /datum/plant/herb/tobacco
 	name = "Tobacco"
@@ -207,6 +216,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	assoc_reagents = list("nicotine")
 	mutations = list(/datum/plantmutation/tobacco/twobacco)
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
+	ticket_cost = 100
 
 /datum/plant/herb/grass
 	name = "Grass"
@@ -240,6 +250,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	harvest_tool_message = "<span style=\"color:green\"><b>You carefully slice segments off the plant and harvest the sprigs of witch hazel.</b></span>"
 	harvest_tool_fail_message = "<b>Hmm...You'll need a tool capable of cutting these branches...</b>"
 	gene_strains = list(/datum/plant_gene_strain/yield/stunted,/datum/plant_gene_strain/pollen)
+	ticket_cost = 150
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -298,7 +309,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 16
 	assoc_reagents = list("mandrake")
 	required_reagents = list(list(id="poo",amount=100))
-	ticket_cost = 50
+	ticket_cost = 300
 
 	HYPharvested_proc(var/obj/machinery/plantpot/POT,var/mob/user)
 		if (.) return
@@ -343,3 +354,4 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	preferred_water_level = 4
 	assoc_reagents = list("heather_oil")
 	gene_strains = list(/datum/plant_gene_strain/slippery,/datum/plant_gene_strain/seedless)
+	ticket_cost = 50

@@ -14,6 +14,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	growtime = 60
 	harvtime = 140
 	endurance = 40
+	ticket_cost = 100
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -37,6 +38,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	endurance = 60
 	var/focused = null
 	var/focus_level = 0
+	ticket_cost = 300
 
 	proc/stare_extreme(var/mob/living/M, var/obj/machinery/plantpot/POT)
 		if(!M || !(M in view(7,POT)) || !isalive(M))
@@ -138,6 +140,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	harvests = 6
 	endurance = 0
 	assoc_reagents = list("plasma")
+	ticket_cost = 150
 
 /datum/plant/artifact/rocks
 	name = "Rock"
@@ -152,6 +155,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	harvests = 8
 	endurance = 40
 	mutations = list(/datum/plantmutation/rocks/syreline,/datum/plantmutation/rocks/bohrum,/datum/plantmutation/rocks/mauxite,/datum/plantmutation/rocks/erebite)
+	ticket_cost = 100
 
 /datum/plant/artifact/litelotus
 	name = "Light Lotus"
@@ -165,6 +169,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	harvests = 2
 	endurance = 20
 	assoc_reagents = list("omnizine")
+	ticket_cost = 300
 
 /datum/plant/artifact/plasma
 	name = "Plasma"
@@ -177,6 +182,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	cropsize = 2
 	harvests = 1
 	endurance = 10
+	ticket_cost = 200
 
 /datum/plant/artifact/goldfish
 	name = "Goldfish"
@@ -189,6 +195,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	cropsize = 4
 	harvests = 6
 	endurance = 30
+	ticket_cost = 100
 
 /datum/plant/artifact/cat
 	name = "Synthetic Cat"
@@ -200,6 +207,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	growtime = 100
 	harvtime = 150
 	endurance = 30
+	ticket_cost = 100
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()

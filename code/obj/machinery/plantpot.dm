@@ -70,6 +70,7 @@
 		src.water_meter = image('icons/obj/hydroponics/machines_hydroponics.dmi', "wat-[src.water_level]")
 		src.plant_sprite = image('icons/obj/hydroponics/plants_weed.dmi', "")
 		update_plant_overlays()
+		update_water_icon()
 
 		SPAWN_DBG(0.5 SECONDS)
 			radio_controller?.add_object(src, "[report_freq]")
@@ -623,7 +624,8 @@
 
 					Hydro_pass_DNA(DNA,FDNA)
 					F.generation = src.generation
-					F.planttype = setup_hybrid(F)
+					if(growing.hybrid)
+						F.planttype = setup_hybrid(F)
 
 					// Now we calculate the final quality of the item!
 					if(Hydro_check_strain(DNA,/datum/plant_gene_strain/unstable) && prob(33))	// The unstable gene can do weird shit to your produce.
@@ -650,7 +652,8 @@
 						S.generic_seed_setup(growing)
 					Hydro_pass_DNA(DNA,seed_DNA)
 					S.generation = src.generation
-					S.planttype = setup_hybrid(S)
+					if(growing.hybrid)
+						S.planttype = setup_hybrid(S)
 
 				else if(istype(CROP,/obj/item/reagent_containers/food/snacks/mushroom/))	// Mushrooms mostly act the same as herbs, except you can eat them.
 					var/obj/item/reagent_containers/food/snacks/mushroom/M = CROP
@@ -703,7 +706,8 @@
 					S.name = "[seedname] seed"
 					Hydro_pass_DNA(DNA,seed_DNA)
 					S.generation = src.generation
-					S.planttype = setup_hybrid(S)
+					if(growing.hybrid)
+						S.planttype = setup_hybrid(S)
 
 					seedcount++
 				getamount--
@@ -1227,12 +1231,11 @@
 				user.show_text(growing.harvest_tool_fail_message)
 
 	proc/setup_hybrid(var/datum/plant/P)
-		if(growing.hybrid)	// Copy the genes from the plant we're harvesting to the new piece of produce.
-			var/datum/plant/hybrid = new /datum/plant(P)
-			for(var/V in growing.vars)
-				if(issaved(growing.vars[V]) && V != "holder")
-					hybrid.vars[V] = growing.vars[V]
-			. = hybrid
+		var/datum/plant/hybrid = new /datum/plant(P)
+		for(var/V in growing.vars)
+			if(issaved(growing.vars[V]) && V != "holder")
+				hybrid.vars[V] = growing.vars[V]
+		. = hybrid
 
 	proc/handle_maneater_interaction(var/obj/item/W,var/mob/user) //used to interact with the maneater in attackby
 		if(istype(W, /obj/item/grab) && iscarbon(W:affecting) && istype(src.growing,/datum/plant/maneater))
@@ -1359,7 +1362,7 @@
 		if(remove_amount)
 			if(remove_amount > reagents.total_volume)
 				remove_amount = reagents.total_volume
-			user.visible_message("<b>[user.name]</b> opens the tap on the [name] and drains some of its contents onto the [get_turf(loc)]")
+			user.visible_message("<b>[user.name]</b> opens the tap on the [name] and drains some of its contents onto the [get_turf(loc)].")
 			reagents.remove_any(remove_amount)
 
 	proc/context_clear_all(var/mob/user)
