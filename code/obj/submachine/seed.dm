@@ -1564,7 +1564,7 @@
 			return
 		switch(action)
 			if("spawn_item")
-				if((tickets - params["cost"]) <= 0)
+				if((params["cost"] != 0) && ((tickets - params["cost"]) <= 0))
 					return
 				target_path = params["target_path"]
 				tickets -= params["cost"]
