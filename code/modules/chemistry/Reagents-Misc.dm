@@ -1860,16 +1860,16 @@ datum
 			on_mob_life(var/mob/M, var/mult = 1) //Causes sneezing and decays into a small amount of histamine.
 				if(!M)
 					M = holder.my_atom
-				if(H.bioHolder && H.bioHolder.HasEffect("bee"))
+				if(M.bioHolder && M.bioHolder.HasEffect("bee"))
 					return
 				if(probmult(25))
 					M.emote(pick( "sneeze", "cough"))
 				M.reagents.add_reagent("histamine", 0.3 * mult)
 				..()
 
-			reaction_obj(var/obj/O, var/volume)
+/* 			reaction_obj(var/obj/O, var/volume)
 				if(reagent_state == LIQUID || prob(2 * volume - min(14 + T0C - holder.total_temperature, 100) * 0.1))
-					explode(list(get_turf(O)), "splash on [key_name(O)]")
+					explode(list(get_turf(O)), "splash on [key_name(O)]") */
 
 		martian_flesh
 			name = "martian flesh"
