@@ -250,7 +250,7 @@
 			src.visible_message("<b>[src]</b> [pick("slurps","sips","drinks")] nectar out of [planter].")
 			src.health = min(initial(src.health), src.health + 5)
 
-			if (src.reagents.total_volume >= src.reagents.maximum_volume)
+			if (src.reagents.total_volume >= (src.reagents.maximum_volume - 1))
 				src.puke_honey()
 
 				src.task = "thinking"
@@ -415,7 +415,7 @@
 
 			src.reagents.add_reagent("honey", nectarAmt)
 			W.reagents.trans_to(src, (isHoney ? W.reagents.total_volume * 0.75 : 100) )
-			if (src.reagents.total_volume >= src.reagents.maximum_volume)
+			if (src.reagents.total_volume >= (src.reagents.maximum_volume - 1) ) // -1 fixes a bug involving very small quantities of reagent preventing capping capacity. Bees would get stuck at 49.99993/50
 				src.puke_honey()
 			qdel(W)
 		else if (istype(W, /obj/item/reagent_containers/glass))

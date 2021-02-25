@@ -60,3 +60,8 @@
 	desc = "A tool used to cut wires and bars of metal. This pair has a yellow handle."
 	icon_state = "wirecutters-yellow"
 	item_state = "wirecutters-yellow"
+
+/obj/item/wirecutters/green
+	desc = "A tool used to cut wires and bars of metal. This pair has a green handle."
+	icon_state = "wirecutters-green"
+	item_state = "wirecutters-green"
