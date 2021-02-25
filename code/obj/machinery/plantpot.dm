@@ -1225,7 +1225,7 @@
 				passed = TRUE
 				break
 		if(passed)
-			if(is_harvestable)
+			if(is_harvestable())
 				if(growing.harvest_tool_message)
 					user.show_text(growing.harvest_tool_message)
 				harvest(user,null)
