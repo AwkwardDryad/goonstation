@@ -364,7 +364,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	growtime = 100
 	harvtime = 130
 	cropsize = 1
-	harvests = 0
+	harvests = 1
 	endurance = 1
 	genome = 1
 	preferred_water_level = 4
@@ -372,3 +372,21 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	gene_strains = list(/datum/plant_gene_strain/slippery,/datum/plant_gene_strain/seedless)
 	ticket_cost = 50
 	vending_details = "Contains heather oil."
+
+/datum/plant/herb/rosemary
+	name = "Rosemary"
+	plant_flags = FORCE_SEED_ON_HARVEST
+	seedcolor = "#512887"
+	crop = /obj/item/plant/herb/rosemary
+	starthealth = 1
+	growtime = 50
+	harvtime = 130
+	cropsize = 1
+	harvests = 1
+	endurance = 1
+	genome = 1
+	preferred_water_level = 2
+	assoc_reagents = list("heather_oil") //placeholder until tea implemented
+	gene_strains = list(/datum/plant_gene_strain/slippery,/datum/plant_gene_strain/terminator) //placeholder until grateful harvest implemented
+	ticket_cost = 50
+	vending_details = "Can be brewed into a tea containing mannitol and occuline. Good for heart conditions."

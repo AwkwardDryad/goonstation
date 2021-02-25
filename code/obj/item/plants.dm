@@ -401,21 +401,30 @@
 			return
 
 /obj/item/plant/herb/hazel
-	name = "sprig of witch hazel"
+	name = "branch of witch hazel"
 	icon = 'icons/obj/foodNdrink/food_produce.dmi'
 	icon_state = "witch_hazel"
 	desc = "it's hazel, but witchier."
 	w_class = 1
-	crop_prefix = "sprig of "
+	crop_prefix = "branch of "
 	crop_suffix = ""
 
 /obj/item/plant/herb/heather
-	name = "branch of witch hazel"
+	name = "sprig of heather"
 	icon = 'icons/obj/foodNdrink/food_produce.dmi'
 	icon_state = "heather"
 	desc = "A pretty pink flowering herb!"
 	w_class = 1
-	crop_prefix = "branch of "
+	crop_prefix = "sprig of "
+	crop_suffix = ""
+
+/obj/item/plant/herb/rosemary
+	name = "sprig of rosemary"
+	icon = 'icons/obj/foodNdrink/food_produce.dmi'
+	icon_state = "heather" //placeholder until we have sprites
+	desc = "A woody herb that looks a bit like pine. Friends with Parsley, Sage, and Thyme."
+	w_class = 1
+	crop_prefix = "sprig of "
 	crop_suffix = ""
 
 // FLOWERS //
