@@ -45,6 +45,6 @@
 	item_state = "screwdriver-yellow"
 
 /obj/item/screwdriver/green
-desc = "A tool used to turn slotted screws and other slotted objects. This one has a nice grass color."
-icon_state = "screwdriver-green"
-item_state = "screwdriver-green"
+	desc = "A tool used to turn slotted screws and other slotted objects. This one has a nice grass color."
+	icon_state = "screwdriver-green"
+	item_state = "screwdriver-green"
