@@ -36,7 +36,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	mutations = list(/datum/plantmutation/nureous/fuzzy)
 	gene_strains = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/damage_res/bad)
 	assoc_reagents = list("anti_rad")
-	vending_details = "Contains potassium iodide."
+	vending_details = "Contains potassium iodide.<br><br>Gene Strains : Radiation Immunity, Vulnerability"
 
 /datum/plant/herb/asomna
 	name = "Asomna"
@@ -73,7 +73,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	assoc_reagents = list("silver_sulfadiazine")
 	mutations = list(/datum/plantmutation/commol/burning)
 	ticket_cost = 50
-	vending_details = "Contains silver sulfadiazine."
+	vending_details = "Contains silver sulfadiazine.<br><br>Gene Strains : Drought Resistance, Stunted Yield"
 
 /datum/plant/herb/ipecacuanha
 	name = "Ipecacuanha"
@@ -91,7 +91,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 	assoc_reagents = list("ipecac")
 	mutations = list(/datum/plantmutation/ipecacuanha/bilious,/datum/plantmutation/ipecacuanha/invigorating)
-	vending_details = "contains space ipecac."
+	vending_details = "contains space ipecac.<br><br>Gene Strains : Drought Resistance, Stunted Yield"
 
 /datum/plant/herb/venne
 	name = "Venne"
@@ -145,7 +145,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	/datum/plantmutation/cannabis/white,/datum/plantmutation/cannabis/ultimate)
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 	ticket_cost = 100
-	vending_details = "Make your own joints by combining a leaf with a sheet of paper."
+	vending_details = "Make your own joints by combining a leaf with a sheet of paper.<br><br>Gene Strains : Drought Resistance, Stunted Yield"
 
 /datum/plant/herb/catnip
 	name = "Nepeta Cataria"
@@ -229,7 +229,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	mutations = list(/datum/plantmutation/tobacco/twobacco)
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 	ticket_cost = 100
-	vending_details = "Contains nicotine, naturally."
+	vending_details = "Contains nicotine, naturally.<br><br>Gene Strains : Drought Resistance, Stunted Yield"
 
 /datum/plant/herb/grass
 	name = "Grass"
@@ -245,7 +245,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 4
 	assoc_reagents = list("grassgro")
 	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
-	vending_details = "Harvested leaves can be extracted into Grass Gro, which makes lovely grass grow when poured onto floor tiles."
+	vending_details = "Harvested leaves can be extracted into Grass Gro, which makes lovely grass grow when poured onto floor tiles.<br><br>Gene Strains : Rapid Growth, Poor Health"
 
 /datum/plant/herb/witchhazel
 	name = "Witch Hazel"
@@ -265,7 +265,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	harvest_tool_fail_message = "<b>Hmm...You'll need a tool capable of cutting these branches...</b>"
 	gene_strains = list(/datum/plant_gene_strain/yield/stunted,/datum/plant_gene_strain/pollen)
 	ticket_cost = 150
-	vending_details = "Known for its violent projectile seeds."
+	vending_details = "Known for its violent projectile seeds.<br><br>Gene Strains : Stunted Yield, High Pollen Production"
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -371,4 +371,4 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	assoc_reagents = list("heather_oil")
 	gene_strains = list(/datum/plant_gene_strain/slippery,/datum/plant_gene_strain/seedless)
 	ticket_cost = 50
-	vending_details = "Contains heather oil."
+	vending_details = "Contains heather oil.<br><br>Gene Strains : Slippery, Seedless"

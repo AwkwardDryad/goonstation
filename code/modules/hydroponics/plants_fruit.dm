@@ -16,6 +16,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 18
 	assoc_reagents = list("juice_tomato")
 	gene_strains = list(/datum/plant_gene_strain/splicing,/datum/plant_gene_strain/quality/inferior)
+	vending_details = "Gene Strains : Splice Enabler, Inferior Quality"
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
@@ -46,6 +47,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	nectarlevel = 10
 	mutations = list(/datum/plantmutation/grapes/green, /datum/plantmutation/grapes/fruit)
 	gene_strains = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/seedless)
+	vending_details = "Gene Strains : Fast Metabolism, Seedless"
 
 /datum/plant/fruit/cherry
 	name = "Cherry"
@@ -61,6 +63,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	nectarlevel = 10
 	assoc_reagents = list("juice_cherry")
 	gene_strains = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/seedless)
+	vending_details = "Gene Strains : Fast Metabolism, Seedless"
 
 /datum/plant/fruit/orange
 	name = "Orange"
@@ -77,7 +80,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	mutations = list(/datum/plantmutation/orange/blood, /datum/plantmutation/orange/clockwork)
 	gene_strains = list(/datum/plant_gene_strain/splicing,/datum/plant_gene_strain/damage_res/bad)
 	assoc_reagents = list("juice_orange")
-	vending_details = "Contains orange juice."
+	vending_details = "Contains orange juice.<br><br>Gene Strains : Splice Enabler, Vulnerability"
 
 /datum/plant/fruit/melon
 	name = "Melon"
@@ -95,7 +98,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	nectarlevel = 15
 	mutations = list(/datum/plantmutation/melon/george, /datum/plantmutation/melon/bowling)
 	gene_strains = list(/datum/plant_gene_strain/immortal,/datum/plant_gene_strain/seedless)
-	vending_details = "Contains water, unsurprisingly."
+	vending_details = "Contains water, unsurprisingly.<br><br>Gene Strains : Immortal, Seedless"
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
@@ -123,7 +126,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	assoc_reagents = list("capsaicin")
 	mutations = list(/datum/plantmutation/chili/chilly,/datum/plantmutation/chili/ghost)
 	gene_strains = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/growth_slow)
-	vending_details = "Processes into hot sauce. Contains capsaicin."
+	vending_details = "Processes into hot sauce. Contains capsaicin.<br><br>Gene Strains : Toxin Immunity, Stunted Growth"
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
@@ -157,7 +160,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	mutations = list(/datum/plantmutation/apple/poison)
 	assoc_reagents = list("juice_apple")
 	gene_strains = list(/datum/plant_gene_strain/quality,/datum/plant_gene_strain/unstable)
-	vending_details = "Contains apple juice. Heals 1 unit of TOX, BURN, BRUTE, OXY, and BRAIN per bite."
+	vending_details = "Contains apple juice. Heals 1 unit of TOX, BURN, BRUTE, OXY, and BRAIN per bite.<br><br>Gene Strains : Superior Quality, Unstable"
 
 /datum/plant/fruit/banana
 	name = "Banana"
@@ -172,7 +175,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 15
 	assoc_reagents = list("potassium")
 	gene_strains = list(/datum/plant_gene_strain/immortal,/datum/plant_gene_strain/growth_slow)
-	vending_details = "Contains potassium. Yummy."
+	vending_details = "Contains potassium. Yummy.<br><br>Gene Strains : Immortal, Stunted Growth"
 
 /datum/plant/fruit/lime
 	name = "Lime"
@@ -187,7 +190,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 21
 	gene_strains = list(/datum/plant_gene_strain/photosynthesis,/datum/plant_gene_strain/splicing/bad)
 	assoc_reagents = list("juice_lime")
-	vending_details = "Contains lime juice, as you'd expect."
+	vending_details = "Contains lime juice, as you'd expect.<br><br>Gene Strains : Photosynthesis, Splice Blocker"
 
 /datum/plant/fruit/lemon
 	name = "Lemon"
@@ -215,7 +218,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	endurance = 10
 	genome = 19
 	gene_strains = list(/datum/plant_gene_strain/damage_res,/datum/plant_gene_strain/stabilizer)
-	vending_details = "Make your own lantern!"
+	vending_details = "Make your own lantern!<br><br>Gene Strains : Damage Resistance, Stabilizer"
 
 /datum/plant/fruit/avocado
 	name = "Avocado"
@@ -243,7 +246,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	gene_strains = list(/datum/plant_gene_strain/mutations,/datum/plant_gene_strain/terminator)
 	mutations = list(/datum/plantmutation/eggplant/literal)
 	assoc_reagents = list("nicotine")
-	vending_details = "Contains nicotine."
+	vending_details = "Contains nicotine.<br><br>Gene Strains : Mutagenic, Terminator"
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
@@ -322,7 +325,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	genome = 19
 	nectarlevel = 10
 	gene_strains = list(/datum/plant_gene_strain/quality)
-	vending_details = "Can be fermented into cider."
+	vending_details = "Can be fermented into cider.<br><br>Gene Strains : Superior Quality"
 
 
 /*
@@ -350,4 +353,4 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	nectarlevel = 10
 	assoc_reagents = list("juice_peach")
 	gene_strains = list(/datum/plant_gene_strain/quality)
-	vending_details = "Contains peach juice. May contain The Presidents of the United States of America song references."
+	vending_details = "Contains peach juice. May contain The Presidents of the United States of America song references.<br><br>Gene Strains : Superior Quality"

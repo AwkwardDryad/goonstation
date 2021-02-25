@@ -59,7 +59,7 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	genome = 16
 	nectarlevel = 6
 	gene_strains = list(/datum/plant_gene_strain/damage_res,/datum/plant_gene_strain/stabilizer)
-	vending_details = "Makes great French fries, batteries and captains."
+	vending_details = "Makes great French fries, batteries and captains.<br><br>Gene Strains : Damage Resistance, Stabilizer"
 
 /datum/plant/veg/onion
 	name = "Onion"
@@ -73,6 +73,7 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	endurance = 3
 	genome = 13
 	gene_strains = list(/datum/plant_gene_strain/splicing,/datum/plant_gene_strain/reagent_adder/toxic)
+	vending_details = "Gene Strains : Splice Enabler, Toxic"
 
 /datum/plant/veg/garlic
 	name = "Garlic"
@@ -86,4 +87,4 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	endurance = 3
 	genome = 13
 	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/terminator)
-	vending_details = "Contains holy water. Not recommended for vampires."
+	vending_details = "Contains holy water. Not recommended for vampires.<br><br>Gene Strains : Rapid Growth, Terminator"

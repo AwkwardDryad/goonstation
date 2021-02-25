@@ -7,11 +7,16 @@ var TAB = 0
 
 function build_list(list, tickets, context){
     const { act } = useBackend(context);
+    var bonus_box
+    if(list.category == "Crops" || list.category == "Fruit" || list.category == "Vegetables"){
+        bonus_box = true
+    }
     return(
         <Box>
             <NoticeBox>
                 {list.category}
             </NoticeBox>
+            {bonus_box?<NoticeBox success>SUPPLY YOUR CHEF : Plants of this type are worth bonus tickets!</NoticeBox>:null}
             {list.plant_list.map(l => (
                 <Section 
                 title={l.name} 

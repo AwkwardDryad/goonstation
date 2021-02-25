@@ -1489,32 +1489,32 @@
 	New()
 		..()
 		for(var/plant in concrete_typesof(/datum/plant/crop))
-			var/datum/plant/p = new plant
-			crop += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+			var/datum/plant/PLANT = new plant
+			crop += list(list("name"=PLANT.name,"path"=PLANT.type,"desc"=PLANT.vending_details,"cost"=PLANT.ticket_cost))
 
 		for(var/plant in concrete_typesof(/datum/plant/fruit))
-			var/datum/plant/p = new plant
-			fruit += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+			var/datum/plant/PLANT = new plant
+			fruit += list(list("name"=PLANT.name,"path"=PLANT.type,"desc"=PLANT.vending_details,"cost"=PLANT.ticket_cost))
 
 		for(var/plant in concrete_typesof(/datum/plant/veg))
-			var/datum/plant/p = new plant
-			vegetable += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+			var/datum/plant/PLANT = new plant
+			vegetable += list(list("name"=PLANT.name,"path"=PLANT.type,"desc"=PLANT.vending_details,"cost"=PLANT.ticket_cost))
 
 		for(var/plant in concrete_typesof(/datum/plant/herb))
-			var/datum/plant/p = new plant
-			herb += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+			var/datum/plant/PLANT = new plant
+			herb += list(list("name"=PLANT.name,"path"=PLANT.type,"desc"=PLANT.vending_details,"cost"=PLANT.ticket_cost))
 
 		for(var/plant in concrete_typesof(/datum/plant/flower))
-			var/datum/plant/p = new plant
-			flower += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+			var/datum/plant/PLANT = new plant
+			flower += list(list("name"=PLANT.name,"path"=PLANT.type,"desc"=PLANT.vending_details,"cost"=PLANT.ticket_cost))
 
 		for(var/plant in concrete_typesof(/datum/plant/weed))
-			var/datum/plant/p = new plant
-			weed += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+			var/datum/plant/PLANT = new plant
+			weed += list(list("name"=PLANT.name,"path"=PLANT.type,"desc"=PLANT.vending_details,"cost"=PLANT.ticket_cost))
 
 		for(var/plant in concrete_typesof(/datum/plant/artifact))
-			var/datum/plant/p = new plant
-			alien += list(list("name"=p.name,"path"=p.type,"desc"=p.vending_details,"cost"=p.ticket_cost))
+			var/datum/plant/PLANT = new plant
+			alien += list(list("name"=PLANT.name,"path"=PLANT.type,"desc"=PLANT.vending_details,"cost"=PLANT.ticket_cost))
 
 		sort_plant_list(crop)
 		sort_plant_list(fruit)
@@ -1632,24 +1632,22 @@
 				else
 					path = pick(concrete_typesof(/datum/plant/weed))
 
-		var/datum/plant/p = new path
-		var/obj/item/seed/S
-		if(p.unique_seed)
-			S = unpool(p.unique_seed)
+		var/datum/plant/PLANT = new path
+		var/obj/item/seed/SEED = Hydro_seed_setup(PLANT,TRUE)
+		if(PLANT.unique_seed)
+			SEED = unpool(PLANT.unique_seed)
 		else
-			S = unpool(/obj/item/seed)
-			S.removecolor()
+			SEED = unpool(/obj/item/seed)
+			SEED.removecolor()
 
-		S.name = "NaNo Gacha! Mystery Seed"
-
-		S.generic_seed_setup(p)
-		S.set_loc(src)
-		stored_seed = S
+		SEED.name = "NaNo Gacha! Mystery Seed"
+		SEED.set_loc(src)
+		stored_seed = SEED
 		
-		underlay_color = S.GetOverlayImage("color")
+		underlay_color = SEED.GetOverlayImage("color")
 		if(underlay_color)
 			underlay_color.pixel_y = 3
-		underlay = image(S.icon,S.icon_state)
+		underlay = image(SEED.icon,SEED.icon_state)
 		underlay.pixel_y = 3
 
 	attack_self(var/mob/user)
