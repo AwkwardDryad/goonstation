@@ -433,14 +433,14 @@
 /obj/item/storage/belt/botany
 	name = "gardening belt"
 	desc = "Can hold various botany tools."
-	icon_state = "utilitybelt"
+	icon_state = "hydrobelt"
 	item_state = "utility"
 	in_list_or_max = 1
 	spawn_contents = list(/obj/item/gardentrowel,
+  /obj/item/wirecutters/green,
+	/obj/item/screwdriver/green,
 	/obj/item/plantanalyzer,
 	/obj/item/device/reagentscanner,
-//  /obj/item/wirecutters/green,
-//	/obj/item/screwdriver/green,
 	/obj/item/seed_gachapon,
 	/obj/item/reagent_containers/glass/bottle/happyplant,
 	/obj/item/satchel/hydro)
