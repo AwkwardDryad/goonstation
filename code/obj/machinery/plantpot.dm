@@ -226,12 +226,6 @@
 		return
 
 	attackby(obj/item/W as obj, mob/user as mob)
-		if(src.growing)
-			if(istype(src.growing,/datum/plant/maneater))	// We want to be able to feed stuff to maneaters, such as meat, people, etc.
-				handle_maneater_interaction(W,user)
-			if(src.growing.harvest_tools)	// Checks to see if the plant requires a specific tool to harvest, rather than an empty hand.
-				check_for_valid_harvest_tool(W,user)
-				return
 		if(istool(W, TOOL_SCREWING | TOOL_WRENCHING))	// These allow you to unanchor the plantpots to move them around, or re-anchor them.
 			if(src.anchored)
 				user.visible_message("<b>[user]</b> unbolts the [src] from the floor.")
@@ -355,6 +349,13 @@
 				harvest(user,W)
 			else
 				user.show_text("The plant isn't ready to be harvested yet!","red")
+				return
+
+		else if(src.growing)
+			if(istype(src.growing,/datum/plant/maneater))	// We want to be able to feed stuff to maneaters, such as meat, people, etc.
+				handle_maneater_interaction(W,user)
+			if(src.growing.harvest_tools)	// Checks to see if the plant requires a specific tool to harvest, rather than an empty hand.
+				check_for_valid_harvest_tool(W,user)
 				return
 
 		else ..()
@@ -895,6 +896,7 @@
 
 		src.generation = 0
 		update_plant_overlays()
+		update_water_info_display()
 		post_alert("event_cleared")
 
 	proc/damage_plant(var/damage_source, var/damage_amount, var/bypass_resistance = FALSE)
@@ -1128,7 +1130,7 @@
 
 	proc/update_water_info_display()
 		var/water_difference = water_preferred_vs_growing()
-		if(water_difference == "no_water" || water_difference < 0)	// if the water difference is negative, the water level is too low
+		if(water_difference == "no water" || water_difference < 0)	// if the water difference is negative, the water level is too low
 			UpdateOverlays(image(icon,"water+",6),"water_info_display")
 		else if(water_difference > 0) 
 			UpdateOverlays(image(icon,"water-",6),"water_info_display")
@@ -1211,6 +1213,7 @@
 
 	proc/check_for_valid_harvest_tool(var/obj/item/W,var/mob/user)
 		if(!W)
+			user.show_text("<b>You don't have the right tool to harvest this plant!</b>","red")
 			return
 		var/passed
 		for(var/i in 1 to length(growing.harvest_tools))
@@ -1222,9 +1225,10 @@
 				passed = TRUE
 				break
 		if(passed)
-			if(growing.harvest_tool_message)
-				user.show_text(growing.harvest_tool_message)
-			harvest(user,null)
+			if(is_harvestable)
+				if(growing.harvest_tool_message)
+					user.show_text(growing.harvest_tool_message)
+				harvest(user,null)
 		else
 			if(!growing.harvest_tool_fail_message)
 				user.show_text("<b>You don't have the right tool to harvest this plant!</b>","red")

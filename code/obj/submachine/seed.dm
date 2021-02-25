@@ -1564,7 +1564,7 @@
 			return
 		switch(action)
 			if("spawn_item")
-				if((tickets - params["cost"]) <= 0)
+				if((tickets - params["cost"]) < 0)
 					return
 				target_path = params["target_path"]
 				tickets -= params["cost"]
@@ -1583,7 +1583,7 @@
 		user.playsound_local(src.loc, "keyboard", 50, 1)
 
 	proc/gachapon(var/mob/user)
-		if((tickets - gacha_cost) <= 0)
+		if((tickets - gacha_cost) < 0)
 			return
 		tickets -= gacha_cost
 		user.put_in_hand_or_drop(new /obj/item/seed_gachapon)
@@ -1601,6 +1601,7 @@
 	name = "NaNo Gacha! Capsule"
 	desc = "NanoTrasen's failed attempt at making hydroponics more attractive to new recruits."
 	icon = 'icons/obj/items/figures.dmi'
+	w_class = 1.0
 	var/obj/item/stored_seed
 	var/image/underlay
 	var/image/underlay_color
