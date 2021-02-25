@@ -325,7 +325,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	assoc_reagents = list("mandrake")
 	required_reagents = list(list(id="poo",amount=100))
 	ticket_cost = 300
-	vending_details = "A mysterious plant said to have interesting reactions to blood and sharp objects. Needs at least 100 units of compost to grow."
+	vending_details = "A mysterious plant said to have interesting reactions to blood and sharp objects. Needs at least 100 units of compost to grow. Mandrakes are tempermental even when they're happy, but if they aren't cared for, they might just rip themselves apart out of spite."
 
 	HYPharvested_proc(var/obj/machinery/plantpot/POT,var/mob/user)
 		if (.) return
@@ -386,7 +386,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 1
 	genome = 1
 	preferred_water_level = 2
-	assoc_reagents = list("heather_oil") //placeholder until tea implemented
+	assoc_reagents = list("mannitol")
 	gene_strains = list(/datum/plant_gene_strain/slippery,/datum/plant_gene_strain/terminator) //placeholder until grateful harvest implemented
 	ticket_cost = 50
 	vending_details = "Can be brewed into a tea containing mannitol and occuline. Good for heart conditions."

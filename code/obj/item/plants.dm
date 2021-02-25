@@ -421,7 +421,7 @@
 /obj/item/plant/herb/rosemary
 	name = "sprig of rosemary"
 	icon = 'icons/obj/foodNdrink/food_produce.dmi'
-	icon_state = "heather" //placeholder until we have sprites
+	icon_state = "rosemary"
 	desc = "A woody herb that looks a bit like pine. Friends with Parsley, Sage, and Thyme."
 	w_class = 1
 	crop_prefix = "sprig of "

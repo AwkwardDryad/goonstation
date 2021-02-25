@@ -1796,6 +1796,7 @@
 		product_list += new/datum/data/vending_product(/obj/item/reagent_containers/glass/bottle/powerplant, 5)
 		product_list += new/datum/data/vending_product(/obj/item/reagent_containers/glass/bottle/fruitful, 5)
 		product_list += new/datum/data/vending_product(/obj/decorative_pot, 5)
+		product_list += new/datum/data/vending_product(/obj/machinery/plantpot, 8)
 		product_list += new/datum/data/vending_product(/obj/chicken_nesting_box,3)
 		product_list += new/datum/data/vending_product(/obj/item/chicken_carrier, 2)
 
