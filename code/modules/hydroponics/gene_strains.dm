@@ -240,3 +240,13 @@
 
 		if (max_produce_pollen)
 			T.fluid_react_single("pollen", 3, airborne = 1)
+
+/datum/plant_gene_strain/gratefulharvest
+	name = "Grateful Harvest"
+	desc = "This plant will care for those that care for it."
+
+	on_harvest(obj/machinery/plantpot/PP, var/mob/user)
+		if(!ishuman(user))
+			return
+		var/mob/living/carbon/human/HUMAN = user
+		HUMAN.HealDamage("All",20,20,20)
