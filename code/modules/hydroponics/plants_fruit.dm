@@ -61,6 +61,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	endurance = 0
 	genome = 20
 	nectarlevel = 10
+	preferred_water_level = 4
 	assoc_reagents = list("juice_cherry")
 	gene_strains = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/seedless)
 	vending_details = "Gene Strains : Fast Metabolism, Seedless"
@@ -77,6 +78,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	endurance = 3
 	genome = 21
 	nectarlevel = 10
+	preferred_water_level = 4
 	mutations = list(/datum/plantmutation/orange/blood, /datum/plantmutation/orange/clockwork)
 	gene_strains = list(/datum/plant_gene_strain/splicing,/datum/plant_gene_strain/damage_res/bad)
 	assoc_reagents = list("juice_orange")
@@ -157,6 +159,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 10
 	endurance = 5
 	genome = 19
+	preferred_water_level = 4
 	mutations = list(/datum/plantmutation/apple/poison)
 	assoc_reagents = list("juice_apple")
 	gene_strains = list(/datum/plant_gene_strain/quality,/datum/plant_gene_strain/unstable)
@@ -173,6 +176,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 4
 	endurance = 3
 	genome = 15
+	preferred_water_level = 4
 	assoc_reagents = list("potassium")
 	gene_strains = list(/datum/plant_gene_strain/immortal,/datum/plant_gene_strain/growth_slow)
 	vending_details = "Contains potassium. Yummy.<br><br>Gene Strains : Immortal, Stunted Growth"
@@ -188,6 +192,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 3
 	endurance = 3
 	genome = 21
+	preferred_water_level = 4
 	gene_strains = list(/datum/plant_gene_strain/photosynthesis,/datum/plant_gene_strain/splicing/bad)
 	assoc_reagents = list("juice_lime")
 	vending_details = "Contains lime juice, as you'd expect.<br><br>Gene Strains : Photosynthesis, Splice Blocker"
@@ -203,6 +208,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 3
 	endurance = 3
 	genome = 21
+	preferred_water_level = 4
 	assoc_reagents = list("juice_lemon")
 	vending_details = "Contains lemon juice. Clearly."
 
@@ -231,6 +237,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 2
 	endurance = 4
 	genome = 18
+	preferred_water_level = 2
 
 /datum/plant/fruit/eggplant
 	name = "Eggplant"
@@ -243,6 +250,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 2
 	endurance = 2
 	genome = 18
+	preferred_water_level = 4
 	gene_strains = list(/datum/plant_gene_strain/mutations,/datum/plant_gene_strain/terminator)
 	mutations = list(/datum/plantmutation/eggplant/literal)
 	assoc_reagents = list("nicotine")
@@ -296,6 +304,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 5
 	endurance = 5
 	genome = 19
+	preferred_water_level = 4
 	assoc_reagents = list("coconut_milk")
 	vending_details = "Contains coconut milk, which is distinct from regular space milk."
 
@@ -310,6 +319,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	harvests = 4
 	endurance = 10
 	genome = 21
+	preferred_water_level = 4
 	vending_details = "Contains pineapple juice. Don't get in it your eyes."
 
 /datum/plant/fruit/pear
@@ -324,6 +334,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	endurance = 5
 	genome = 19
 	nectarlevel = 10
+	preferred_water_level = 4
 	gene_strains = list(/datum/plant_gene_strain/quality)
 	vending_details = "Can be fermented into cider.<br><br>Gene Strains : Superior Quality"
 
@@ -351,6 +362,7 @@ ABSTRACT_TYPE(/datum/plant/fruit)
 	endurance = 5
 	genome = 17
 	nectarlevel = 10
+	preferred_water_level = 4
 	assoc_reagents = list("juice_peach")
 	gene_strains = list(/datum/plant_gene_strain/quality)
 	vending_details = "Contains peach juice. May contain The Presidents of the United States of America song references.<br><br>Gene Strains : Superior Quality"

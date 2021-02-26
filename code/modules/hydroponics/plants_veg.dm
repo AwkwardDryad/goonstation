@@ -86,5 +86,6 @@ ABSTRACT_TYPE(/datum/plant/veg)
 	harvests = 1
 	endurance = 3
 	genome = 13
+	preferred_water_level = 4
 	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/terminator)
 	vending_details = "Contains holy water. Not recommended for vampires.<br><br>Gene Strains : Rapid Growth, Terminator"

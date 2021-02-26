@@ -14,6 +14,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	endurance = 40
 	cropsize = 3
 	genome = 30
+	preferred_water_level = 4
 	assoc_reagents = list("space_fungus")
 	mutations = list(/datum/plantmutation/fungus/amanita,/datum/plantmutation/fungus/psilocybin,/datum/plantmutation/fungus/cloak)
 	ticket_cost = 50
@@ -115,6 +116,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	harvtime = 200
 	endurance = 80
 	genome = 40
+	preferred_water_level = 2
 	assoc_reagents = list("radium")
 	mutations = list(/datum/plantmutation/radweed/redweed,/datum/plantmutation/radweed/safeweed)
 	ticket_cost = 200
@@ -169,6 +171,7 @@ ABSTRACT_TYPE(/datum/plant/weed)
 	cropsize = 3
 	endurance = 30
 	genome = 45
+	preferred_water_level = 4
 	var/exploding = 0
 	assoc_reagents = list("toxic_slurry")
 	mutations = list(/datum/plantmutation/slurrypod/omega)

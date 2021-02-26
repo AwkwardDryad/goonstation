@@ -14,6 +14,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 1
 	endurance = 0
 	genome = 10
+	preferred_water_level = 4
 	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
 	vending_details = "Produces bamboo stalks, which can be cut down to produce edible shoots.<br><br>Gene Strains : Rapid Growth, Poor Health"
 
@@ -29,6 +30,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 1
 	endurance = 0
 	genome = 10
+	preferred_water_level = 2
 	mutations = list(/datum/plantmutation/wheat/steelwheat, /datum/plantmutation/wheat/durum)
 	gene_strains = list(/datum/plant_gene_strain/growth_fast,/datum/plant_gene_strain/health_poor)
 	vending_details = "Processes into flour.<br><br>Gene Strains : Rapid Growth, Poor Health"
@@ -67,6 +69,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 1
 	endurance = 0
 	genome = 8
+	preferred_water_level = 4
 	gene_strains = list(/datum/plant_gene_strain/yield,/datum/plant_gene_strain/health_poor)
 	vending_details = "Processes into rice.<br><br>Gene Strains : Enhanced Yield, Poor Health"
 
@@ -81,6 +84,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 4
 	endurance = 0
 	genome = 6
+	preferred_water_level = 4
 	mutations = list(/datum/plantmutation/beans/jelly)
 	gene_strains = list(/datum/plant_gene_strain/immunity_toxin,/datum/plant_gene_strain/metabolism_slow)
 	assoc_reagents = list("nitrogen")
@@ -128,10 +132,12 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 2
 	endurance = 3
 	genome = 7
+	preferred_water_level = 4
 	assoc_reagents = list("synthflesh")
+	required_reagents = list(list(id="blood",amount=10))
 	mutations = list(/datum/plantmutation/synthmeat/butt,/datum/plantmutation/synthmeat/limb,/datum/plantmutation/synthmeat/brain,/datum/plantmutation/synthmeat/heart,/datum/plantmutation/synthmeat/eye)
 	gene_strains = list(/datum/plant_gene_strain/yield,/datum/plant_gene_strain/unstable)
-	vending_details = "Gene Strains : Enhanced Yield, Unstable"
+	vending_details = "Requires at least 10 units of blood to grow<br><br>Gene Strains : Enhanced Yield, Unstable"
 
 	infuse_from_plant(var/obj/item/seed/S,var/reagent)
 		..()
@@ -156,6 +162,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 1
 	endurance = 0
 	genome = 8
+	preferred_water_level = 4
 	gene_strains = list(/datum/plant_gene_strain/quality,/datum/plant_gene_strain/terminator)
 	assoc_reagents = list("sugar")
 	vending_details = "Processes into sugar. Contains, you guessed it, sugar.<br><br>Gene Strains : Superior Quality, Terminator"
@@ -171,6 +178,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 3
 	endurance = 1
 	genome = 7
+	preferred_water_level = 4
 	gene_strains = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/quality/inferior)
 	assoc_reagents = list("grease")
 	mutations = list(/datum/plantmutation/soy/soylent)
@@ -211,6 +219,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 4
 	endurance = 0
 	genome = 5
+	preferred_water_level = 4
 	gene_strains = list(/datum/plant_gene_strain/immunity_radiation,/datum/plant_gene_strain/metabolism_slow)
 	vending_details = "Processes into fabric when used in a material processor.<br><br>Gene Strains : Radiation Immunity, Slow Metabolism"
 
@@ -226,6 +235,7 @@ ABSTRACT_TYPE(/datum/plant/crop)
 	harvests = 10
 	endurance = 5
 	genome = 20
+	preferred_water_level = 4
 	mutations = list(/datum/plantmutation/tree/money, /datum/plantmutation/tree/rubber,/datum/plantmutation/tree/sassafras, /datum/plantmutation/tree/dog,/datum/plantmutation/tree/paper)
 	gene_strains = list(/datum/plant_gene_strain/metabolism_fast,/datum/plant_gene_strain/metabolism_slow,/datum/plant_gene_strain/resistance_drought)
 	vending_details = "Chainsaw the resulting log to get your very own barricade.<br><br>Gene Strains : Fast Metabolism, Slow Metabolism, Drought Resistance"
