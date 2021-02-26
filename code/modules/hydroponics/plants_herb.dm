@@ -337,8 +337,8 @@ ABSTRACT_TYPE(/datum/plant/herb)
 			POT.growing.cropsize = 0
 		POT.health = 1
 		if((POT.growing.cropsize+POT.DNA.cropsize) > 0)
-			playsound(POT.loc, 'sound/voice/screams/mandrake_scree.ogg', 100, 0, 0, null)
-			for (var/mob/living/M in all_hearers(world.view, POT.loc))
+			playsound(POT.loc, 'sound/voice/screams/mandrake_scree.ogg', 100, 0, 1, null)
+			for(var/mob/living/M in all_hearers(world.view, POT.loc))
 				if(issilicon(M) || isintangible(M))
 					continue
 
