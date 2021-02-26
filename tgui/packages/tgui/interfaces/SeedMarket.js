@@ -70,7 +70,7 @@ export const SeedMarket = (props, context) => {
                 icon="heart"
                 disabled={tickets < gacha_cost}
                 onClick={() => act("gachapon")}>
-                Gachapon! : {gacha_cost}
+                Gachapon! : {gacha_cost} Tickets
             </Button>
             <Setup/>
             {check_tab(plant_lists, tickets, context)}
