@@ -15,6 +15,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	harvtime = 140
 	endurance = 40
 	ticket_cost = 100
+	preferred_water_level = 4
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()
@@ -141,6 +142,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	endurance = 0
 	assoc_reagents = list("plasma")
 	ticket_cost = 150
+	preferred_water_level = 4
 
 /datum/plant/artifact/rocks
 	name = "Rock"
@@ -156,6 +158,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	endurance = 40
 	mutations = list(/datum/plantmutation/rocks/syreline,/datum/plantmutation/rocks/bohrum,/datum/plantmutation/rocks/mauxite,/datum/plantmutation/rocks/erebite)
 	ticket_cost = 100
+	preferred_water_level = 1
 
 /datum/plant/artifact/litelotus
 	name = "Light Lotus"
@@ -170,6 +173,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	endurance = 20
 	assoc_reagents = list("omnizine")
 	ticket_cost = 300
+	preferred_water_level = 4
 
 /datum/plant/artifact/plasma
 	name = "Plasma"
@@ -183,6 +187,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	harvests = 1
 	endurance = 10
 	ticket_cost = 200
+	preferred_water_level = 4
 
 /datum/plant/artifact/goldfish
 	name = "Goldfish"
@@ -196,6 +201,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	harvests = 6
 	endurance = 30
 	ticket_cost = 100
+	preferred_water_level = 2
 
 /datum/plant/artifact/cat
 	name = "Synthetic Cat"
@@ -208,6 +214,7 @@ ABSTRACT_TYPE(/datum/plant/artifact)
 	harvtime = 150
 	endurance = 30
 	ticket_cost = 100
+	preferred_water_level = 4
 
 	HYPspecial_proc(var/obj/machinery/plantpot/POT)
 		..()

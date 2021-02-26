@@ -15,6 +15,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 0
 	nectarlevel = 10
 	genome = 3
+	preferred_water_level = 4
 	assoc_reagents = list("salicylic_acid")
 	mutations = list(/datum/plantmutation/contusine/shivering,/datum/plantmutation/contusine/quivering)
 	ticket_cost = 50
@@ -51,6 +52,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 0
 	nectarlevel = 15
 	genome = 3
+	preferred_water_level = 1
 	assoc_reagents = list("ephedrine")
 	mutations = list(/datum/plantmutation/asomna/robust)
 	ticket_cost = 50
@@ -69,6 +71,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 0
 	genome = 16
 	nectarlevel = 5
+	preferred_water_level = 1
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 	assoc_reagents = list("silver_sulfadiazine")
 	mutations = list(/datum/plantmutation/commol/burning)
@@ -88,6 +91,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 0
 	genome = 16
 	nectarlevel = 5
+	preferred_water_level = 4
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
 	assoc_reagents = list("ipecac")
 	mutations = list(/datum/plantmutation/ipecacuanha/bilious,/datum/plantmutation/ipecacuanha/invigorating)
@@ -124,6 +128,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 3
 	nectarlevel = 5
 	genome = 1
+	preferred_water_level = 4
 	assoc_reagents = list("mint")
 	vending_details = "Contains, as you'd expect, mint."
 
@@ -140,6 +145,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 0
 	nectarlevel = 5
 	genome = 2
+	preferred_water_level = 4
 	assoc_reagents = list("THC","CBD")
 	mutations = list(/datum/plantmutation/cannabis/rainbow,/datum/plantmutation/cannabis/death,
 	/datum/plantmutation/cannabis/white,/datum/plantmutation/cannabis/ultimate)
@@ -177,6 +183,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	harvests = 1
 	endurance = 0
 	genome = 1
+	preferred_water_level = 4
 	assoc_reagents = list("mercury")
 	ticket_cost = 25
 	vending_details = "Fish mint, contains mercury."
@@ -225,6 +232,7 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	endurance = 1
 	genome = 2 //no idea if this was set to the right thing aaa
 	nectarlevel = 5
+	preferred_water_level = 2
 	assoc_reagents = list("nicotine")
 	mutations = list(/datum/plantmutation/tobacco/twobacco)
 	gene_strains = list(/datum/plant_gene_strain/resistance_drought,/datum/plant_gene_strain/yield/stunted)
@@ -322,10 +330,11 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	harvests = 0
 	endurance = 1
 	genome = 16
+	preferred_water_level = 2
 	assoc_reagents = list("mandrake")
-	required_reagents = list(list(id="poo",amount=100))
+	required_reagents = list(list(id="poo",amount=100),list(id="blood",amount=10))
 	ticket_cost = 300
-	vending_details = "A mysterious plant said to have interesting reactions to blood and sharp objects. Needs at least 100 units of compost to grow. Mandrakes are tempermental even when they're happy, but if they aren't cared for, they might just rip themselves apart out of spite."
+	vending_details = "A mysterious plant said to have interesting reactions to blood and sharp objects. Needs at least 100 units of compost and 10 units of blood to grow. Mandrakes are tempermental even when they're happy, but if they aren't cared for, they might just rip themselves apart out of spite."
 
 	HYPharvested_proc(var/obj/machinery/plantpot/POT,var/mob/user)
 		if (.) return
