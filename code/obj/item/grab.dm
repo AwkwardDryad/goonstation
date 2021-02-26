@@ -394,7 +394,7 @@
 
 				for (var/mob/O in AIviewers(src.affecting, null))
 					O.show_message(text("<span class='alert'>[] attempts to break free of []'s grip!</span>", src.affecting, src.assailant), 1, group = "resist")
-			if(affecting.is_slippery && prob(20))
+			if(affecting && affecting.is_slippery && prob(20))
 				affecting.is_slippery = FALSE
 	//returns an atom to be thrown if any
 	proc/handle_throw(var/mob/living/user, var/atom/target)
