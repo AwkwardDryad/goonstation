@@ -1873,6 +1873,7 @@ datum
 					if(currentpollen < 15) //cap pollen on bee to 15 so it doesn't completely fill the bee and block out nectar. Those fuzzy bumblebutts are only so big.
 						var/pollenTransferAmt = min((15 - currentpollen), volume)
 						O.reagents.add_reagent("pollen", pollenTransferAmt)
+
 		martian_flesh
 			name = "martian flesh"
 			id = "martian_flesh"

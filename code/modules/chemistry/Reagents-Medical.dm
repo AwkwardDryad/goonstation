@@ -1547,7 +1547,7 @@ datum
 			overdose = 40
 
 			on_mob_life(var/mob/M, var/mult = 1)
-				if(!M) 
+				if(!M)
 					M = holder.my_atom
 				M.reagents.add_reagent("ethanol", 0.3 * mult)
 				if(ishuman(M))
@@ -1578,3 +1578,22 @@ datum
 				if(ismob(holder?.my_atom))
 					var/mob/M = holder.my_atom
 					REMOVE_MOVEMENT_MODIFIER(M, /datum/movement_modifier/reagent/salicylic_acid, src.type)
+
+		medical/rosemary_tea
+			name = "rosemary tea"
+			id = "rosemary_tea"
+			fluid_r = 65
+			fluid_g = 37
+			fluid_b = 7
+			description = "Herbal. Tea."
+			reagent_state = LIQUID
+			depletion_rate = 0.4
+			value = 2
+
+			on_mob_life(var/mob/M, var/mult = 1)
+				if(!M)
+					M = holder.my_atom
+				M.reagents.add_reagent("mannitol", 0.3 * mult)
+				M.reagents.add_reagent("oculine", 0.3 * mult)
+				..()
+				return

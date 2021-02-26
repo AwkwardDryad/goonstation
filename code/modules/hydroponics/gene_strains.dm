@@ -14,6 +14,12 @@
 		if (!prob(process_proc_chance))
 			return 1
 
+	proc/on_harvest(var/obj/machinery/plantpot/PP,var/mob/user)
+		if (!PP)
+			return 1
+		if (!PP.growing)
+			return 1
+
 /datum/plant_gene_strain/immunity_toxin
 	name = "Toxin Immunity"
 	desc = "This genetic strain enables a plant to wholly resist damage from toxic substances."
