@@ -396,6 +396,6 @@ ABSTRACT_TYPE(/datum/plant/herb)
 	genome = 1
 	preferred_water_level = 2
 	assoc_reagents = list("mannitol")
-	gene_strains = list(/datum/plant_gene_strain/slippery,/datum/plant_gene_strain/terminator) //placeholder until grateful harvest implemented
+	gene_strains = list(/datum/plant_gene_strain/gratefulharvest,/datum/plant_gene_strain/terminator)
 	ticket_cost = 50
 	vending_details = "Can be brewed into a tea containing mannitol and occuline. Good for heart conditions."
