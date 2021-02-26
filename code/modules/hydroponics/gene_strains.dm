@@ -249,6 +249,6 @@
 		if(!ishuman(user))
 			return
 		var/mob/living/carbon/human/HUMAN = user
-		HUMAN.HealDamage(All,20,20,20)
+		HUMAN.HealDamage("All",20,20,20)
 
 
