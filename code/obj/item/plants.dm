@@ -424,6 +424,8 @@
 	icon_state = "rosemary"
 	desc = "A woody herb that looks a bit like pine. Friends with Parsley, Sage, and Thyme."
 	w_class = 1
+	brewable = 1
+	brew_result = "rosemary_tea"
 	crop_prefix = "sprig of "
 	crop_suffix = ""
 

@@ -33,7 +33,7 @@
 	var/harvests = 0  						// Set this when you plant a seed. How many times you can harvest it before it dies. Plant dies when it hits 0.
 	var/recently_harvested = 0 				// Automatic. A time delay between harvests.
 	var/generation = 0 						// Automatic. Just a fun thing to track how many generations a plant has been bred.
-	var/dead = FALSE       					// Automatic. If the plant is dead.	
+	var/dead = FALSE       					// Automatic. If the plant is dead.
 	var/weedproof = FALSE  					// Does this tray block weeds from appearing in it? (Won't stop deliberately planted weeds)
 
 	var/report_freq = 1433 					//Radio channel to report plant status/death/whatever.
@@ -58,7 +58,7 @@
 
 	var/action_bar_status // holds defines for action bar harvesting yay :D
 	var/tickets_ready = FALSE // Are there tickets waiting to be claimed?
-	
+
 	New()
 		..()
 		DNA = new /datum/plantgenes(src)
@@ -103,7 +103,7 @@
 		if(has_plant_flag(growing,SIMPLE_GROWTH))	// Simplegrowth essentially skips all simulation whatsoever and just adds one growth point per tick
 			src.growth++
 		else
-			var/compared_water = abs(water_preferred_vs_growing()) // What is the deviation between the plant's preferred water and the current water level? 
+			var/compared_water = abs(water_preferred_vs_growing()) // What is the deviation between the plant's preferred water and the current water level?
 
 			if(compared_water != "no water")
 				var/is_slow_metabolism = Hydro_check_strain(DNA,/datum/plant_gene_strain/metabolism_slow)
@@ -449,7 +449,7 @@
 
 		// Does this plant react to being harvested? If so, do it - it also functions as
 		// a check since harvesting will stop here if this returns anything other than 0.
-		if(has_plant_flag(growing,USE_HARVESTED_PROC) && (growing.HYPharvested_proc(src,user) || MUT?.HYPharvested_proc_M(src,user)))
+		if(has_plant_flag(growing,USE_HARVESTED_PROC) && (growing.HYPharvested_proc(src,user) || MUT?.HYPharvested_proc_M(src,user))) growing.DNA.gene_strains.on_harvest(src,user)
 			return
 
 		if(hydro_controls)
@@ -524,7 +524,7 @@
 			if(has_plant_flag(growing,NO_RENAME_HARVEST))
 				dont_rename_crop = TRUE
 
-		getamount = max(getamount, 0) 
+		getamount = max(getamount, 0)
 		if(getamount < 1)
 			user.show_text("You aren't able to harvest anything worth salvaging.","red")
 		else if(!getitem)
@@ -554,7 +554,7 @@
 
 				var/obj/CROP = unpool(itemtype)
 				CROP.set_loc(src)
-				
+
 				if(!dont_rename_crop)
 					CROP.name = growing.name
 				/*
@@ -580,7 +580,7 @@
 						if(prob(min(100, quality_score - 15)))
 							CROP.name = "jumbo [CROP.name]"
 							quality_status = "jumbo"
-							added_tickets += 3 
+							added_tickets += 3
 						else
 							CROP.name = "[pick("perfect","amazing","incredible","supreme")] [CROP.name]"
 							added_tickets += 2
@@ -794,7 +794,7 @@
 	proc/mutate_plant(var/severity = 1)	// This proc is for mutating the plant - gene strains, mutant variants and plain old genetic bonuses and penalties are handled here.
 		if(severity < 1 || !severity)	// Severity is a multiplier to odds and amounts.
 			severity = 1
-			
+
 		if(!istype(growing) || !istype(DNA))
 			return
 
@@ -909,7 +909,7 @@
 		if(!bypass_resistance)
 			switch(damage_source)
 				if("poison")
-					if(Hydro_check_strain(DNA,/datum/plant_gene_strain/immunity_toxin)) 
+					if(Hydro_check_strain(DNA,/datum/plant_gene_strain/immunity_toxin))
 						return
 				if("radiation")
 					if(Hydro_check_strain(DNA,/datum/plant_gene_strain/immunity_radiation))
@@ -933,7 +933,7 @@
 							damage_amount /= D.damage_mult
 
 			damage_prob -= growing.endurance + DNA.endurance
-			if(damage_prob < 1) 
+			if(damage_prob < 1)
 				return
 			if(damage_prob > 100) damage_prob = 100
 
@@ -1001,7 +1001,7 @@
 						if(growing.HYPattacked_proc(src,user,W))
 							return
 					if(1)
-						if(MUT.HYPattacked_proc_M(src,user,W)) 
+						if(MUT.HYPattacked_proc_M(src,user,W))
 							return
 					else
 						if(growing.HYPattacked_proc(src,user,W) || MUT.HYPattacked_proc_M(src,user,W))
@@ -1017,7 +1017,7 @@
 
 	proc/post_alert(var/alert_msg)
 		var/datum/radio_frequency/frequency = radio_controller.return_frequency("[report_freq]")
-		if(!frequency || !alert_msg) 
+		if(!frequency || !alert_msg)
 			return
 		var/datum/signal/signal = get_free_signal()
 		signal.source = src
@@ -1048,7 +1048,7 @@
 		else
 			ticket_animation_setup()
 		stored_tickets += amount
-			
+
 	proc/vend_tickets(var/mob/user)
 		if(!tickets_ready)
 			return
@@ -1132,7 +1132,7 @@
 		var/water_difference = water_preferred_vs_growing()
 		if(water_difference == "no water" || water_difference < 0)	// if the water difference is negative, the water level is too low
 			UpdateOverlays(image(icon,"water+",6),"water_info_display")
-		else if(water_difference > 0) 
+		else if(water_difference > 0)
 			UpdateOverlays(image(icon,"water-",6),"water_info_display")
 		else if(GetOverlayImage("water_info_display"))
 			ClearSpecificOverlays("water_info_display")
@@ -1201,9 +1201,9 @@
 	proc/is_harvestable()
 		if(!growing || !DNA || health < 1 || harvests < 1 || recently_harvested) return 0
 		if(MUT && MUT.harvest_override && MUT.crop)
-			if(src.growth >= growing.harvtime - DNA.harvtime) 
+			if(src.growth >= growing.harvtime - DNA.harvtime)
 				return TRUE
-			else 
+			else
 				return
 		if(!growing.crop || has_plant_flag(growing,NO_HARVEST))
 			return

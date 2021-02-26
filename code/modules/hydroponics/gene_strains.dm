@@ -241,3 +241,4 @@
 		if (max_produce_pollen)
 			T.fluid_react_single("pollen", 3, airborne = 1)
 
+ growing.HYPharvested_proc(src,user)
