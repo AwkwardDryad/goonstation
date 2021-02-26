@@ -449,8 +449,12 @@
 
 		// Does this plant react to being harvested? If so, do it - it also functions as
 		// a check since harvesting will stop here if this returns anything other than 0.
-		if(has_plant_flag(growing,USE_HARVESTED_PROC) && (growing.HYPharvested_proc(src,user) || MUT?.HYPharvested_proc_M(src,user))) growing.DNA.gene_strains.on_harvest(src,user)
+		if(has_plant_flag(growing,USE_HARVESTED_PROC) && (growing.HYPharvested_proc(src,user) || MUT?.HYPharvested_proc_M(src,user)))
 			return
+		if(DNA.gene_strains)
+			for(var/datum/plant_gene_strain/STRAIN in DNA.gene_strains)
+				if(STRAIN.on_harvest(src,user) == 1)
+					return
 
 		if(hydro_controls)
 			src.recently_harvested = 1
