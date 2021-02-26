@@ -3959,9 +3959,20 @@ datum
 			reagent_state = LIQUID
 			depletion_rate = 0.4
 			transparency = 125
+			target_organs = list("left_kidney", "right_kidney")
 
 			reaction_mob(var/mob/M, var/method=TOUCH, var/amount_passed)
 				..()
+				if(ishuman(M) && amount_passed >= 20)
+					var/mob/living/carbon/human/H = M
+					H.is_slippery = TRUE
+
+			on_mob_life(var/mob/M, var/mult = 1)
+				if(ishuman(M))
+					var/mob/living/carbon/human/H = M
+					H.organHolder.heal_organs(1*mult, 1*mult, 1*mult, pick(target_organs))
+				..()
+				return
 
 /obj/badman/ //I really don't know a good spot to put this guy so im putting him here, fuck you.
 	name = "Senator Death Badman"

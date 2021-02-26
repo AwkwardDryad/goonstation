@@ -50,6 +50,15 @@
 						var/atom/target = get_edge_target_turf(src, src.dir)
 						src.throw_at(target, 30, 1, throw_type = THROW_SLIP)
 						random_brute_damage(src, 10)
+		else if(src.is_slippery && src.hasStatus("resting"))
+			src.pulling = null
+			src.changeStatus("weakened", 35)
+			src.visible_message("[src.name] slides across the floor like a penguin!")
+			playsound(get_turf(src), "sound/misc/slip.ogg", 50, 1, -3)
+			var/atom/target = get_edge_target_turf(src, src.dir)
+			src.throw_at(target, 8, 1, throw_type = THROW_SLIP)
+			if(prob(10))
+				src.is_slippery = FALSE
 
 /mob/living/carbon/relaymove(var/mob/user, direction)
 	if(user in src.stomach_contents)

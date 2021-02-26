@@ -381,9 +381,12 @@
 					O.show_message(text("<span class='alert'>[] attempts to break free of []'s pin!</span>", src.affecting, src.assailant), 1, group = "resist")
 
 		else
-			if (prob(break_prob))
+			if (prob(break_prob) || affecting.is_slippery)
 				for (var/mob/O in AIviewers(src.affecting, null))
-					O.show_message(text("<span class='alert'>[] has broken free of []'s grip!</span>", src.affecting, src.assailant), 1, group = "resist")
+					if(affecting.is_slippery)
+						O.show_message(text("<span class='alert'>[] has slipped right out of []'s grip!</span>", src.affecting, src.assailant), 1, group = "resist")
+					else
+						O.show_message(text("<span class='alert'>[] has broken free of []'s grip!</span>", src.affecting, src.assailant), 1, group = "resist")
 				qdel(src)
 			else
 				src.assailant.remove_stamina(assailant_stam_drain)
@@ -391,7 +394,8 @@
 
 				for (var/mob/O in AIviewers(src.affecting, null))
 					O.show_message(text("<span class='alert'>[] attempts to break free of []'s grip!</span>", src.affecting, src.assailant), 1, group = "resist")
-
+			if(affecting.is_slippery && prob(20))
+				affecting.is_slippery = FALSE
 	//returns an atom to be thrown if any
 	proc/handle_throw(var/mob/living/user, var/atom/target)
 		if (!src.affecting) return 0

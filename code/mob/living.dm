@@ -127,6 +127,7 @@
 	can_lie = 1
 
 	var/const/singing_prefix = "%"
+	var/is_slippery = FALSE
 
 /mob/living/New()
 	..()
